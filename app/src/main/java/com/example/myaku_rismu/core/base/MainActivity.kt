@@ -1,4 +1,4 @@
-package com.example.myaku_rismu
+package com.example.myaku_rismu.core.base
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
