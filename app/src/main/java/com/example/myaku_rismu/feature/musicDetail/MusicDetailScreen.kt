@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,8 +41,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
+import com.example.myaku_rismu.ui.theme.customTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -55,28 +59,48 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Composable
 fun MusicDetailScreen(
-    viewModel: MusicDetailViewModel
+    viewModel: MusicDetailViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var stepData by remember { mutableStateOf(List(24) { (0..3000).random() }) }
     val periods = listOf("日", "週", "月", "年")
     var selectedPeriod by remember { mutableIntStateOf(0) }
+    val dailyAverage by remember(stepData) {
+        mutableStateOf(
+            if (stepData.isEmpty()) "0"
+            else when (selectedPeriod) {
+                0 -> stepData.sum().toString()
+                1, 2 -> stepData.average().roundToInt().toString()
+                3 -> {
+                    val totalSteps = stepData.sum().toDouble()
+                    val daysInYear = LocalDate.now().lengthOfYear().toDouble()
+                    (totalSteps / daysInYear).roundToInt().toString()
+                }
+                else -> "0"
+            }
+        )
+    }
 
     LaunchedEffect(selectedPeriod) {
         stepData = when (selectedPeriod) {
             // TODO: 仮の値なので後に書き換える
-            0 -> List(24) { (500..10000).random() }
-            1 -> List(7) { (500..10000).random() }
-            2 -> List(31) { (500..10000).random() }
-            3 -> List(12) { (500..10000).random() }
+            0 -> List(24) { (10..50).random() }
+            1 -> List(7) { (200..800).random() }
+            2 -> List(31) { (200..800).random() }
+            3 -> List(12) { (6000..25000).random() }
             else -> emptyList()
         }
     }
 
     MusicDetail(
+        uiState = uiState,
+        dailyAverage = dailyAverage,
         periods = periods,
         stepData = stepData,
         selectedPeriod = selectedPeriod,
@@ -88,12 +112,26 @@ fun MusicDetailScreen(
 
 @Composable
 fun MusicDetail(
+    uiState: MusicDetailState,
     periods: List<String>,
     stepData: List<Int>,
+    dailyAverage: String,
     selectedPeriod: Int,
     onPeriodSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val titleText = when (selectedPeriod) {
+        0 -> stringResource(R.string.MusicDetailScreen_all)
+        else -> stringResource(R.string.MusicDetailScreen_daily_average)
+    }
+    val graphTitleText = when (selectedPeriod) {
+        0 -> stringResource(R.string.MusicDetailScreen_all)
+        1 -> stringResource(R.string.MusicDetailScreen_this_week)
+        2 -> uiState.monthlyGraphTitle
+        3 -> uiState.yearlyGraphTitle
+        else -> stringResource(R.string.MusicDetailScreen_daily_average)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -106,7 +144,7 @@ fun MusicDetail(
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
-            title = stringResource(R.string.MusicDetailScreen_all),
+            title = titleText,
             titleTextStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
@@ -117,20 +155,20 @@ fun MusicDetail(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = "50",
-                        color = Color(0xFFFF1F61),
+                        text = dailyAverage,
+                        color = MaterialTheme.customTheme.moveThemeColor,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "/",
-                        color = Color(0xFFFF1F61),
+                        color = MaterialTheme.customTheme.moveThemeColor,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "130",
-                        color = Color(0xFFFF1F61),
+                        color = MaterialTheme.customTheme.moveThemeColor,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -147,14 +185,14 @@ fun MusicDetail(
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
-            title = stringResource(R.string.MusicDetail_today),
+            title = graphTitleText,
             titleTextStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             ),
             subComponent = {
-                AdvancedFixedAxisBarChart(
+                BarChart(
                     data = stepData,
                     selectedPeriod = selectedPeriod,
                     modifier = Modifier
@@ -170,7 +208,7 @@ fun MusicDetail(
 }
 
 @Composable
-fun AdvancedFixedAxisBarChart(
+fun BarChart(
     data: List<Int>,
     selectedPeriod: Int,
     modifier: Modifier = Modifier
@@ -245,7 +283,6 @@ fun AdvancedFixedAxisBarChart(
         itemPlacer = itemPlacer
     )
 
-
     LaunchedEffect(fixedData) {
         modelProducer.setEntries(
             fixedData.mapIndexed { index, value ->
@@ -258,7 +295,7 @@ fun AdvancedFixedAxisBarChart(
         chart = columnChart(
             columns = listOf(
                 LineComponent(
-                    color = (0xFFE91E63).toInt(),
+                    color = MaterialTheme.customTheme.moveThemeColor.toArgb(),
                     thicknessDp = 6f
                 )
             ),
@@ -306,7 +343,7 @@ fun PeriodTabList(
                 .fillMaxWidth()
                 .height(36.dp)
                 .background(
-                    color = Color(0xFFE8E8E8),
+                    color = MaterialTheme.customTheme.musicDetailPeriodTabColor,
                     shape = RoundedCornerShape(8.dp)
                 )
         ) {
@@ -319,7 +356,7 @@ fun PeriodTabList(
                     .width(tabWidth)
                     .fillMaxHeight()
                     .background(
-                        color = Color(0xFFF5F5F5),
+                        color = MaterialTheme.customTheme.musicDetailSelectedPeriodTabColor,
                         shape = RoundedCornerShape(6.dp)
                     )
             )
@@ -341,7 +378,6 @@ fun PeriodTabList(
                         Text(
                             text = period,
                             color = if (selectedPeriod == index) Color.Black else Color.Gray,
-                            fontWeight = if (selectedPeriod == index) FontWeight.Medium else FontWeight.Medium
                         )
                     }
                 }
@@ -356,24 +392,44 @@ fun MusicDetailScreenPreview() {
     var stepData by remember { mutableStateOf(List(24) { (0..3000).random() }) }
     val periods = listOf("日", "週", "月", "年")
     var selectedPeriod by remember { mutableIntStateOf(0) }
+    val dailyAverage by remember(stepData) {
+        mutableStateOf(
+            if (stepData.isEmpty()) "0"
+            else when (selectedPeriod) {
+                0 -> stepData.sum().toString()
+                1, 2 -> stepData.average().roundToInt().toString()
+                3 -> {
+                    val totalSteps = stepData.sum().toDouble()
+                    val daysInYear = LocalDate.now().lengthOfYear().toDouble()
+                    (totalSteps / daysInYear).roundToInt().toString()
+                }
+                else -> "0"
+            }
+        )
+    }
 
     LaunchedEffect(selectedPeriod) {
-        when (selectedPeriod) {
+        stepData = when (selectedPeriod) {
             // TODO: 仮の値なので後に書き換える
-            0 -> stepData = List((1..24).random()) { (0..3000).random() }
-            1 -> stepData = List((1..7).random()) { (500..10000).random() }
-            2 -> stepData = List((1..31).random()) { (500..10000).random() }
-            3 -> stepData = List((1..12).random()) { (500..10000).random() }
+            0 -> List(24) { (10..50).random() }
+            1 -> List(7) { (200..800).random() }
+            2 -> List(31) { (200..800).random() }
+            3 -> List(12) { (6000..25000).random() }
+            else -> emptyList()
         }
     }
 
-    MusicDetail(
-        periods = periods,
-        stepData = stepData,
-        selectedPeriod = selectedPeriod,
-        onPeriodSelected = { newPeriod ->
-            selectedPeriod = newPeriod
-        },
-        modifier = Modifier.padding(top = 50.dp)
-    )
+    MaterialTheme {
+        MusicDetail(
+            uiState = MusicDetailState(),
+            dailyAverage = dailyAverage,
+            periods = periods,
+            stepData = stepData,
+            selectedPeriod = selectedPeriod,
+            onPeriodSelected = { newPeriod ->
+                selectedPeriod = newPeriod
+            },
+            modifier = Modifier.padding(top = 50.dp)
+        )
+    }
 }
