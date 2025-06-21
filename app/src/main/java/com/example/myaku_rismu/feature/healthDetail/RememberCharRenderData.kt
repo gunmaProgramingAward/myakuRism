@@ -1,4 +1,4 @@
-package com.example.myaku_rismu.feature.musicDetail
+package com.example.myaku_rismu.feature.healthDetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,7 +15,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import kotlin.math.roundToInt
 
 @Composable
-fun rememberChartRenderData(uiState: MusicDetailState, data: List<Int>): ChartRenderData? {
+fun rememberChartRenderData(uiState: HealthDetailState, data: List<Int>): ChartRenderData? {
     val axisConfig = uiState.axisConfig ?: return null
 
     val modelProducer = remember { ChartEntryModelProducer() }
