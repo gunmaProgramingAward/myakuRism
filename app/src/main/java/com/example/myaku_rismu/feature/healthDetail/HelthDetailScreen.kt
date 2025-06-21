@@ -213,7 +213,7 @@ private fun HealthMetric(
 private fun BarChart(
     uiState: HealthDetailState,
     data: List<Int>,
-    healthTypeColor : Color,
+    healthTypeColor: Color,
     modifier: Modifier = Modifier
 ) {
     val chartRenderData = rememberChartRenderData(uiState = uiState, data = data) ?: return
