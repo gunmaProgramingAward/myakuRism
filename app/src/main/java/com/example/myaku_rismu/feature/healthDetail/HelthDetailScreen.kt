@@ -58,11 +58,18 @@ fun HealthDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    fun eventHandler(event: HealthDetailUiEvent) {
+        when (event) {
+            is HealthDetailUiEvent.OnClickPeriod -> {
+                viewModel.changeSelectedPeriod(event.period)
+            }
+        }
+    }
 
     HealthDetail(
         uiState = uiState,
-        onPeriodSelected = { newPeriod ->
-            viewModel.changeSelectedPeriod(newPeriod)
+        onClickPeriod = { newPeriod ->
+            eventHandler(HealthDetailUiEvent.OnClickPeriod(newPeriod))
         },
         context = context,
         modifier = modifier
@@ -72,7 +79,7 @@ fun HealthDetailScreen(
 @Composable
 fun HealthDetail(
     uiState: HealthDetailState,
-    onPeriodSelected: (Int) -> Unit,
+    onClickPeriod: (Int) -> Unit,
     context: Context,
     modifier: Modifier = Modifier
 ) {
@@ -97,7 +104,7 @@ fun HealthDetail(
         PeriodTabList(
             periods = periods.toList(),
             selectedPeriod = uiState.selectedPeriods,
-            onPeriodSelected = { onPeriodSelected(it) },
+            onClickPeriod = { onClickPeriod(it) },
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
@@ -206,7 +213,7 @@ fun BarChart(
 fun PeriodTabList(
     periods: List<String>,
     selectedPeriod: Int,
-    onPeriodSelected: (Int) -> Unit,
+    onClickPeriod: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -260,7 +267,7 @@ fun PeriodTabList(
                             .clickable(
                                 interactionSource = interactionSource,
                                 indication = null,
-                                onClick = { onPeriodSelected(index) }
+                                onClick = { onClickPeriod(index) }
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -284,7 +291,7 @@ fun HealthDetailScreenPreview() {
 
     HealthDetail(
         uiState = uiState,
-        onPeriodSelected = { newPeriod ->
+        onClickPeriod = { newPeriod ->
             viewModel.changeSelectedPeriod(newPeriod)
         },
         context = context
