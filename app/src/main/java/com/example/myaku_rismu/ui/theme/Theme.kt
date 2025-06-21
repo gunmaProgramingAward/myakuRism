@@ -28,12 +28,20 @@ private val LightColorScheme = lightColorScheme(
 
 val LightCustomTheme = CustomTheme(
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
+    healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
+    healthDetailSleepThemeColor = Color(0xFF00C3E0),
+    healthDetailWalkThemeColor = Color(0xFF0ECB9C),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
 )
 
 val DarkCustomTheme = CustomTheme(
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
+    healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
+    healthDetailSleepThemeColor = Color(0xFF00C3E0),
+    healthDetailWalkThemeColor = Color(0xFF0ECB9C),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
 )
