@@ -1,6 +1,5 @@
 package com.example.myaku_rismu.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +8,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -22,16 +24,28 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
+
+val LightCustomTheme = CustomTheme(
+    moveThemeColor = Color(0xFFFF1F61),
+    musicDetailPeriodTabColor = Color(0xFFE8E8E8),
+    musicDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
+)
+
+val DarkCustomTheme = CustomTheme(
+    moveThemeColor = Color(0xFFFF1F61),
+    musicDetailPeriodTabColor = Color(0xFFE8E8E8),
+    musicDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
+)
+
+val LocalCustomTheme = staticCompositionLocalOf {
+    LightCustomTheme
+}
+
+val MaterialTheme.customTheme: CustomTheme
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalCustomTheme.current
 
 @Composable
 fun Myaku_rismuTheme(

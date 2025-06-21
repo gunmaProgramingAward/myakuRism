@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">myaku_rismu</string>
+
+    // MusicDetailScreen
+    <string name="MusicDetailScreen_all">合計</string>
+    <string name="MusicDetailScreen_daily_average">1日の平均</string>
+    <string name="MusicDetailScreen_this_week">今週</string>
+    <string name="MusicDetail_today">今日</string>
 </resources>
