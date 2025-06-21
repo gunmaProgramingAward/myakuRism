@@ -1,11 +1,11 @@
 package com.example.myaku_rismu.feature.musicDetail
 
+import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -25,15 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -50,7 +48,6 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
@@ -59,8 +56,6 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Composable
@@ -68,69 +63,36 @@ fun MusicDetailScreen(
     viewModel: MusicDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var stepData by remember { mutableStateOf(List(24) { (0..3000).random() }) }
-    val periods = listOf("日", "週", "月", "年")
-    var selectedPeriod by remember { mutableIntStateOf(0) }
-    val dailyAverage by remember(stepData) {
-        mutableStateOf(
-            if (stepData.isEmpty()) "0"
-            else when (selectedPeriod) {
-                0 -> stepData.sum().toString()
-                1, 2 -> stepData.average().roundToInt().toString()
-                3 -> {
-                    val totalSteps = stepData.sum().toDouble()
-                    val daysInYear = LocalDate.now().lengthOfYear().toDouble()
-                    (totalSteps / daysInYear).roundToInt().toString()
-                }
-                else -> "0"
-            }
-        )
-    }
-
-    LaunchedEffect(selectedPeriod) {
-        stepData = when (selectedPeriod) {
-            // TODO: 仮の値なので後に書き換える
-            0 -> List(24) { (10..50).random() }
-            1 -> List(7) { (200..800).random() }
-            2 -> List(31) { (200..800).random() }
-            3 -> List(12) { (6000..25000).random() }
-            else -> emptyList()
-        }
-    }
+    val context = LocalContext.current
 
     MusicDetail(
         uiState = uiState,
-        dailyAverage = dailyAverage,
-        periods = periods,
-        stepData = stepData,
-        selectedPeriod = selectedPeriod,
         onPeriodSelected = { newPeriod ->
-            selectedPeriod = newPeriod
+            viewModel.changeSelectedPeriod(newPeriod)
         },
+        context = context
     )
 }
 
 @Composable
 fun MusicDetail(
     uiState: MusicDetailState,
-    periods: List<String>,
-    stepData: List<Int>,
-    dailyAverage: String,
-    selectedPeriod: Int,
     onPeriodSelected: (Int) -> Unit,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
-    val titleText = when (selectedPeriod) {
-        0 -> stringResource(R.string.MusicDetailScreen_all)
-        else -> stringResource(R.string.MusicDetailScreen_daily_average)
+    val detailTitleText = when (uiState.selectedPeriods) {
+        0 -> stringResource(R.string.health_detail_all)
+        else -> stringResource(R.string.health_detail_daily_average)
     }
-    val graphTitleText = when (selectedPeriod) {
-        0 -> stringResource(R.string.MusicDetailScreen_all)
-        1 -> stringResource(R.string.MusicDetailScreen_this_week)
+    val graphTitleText = when (uiState.selectedPeriods) {
+        0 -> stringResource(R.string.health_detail_all)
+        1 -> stringResource(R.string.health_detail_this_week)
         2 -> uiState.monthlyGraphTitle
         3 -> uiState.yearlyGraphTitle
-        else -> stringResource(R.string.MusicDetailScreen_daily_average)
+        else -> stringResource(R.string.health_detail_daily_average)
     }
+    val periods = context.resources.getStringArray(R.array.health_detail_periods)
 
     Column(
         modifier = modifier
@@ -138,13 +100,13 @@ fun MusicDetail(
             .background(Color.White)
     ) {
         PeriodTabList(
-            periods = periods,
-            selectedPeriod = selectedPeriod,
+            periods = periods.toList(),
+            selectedPeriod = uiState.selectedPeriods,
             onPeriodSelected = { onPeriodSelected(it) },
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
-            title = titleText,
+            title = detailTitleText,
             titleTextStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
@@ -155,7 +117,7 @@ fun MusicDetail(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = dailyAverage,
+                        text = uiState.dailyAverage,
                         color = MaterialTheme.customTheme.moveThemeColor,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Bold
@@ -174,7 +136,7 @@ fun MusicDetail(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "KCAL",
+                        text = stringResource(R.string.health_detail_unit),
                         color = Color.Black,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -193,8 +155,8 @@ fun MusicDetail(
             ),
             subComponent = {
                 BarChart(
-                    data = stepData,
-                    selectedPeriod = selectedPeriod,
+                    uiState = uiState,
+                    data = uiState.stepData,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp)
@@ -209,83 +171,15 @@ fun MusicDetail(
 
 @Composable
 fun BarChart(
+    uiState: MusicDetailState,
     data: List<Int>,
-    selectedPeriod: Int,
     modifier: Modifier = Modifier
 ) {
-    val modelProducer = remember { ChartEntryModelProducer() }
-    val axisConfig = remember(selectedPeriod) {
-        when (selectedPeriod) {
-            0 -> AxisConfig(
-                maxValue = 24,
-                labelFormatter = { "${it}時" },
-                spacing = 4,
-                totalLabels = 6
-            )
-            1 -> {
-                val weekDays = listOf("日", "月", "火", "水", "木", "金", "土")
-                AxisConfig(
-                    maxValue = 7,
-                    labelFormatter = { weekDays.getOrElse(it) { "" } },
-                    spacing = 1,
-                    totalLabels = 7
-                )
-            }
-            2 -> AxisConfig(
-                maxValue = 31,
-                labelFormatter = { "${it + 1}日" },
-                spacing = 5,
-                totalLabels = 7
-            )
-            3 -> AxisConfig(
-                maxValue = 12,
-                labelFormatter = { "${it + 1}" },
-                spacing = 1,
-                totalLabels = 6
-            )
-            else -> AxisConfig(
-                maxValue = data.size.coerceAtLeast(1),
-                labelFormatter = { it.toString() },
-                spacing = 1,
-                totalLabels = data.size.coerceAtLeast(1)
-            )
-        }
-    }
-    val fixedData = remember(data, axisConfig) {
-        List(axisConfig.maxValue) { index ->
-            data.getOrNull(index) ?: 0
-        }
-    }
-    val itemPlacer = AxisItemPlacer.Horizontal.default(
-        spacing = axisConfig.spacing,
-    )
-    val bottomAxisValueFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
-        axisConfig.labelFormatter(value.toInt())
-    }
-    val startAxis = rememberStartAxis(
-        guideline = LineComponent(
-            color = Color.Gray.toArgb(),
-        ),
-        label = TextComponent.Builder()
-            .build(),
-        itemPlacer = AxisItemPlacer.Vertical.default(maxItemCount = 6),
-        valueFormatter = { value, _ ->
-            value.roundToInt().toString()
-        }
-    )
-    val bottomAxis = rememberBottomAxis(
-        guideline = LineComponent(
-            color = Color.Gray.toArgb(),
-            thicknessDp = 1f
-        ),
-        label = TextComponent.Builder().build(),
-        valueFormatter = bottomAxisValueFormatter,
-        itemPlacer = itemPlacer
-    )
+    val chartRenderData = rememberChartRenderData(uiState = uiState, data = data) ?: return
 
-    LaunchedEffect(fixedData) {
-        modelProducer.setEntries(
-            fixedData.mapIndexed { index, value ->
+    LaunchedEffect(chartRenderData.fixedData) {
+        chartRenderData.modelProducer.setEntries(
+            chartRenderData.fixedData.mapIndexed { index, value ->
                 entryOf(index.toFloat(), value.toFloat())
             }
         )
@@ -301,9 +195,9 @@ fun BarChart(
             ),
             spacing = 3.dp,
         ),
-        chartModelProducer = modelProducer,
-        startAxis = startAxis,
-        bottomAxis = bottomAxis,
+        chartModelProducer = chartRenderData.modelProducer,
+        startAxis = chartRenderData.startAxis,
+        bottomAxis = chartRenderData.bottomAxis,
         modifier = modifier,
         horizontalLayout = HorizontalLayout.fullWidth(
             scalableStartPadding = 8.dp,
@@ -389,47 +283,16 @@ fun PeriodTabList(
 @Preview
 @Composable
 fun MusicDetailScreenPreview() {
-    var stepData by remember { mutableStateOf(List(24) { (0..3000).random() }) }
-    val periods = listOf("日", "週", "月", "年")
-    var selectedPeriod by remember { mutableIntStateOf(0) }
-    val dailyAverage by remember(stepData) {
-        mutableStateOf(
-            if (stepData.isEmpty()) "0"
-            else when (selectedPeriod) {
-                0 -> stepData.sum().toString()
-                1, 2 -> stepData.average().roundToInt().toString()
-                3 -> {
-                    val totalSteps = stepData.sum().toDouble()
-                    val daysInYear = LocalDate.now().lengthOfYear().toDouble()
-                    (totalSteps / daysInYear).roundToInt().toString()
-                }
-                else -> "0"
-            }
-        )
-    }
+    val viewModel: MusicDetailViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-    LaunchedEffect(selectedPeriod) {
-        stepData = when (selectedPeriod) {
-            // TODO: 仮の値なので後に書き換える
-            0 -> List(24) { (10..50).random() }
-            1 -> List(7) { (200..800).random() }
-            2 -> List(31) { (200..800).random() }
-            3 -> List(12) { (6000..25000).random() }
-            else -> emptyList()
-        }
-    }
 
-    MaterialTheme {
-        MusicDetail(
-            uiState = MusicDetailState(),
-            dailyAverage = dailyAverage,
-            periods = periods,
-            stepData = stepData,
-            selectedPeriod = selectedPeriod,
-            onPeriodSelected = { newPeriod ->
-                selectedPeriod = newPeriod
-            },
-            modifier = Modifier.padding(top = 50.dp)
-        )
-    }
+    MusicDetail(
+        uiState = uiState,
+        onPeriodSelected = { newPeriod ->
+            viewModel.changeSelectedPeriod(newPeriod)
+        },
+        context = context
+    )
 }
