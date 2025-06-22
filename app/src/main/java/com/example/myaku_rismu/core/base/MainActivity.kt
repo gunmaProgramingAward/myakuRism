@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.myaku_rismu.feature.setting.ProfileScreen
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 
 class MainActivity : ComponentActivity() {
