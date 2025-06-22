@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
 import com.example.myaku_rismu.ui.theme.customTheme
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -53,6 +54,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HealthDetailScreen(
+    appState: AppState,
     viewModel: HealthDetailViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
