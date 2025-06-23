@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -90,7 +91,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
     if (showHeightDialog) {
         ModernStringOrNumberPickerDialog(
-            title = "身長を選択",
+            title = stringResource(R.string.select_height),
             options = (100..220).map { it.toString() },
             currentValue = currentHeightCm?.toString(),
             onValueSelected = { selectedString ->
@@ -105,7 +106,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
     if (showWeightDialog) {
         ModernStringOrNumberPickerDialog(
-            title = "体重を選択",
+            title = stringResource(R.string.select_weight),
             options = remember { (30..150).map { it.toString() } },
             currentValue = currentWeightKg?.toString(),
             onValueSelected = { selectedString ->
@@ -120,7 +121,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
     if (showGenderDialog) {
         ModernStringOrNumberPickerDialog(
-            title = "性別を選択",
+            title = stringResource(R.string.select_gender),
             options = genderDisplayOptions,
             currentValue = if (selectedGenderIndex != UNSET_INT_VALUE && selectedGenderIndex in genderDisplayOptions.indices) {
                 genderDisplayOptions[selectedGenderIndex]
@@ -143,7 +144,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
-            "プロフィール",
+            stringResource(R.string.profile),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 4.dp)
@@ -167,7 +168,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "基本情報",
+                        stringResource(R.string.basic_information),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -177,7 +178,6 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     {
                         InfoItem(
                             label = "生年月日",
-                            // ★ 表示形式はそのまま、プレースホルダーを共通化
                             value = if (selectedYear != null && selectedMonth != null && selectedDay != null) {
                                 "${selectedYear}年 ${selectedMonth}月 ${selectedDay}日"
                             } else COMMON_PLACEHOLDER,
@@ -243,13 +243,13 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.event), // 適宜アイコンリソースを指定
+                        painter = painterResource(id = R.drawable.event),
                         contentDescription = "活動レベルアイコン",
                         modifier = Modifier.size(31.dp),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "活動レベル",
+                        stringResource(R.string.activity_level),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -476,7 +476,8 @@ fun ModernStringOrNumberPickerDialog(
                                             if (visibleItemsCount > 1) {
                                                 scaleX = if (isSelected) 1f else scaleFactor
                                                 scaleY = if (isSelected) 1f else scaleFactor
-                                                alpha = if (isSelected) 1f else alphaFactor.pow(1.2f)
+                                                alpha =
+                                                    if (isSelected) 1f else alphaFactor.pow(1.2f)
                                             }
                                             transformOrigin = TransformOrigin.Center
                                         },
@@ -856,7 +857,7 @@ fun ModernNumberPickerDialogPreview_Height() {
 
         if (showDialog) {
             ModernStringOrNumberPickerDialog(
-                title = "身長を選択",
+                title = stringResource(R.string.select_height),
                 options = (100..220).map { it.toString() },
                 currentValue = selectedValue,
                 onValueSelected = {
@@ -877,7 +878,7 @@ fun ModernNumberPickerDialogPreview_Height() {
         ) {
             Text("選択された身長: ${selectedValue ?: "未選択"}${if (selectedValue != null) " cm" else ""}")
             Button(onClick = { showDialog = true }) {
-                Text(if (selectedValue == null) "身長を選択" else "身長を変更 (${selectedValue}cm)")
+                Text(if (selectedValue == null) stringResource(R.string.select_height) else "身長を変更 (${selectedValue}cm)")
             }
         }
     }
@@ -893,7 +894,7 @@ fun ModernNumberPickerDialogPreview_Weight_Min() {
 
         if (showDialog) {
             ModernStringOrNumberPickerDialog(
-                title = "体重を選択",
+                title = stringResource(R.string.select_weight),
                 options = weightOptions,
                 currentValue = selectedValue,
                 onValueSelected = { selectedValue = it },
@@ -911,7 +912,7 @@ fun ModernNumberPickerDialogPreview_Weight_Min() {
         ) {
             Text("選択された体重: ${selectedValue ?: "未選択"}${if (selectedValue != null) " kg" else ""}")
             Button(onClick = { showDialog = true }) {
-                Text(if (selectedValue == null) "体重を選択" else "体重を変更 (${selectedValue}kg)")
+                Text(if (selectedValue == null) stringResource(R.string.select_weight) else "体重を変更 (${selectedValue}kg)")
             }
         }
     }
@@ -927,7 +928,7 @@ fun ModernStringPickerDialogPreview_Gender() {
 
         if (showDialog) {
             ModernStringOrNumberPickerDialog(
-                title = "性別を選択",
+                title = stringResource(R.string.select_gender),
                 options = genderDisplayOptions,
                 currentValue = selectedValue,
                 onValueSelected = { selectedValue = it },
@@ -942,7 +943,7 @@ fun ModernStringPickerDialogPreview_Gender() {
             verticalArrangement = Arrangement.Center
         ) {
             Text("選択された性別: ${selectedValue ?: "未選択"}")
-            Button(onClick = { showDialog = true }) { Text("性別を選択") }
+            Button(onClick = { showDialog = true }) { Text(stringResource(R.string.select_gender)) }
         }
     }
 }
