@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.myaku_rismu.core.navigation.CalendarRoute
+import com.example.myaku_rismu.core.navigation.CalenderRoute
 import com.example.myaku_rismu.core.navigation.HealthDetailRoute
 import com.example.myaku_rismu.core.navigation.HomeRoute
 import com.example.myaku_rismu.core.navigation.LibraryRoute
@@ -59,7 +59,7 @@ class AppState(
     }
 
     fun navigateToCalender() {
-        navController.navigate(CalendarRoute)
+        navController.navigate(CalenderRoute)
     }
 
     fun navigateToLibrary() {
