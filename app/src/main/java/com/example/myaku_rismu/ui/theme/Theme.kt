@@ -27,15 +27,15 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val LightCustomTheme = CustomTheme(
-    moveThemeColor = Color(0xFFFF1F61),
-    musicDetailPeriodTabColor = Color(0xFFE8E8E8),
-    musicDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
+    healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailPeriodTabColor = Color(0xFFE8E8E8),
+    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
 )
 
 val DarkCustomTheme = CustomTheme(
-    moveThemeColor = Color(0xFFFF1F61),
-    musicDetailPeriodTabColor = Color(0xFFE8E8E8),
-    musicDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
+    healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailPeriodTabColor = Color(0xFFE8E8E8),
+    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
