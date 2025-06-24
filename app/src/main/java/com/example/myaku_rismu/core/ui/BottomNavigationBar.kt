@@ -1,5 +1,7 @@
 package com.example.myaku_rismu.core.ui
 
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.navigation.CalenderRoute
@@ -32,31 +35,31 @@ enum class NavigationItem(
     val route: Any,
     val selectedIcon: IconResource,
     val unselectedIcon: IconResource,
-    val label: String
+    @StringRes val label: Int
 ) {
     HOME(
         route = HomeRoute(),
         selectedIcon = IconResource.Vector(Icons.Filled.Favorite),
         unselectedIcon = IconResource.Vector(Icons.Outlined.FavoriteBorder),
-        label = "ホーム"
+        label = R.string.bottom_navigation_bar_home
     ),
     CALENDAR(
         route = CalenderRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.DateRange),
         unselectedIcon = IconResource.Vector(Icons.Outlined.DateRange),
-        label = "カレンダー"
+        label = R.string.bottom_navigation_bar_calendar
     ),
     LIBRARY(
         route = LibraryRoute,
         selectedIcon = IconResource.Drawable(R.drawable.outline_music_note_24),
         unselectedIcon = IconResource.Drawable(R.drawable.outline_music_note_24),
-        label = "ライブラリ"
+        label = R.string.bottom_navigation_bar_library
     ),
     SETTING(
         route = SettingsRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.Settings),
         unselectedIcon = IconResource.Vector(Icons.Outlined.Settings),
-        label = "プロフィール"
+        label = R.string.bottom_navigation_bar_profile
     )
 }
 
@@ -69,7 +72,7 @@ fun BottomNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = Color.White,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         items.forEach { item ->
@@ -85,19 +88,19 @@ fun BottomNavigationBar(
                     when (icon) {
                         is IconResource.Vector -> Icon(
                             imageVector = icon.imageVector,
-                            contentDescription = item.label,
+                            contentDescription = stringResource(id = item.label),
                             tint = tint
                         )
                         is IconResource.Drawable -> Icon(
                             painter = androidx.compose.ui.res.painterResource(id = icon.id),
-                            contentDescription = item.label,
+                            contentDescription = stringResource(id = item.label),
                             tint = tint
                     )
                     }
                 },
                 label = {
                     Text(
-                        text = item.label,
+                        text = stringResource(id = item.label),
                         style = MaterialTheme.typography.labelMedium,
                         color = tint
                     )

@@ -21,4 +21,10 @@
         <item>月</item>
         <item>年</item>
     </string-array>
+
+    // BottomNavigationBar
+    <string name="bottom_navigation_bar_home">ホーム</string>
+    <string name="bottom_navigation_bar_calendar">カレンダー</string>
+    <string name="bottom_navigation_bar_library">ライブラリー</string>
+    <string name="bottom_navigation_bar_profile">プロフィール</string>
 </resources>
