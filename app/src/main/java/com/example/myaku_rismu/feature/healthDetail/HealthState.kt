@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter
 
 data class HealthDetailState(
     val screenState: ScreenState = ScreenState.Initializing(),
+    val healthType: HealthType? = null,
     val stepData: List<Int> = emptyList(),
     val axisConfig: AxisConfig? = null,
     val selectedPeriods: Int = 0,
@@ -43,3 +44,10 @@ data class ChartRenderData(
     val fixedData: List<Int>
 )
 
+sealed interface HealthType {
+    data class Move(val target: Int) : HealthType
+    data object MoveDistance : HealthType
+    data object HeartRate : HealthType
+    data object SleepTime : HealthType
+    data object Walk : HealthType
+}
