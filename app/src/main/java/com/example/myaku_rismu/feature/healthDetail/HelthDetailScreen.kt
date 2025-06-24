@@ -19,7 +19,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,14 +73,19 @@ fun HealthDetailScreen(
         }
     }
 
-    HealthDetail(
-        uiState = uiState,
-        onClickPeriod = { newPeriod ->
-            eventHandler(HealthDetailUiEvent.OnClickPeriod(newPeriod))
-        },
-        context = context,
-        modifier = modifier
-    )
+    Scaffold (
+        topBar = {
+        }
+    ) { padding ->
+        HealthDetail(
+            uiState = uiState,
+            onClickPeriod = { period ->
+                eventHandler(HealthDetailUiEvent.OnClickPeriod(period))
+            },
+            context = context,
+            modifier = modifier.padding(padding)
+        )
+    }
 }
 
 @Composable

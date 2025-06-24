@@ -27,4 +27,7 @@
     <string name="bottom_navigation_bar_calendar">カレンダー</string>
     <string name="bottom_navigation_bar_library">ライブラリー</string>
     <string name="bottom_navigation_bar_profile">プロフィール</string>
+
+    // TopBar
+    <string name="top_bar_back_icon">戻る</string>
 </resources>
