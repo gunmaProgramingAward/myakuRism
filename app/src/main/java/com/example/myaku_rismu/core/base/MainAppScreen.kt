@@ -22,11 +22,12 @@ fun MainAppScreen(
                 onNavigate =appState::bottomBarNavigateTo,
                 modifier = Modifier
             )
-        }
+        },
+        modifier = modifier
     ) { innerPadding ->
         AppNavigation(
             appState = appState,
-            modifier = modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }

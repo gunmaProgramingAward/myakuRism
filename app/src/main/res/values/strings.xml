@@ -2,6 +2,11 @@
     <string name="app_name">myaku_rismu</string>
 
     // HealthDetailScreen
+    <string name="health_detail_title_move">ムーブ</string>
+    <string name="health_detail_title_move_distance">歩行距離</string>
+    <string name="health_detail_title_heart_rate">心拍数</string>
+    <string name="health_detail_title_sleep">睡眠</string>
+    <string name="health_detail_title_walk">歩数</string>
     <string name="health_detail_all">合計</string>
     <string name="health_detail_daily_average">1日の平均</string>
     <string name="health_detail_this_week">今週</string>
