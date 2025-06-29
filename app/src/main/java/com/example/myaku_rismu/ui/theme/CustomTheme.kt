@@ -7,5 +7,9 @@ import androidx.compose.ui.graphics.Color
 data class CustomTheme(
     val moveThemeColor: Color,
     val musicDetailPeriodTabColor: Color,
-    val musicDetailSelectedPeriodTabColor: Color
+    val musicDetailSelectedPeriodTabColor: Color,
+    val settingScreenSurfaceColor: Color,
+    val settingScreenOnSurfaceColor: Color,
+    val settingScreenTextColor: Color,
+    val settingScreenCommonColor: Color
 )

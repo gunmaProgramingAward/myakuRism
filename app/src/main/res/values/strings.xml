@@ -1,11 +1,39 @@
 <resources>
     <string name="app_name">myaku_rismu</string>
+
+    // SettingScreen
     <string name="select_height">身長を選択</string>
     <string name="select_weight">体重を選択</string>
     <string name="select_gender">性別を選択</string>
     <string name="profile">プロフィール</string>
     <string name="basic_information">基本情報</string>
     <string name="activity_level">活動レベル</string>
+    <string name="not_set">未設定</string>
+    <string name="date_of_birth">生年月日</string>
+    <string name="body_weight">体重</string>
+    <string name="gender">性別</string>
+    <string name="height">身長</string>
+    <string name="unit_of_height">cm</string>
+    <string name="unit_of_weight">kg</string>
+    <string name="date_format_jp">%1$s年 %2$s月 %3$s日</string>
+    <string name="height_display_format">%1$s cm</string>
+    <string name="weight_display_format">%1$s kg</string>
+    <string-array name="gender_display_options">
+        <item>男性</item>
+        <item>女性</item>
+        <item>その他</item>
+        <item>回答しない</item>
+    </string-array>
+    <string-array name="activity_level_main_texts">
+        <item>低い</item>
+        <item>普通</item>
+        <item>高い</item>
+    </string-array>
+    <string-array name="activity_level_sub_texts">
+        <item>座りがちな生活</item>
+        <item>週2–3回の軽い運動</item>
+        <item>週4回以上の運動</item>
+    </string-array>
 
 
     // MusicDetailScreen
