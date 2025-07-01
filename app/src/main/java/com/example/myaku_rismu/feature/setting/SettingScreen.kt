@@ -45,8 +45,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,6 +85,11 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
     var showHeightDialog by remember { mutableStateOf(false) }
     var showWeightDialog by remember { mutableStateOf(false) }
     var showGenderDialog by remember { mutableStateOf(false) }
+
+    val birthDateInteractionSource = remember { MutableInteractionSource() }
+    val heightInteractionSource = remember { MutableInteractionSource() }
+    val weightInteractionSource = remember { MutableInteractionSource() }
+    val genderInteractionSource = remember { MutableInteractionSource() }
 
     // --- ダイアログ表示制御 ---
     if (showBirthdateDialog) {
@@ -176,7 +183,11 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                     onGenderClick = { showGenderDialog = true },
                     commonPlaceholder = commonPlaceholder,
                     genderDisplayOptions = genderDisplayOptions,
-                    unSetValue = unSetValue
+                    unSetValue = unSetValue,
+                    birthDateInteractionSource = birthDateInteractionSource,
+                    heightInteractionSource = heightInteractionSource,
+                    weightInteractionSource = weightInteractionSource,
+                    genderInteractionSource = genderInteractionSource
                 )
             }
             ProfileCard(
@@ -204,7 +215,11 @@ private fun InfoItemLabel(
     onGenderClick: () -> Unit,
     commonPlaceholder: String,
     unSetValue: Int,
-    genderDisplayOptions: List<String>
+    genderDisplayOptions: List<String>,
+    birthDateInteractionSource: MutableInteractionSource,
+    heightInteractionSource: MutableInteractionSource,
+    weightInteractionSource: MutableInteractionSource,
+    genderInteractionSource: MutableInteractionSource
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -221,14 +236,16 @@ private fun InfoItemLabel(
                         selectedDay
                     )
                 } else commonPlaceholder,
-                onClick = onBirthdateClick
+                onClick = onBirthdateClick,
+                interactionSource = birthDateInteractionSource
             )
         }
         Box(modifier = modifier.weight(1f)) {
             InfoItem(
                 label = stringResource(R.string.height),
                 value = currentHeightCm?.let { stringResource(R.string.height_display_format, it) } ?: commonPlaceholder,
-                onClick = onHeightClick
+                onClick = onHeightClick,
+                interactionSource = heightInteractionSource
             )
         }
     }
@@ -242,7 +259,8 @@ private fun InfoItemLabel(
             InfoItem(
                 label = stringResource(R.string.body_weight),
                 value = currentWeightKg?.let { stringResource(R.string.weight_display_format, it) } ?: commonPlaceholder,
-                onClick = onWeightClick
+                onClick = onWeightClick,
+                interactionSource = weightInteractionSource
             )
         }
         Box(modifier = modifier.weight(1f)) {
@@ -251,7 +269,8 @@ private fun InfoItemLabel(
                 value = if (selectedGenderIndex != unSetValue && selectedGenderIndex in genderDisplayOptions.indices) {
                     genderDisplayOptions[selectedGenderIndex]
                 } else commonPlaceholder,
-                onClick = onGenderClick
+                onClick = onGenderClick,
+                interactionSource = genderInteractionSource
             )
         }
     }
@@ -340,9 +359,8 @@ private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = if (selectedActivity == index) MaterialTheme.colorScheme.primaryContainer.copy(
-                        alpha = 0.2f
-                    ) else Color.Transparent,
+                    color = if (selectedActivity == index) MaterialTheme.customTheme.settingScreenPrimaryContainerAlpha01
+                    else Color.Transparent,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .border(
@@ -387,7 +405,12 @@ private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
 
 // --- プロフィール情報表示用の小コンポーネント ---
 @Composable
-private fun InfoItem(label: String, value: String, onClick: () -> Unit) {
+private fun InfoItem(
+    label: String,
+    value: String,
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource
+) {
     Column {
         Text(
             text = label,
@@ -397,7 +420,8 @@ private fun InfoItem(label: String, value: String, onClick: () -> Unit) {
         )
         SelectableInfoField(
             text = value,
-            onClick = onClick
+            onClick = onClick,
+            interactionSource = interactionSource
         )
     }
 }
@@ -409,7 +433,8 @@ private fun SelectableInfoField(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource
 ) {
     Box(
         modifier = modifier
@@ -427,7 +452,7 @@ private fun SelectableInfoField(
                 onClick = onClick,
                 enabled = enabled,
                 role = Role.Button,
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = interactionSource,
                 indication = ripple()
             )
             .padding(OutlinedTextFieldDefaults.contentPadding()),
@@ -450,22 +475,11 @@ private fun SelectableInfoField(
 
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
-fun GreetingPreview() {
+fun ProfileScreenPreview() {
     Myaku_rismuTheme {
         ProfileScreen()
     }
 }
-
-@Preview(showBackground = true, name = "基本情報アイテム (InfoItem)")
-@Composable
-fun InfoItemPreview() {
-    Myaku_rismuTheme {
-        Surface(modifier = Modifier.padding(8.dp)) {
-            InfoItem(label = "テストラベル", value = "テスト値", onClick = {})
-        }
-    }
-}
-
 
 @Preview(showBackground = true, name = "身長ピッカー (100-220cm)")
 @Composable
