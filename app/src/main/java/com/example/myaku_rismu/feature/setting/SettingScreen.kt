@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -45,10 +46,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -154,7 +153,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier
             .fillMaxSize(),
-        color = MaterialTheme.customTheme.settingScreenSurfaceColor,
+        color = MaterialTheme.customTheme.settingScreenBackgroundColor,
         contentColor = MaterialTheme.customTheme.settingScreenTextColor
     ) {
         Column(
@@ -193,7 +192,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             ProfileCard(
                 icon = Icons.Default.FavoriteBorder,
                 text = stringResource(R.string.activity_level),
-                rowContentModifier = Modifier.padding(bottom = 12.dp)
+                contentBottomPadding = PaddingValues(bottom = 12.dp)
             ) { ActivityLevelLabel() }
         }
     }
@@ -309,7 +308,7 @@ private fun ProfileCard(
     icon: ImageVector,
     text: String,
     modifier: Modifier = Modifier,
-    rowContentModifier: Modifier = modifier.padding(bottom = 8.dp),
+    contentBottomPadding: PaddingValues = PaddingValues(bottom = 8.dp),
     content: @Composable () -> Unit
 ) {
     Card(
@@ -317,14 +316,14 @@ private fun ProfileCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.customTheme.settingScreenOnSurfaceColor,
+            containerColor = MaterialTheme.customTheme.settingScreenCardColor,
             contentColor = MaterialTheme.customTheme.settingScreenTextColor
         )
     ) {
         Column(modifier = modifier.padding(20.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = rowContentModifier
+                modifier = modifier.padding(contentBottomPadding)
             ) {
                 Icon(
                     icon,
@@ -359,7 +358,7 @@ private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = if (selectedActivity == index) MaterialTheme.customTheme.settingScreenPrimaryContainerAlpha01
+                    color = if (selectedActivity == index) MaterialTheme.customTheme.onSelectedButtonOverlay
                     else Color.Transparent,
                     shape = RoundedCornerShape(12.dp)
                 )

@@ -27,25 +27,25 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val LightCustomTheme = CustomTheme(
-    settingScreenTextColor = Color(0xFF1F2937),
-    settingScreenOnSurfaceColor = Color(0xFFFFFFFF),
-    settingScreenSurfaceColor = Color(0xFFF9FAFB),
-    settingScreenCommonColor = Color(0x991F2937),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
-    settingScreenPrimaryContainerAlpha01 = Color(0x1A4F378B)
+    settingScreenTextColor = Color(0xFF1F2937),
+    settingScreenCardColor = Color(0xFFFFFFFF),
+    settingScreenBackgroundColor = Color(0xFFF9FAFB),
+    settingScreenCommonColor = Color(0x991F2937),
+    onSelectedButtonOverlay = Color(0x1A4F378B)
 )
 
 val DarkCustomTheme = CustomTheme(
-    settingScreenTextColor = Color(0xFF1F2937),
-    settingScreenOnSurfaceColor = Color(0xFFFFFFFF),
-    settingScreenSurfaceColor = Color(0xFFF9FAFB),
-    settingScreenCommonColor = Color(0x991F2937),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
-    settingScreenPrimaryContainerAlpha01 = Color(0x1A4F378B)
+    settingScreenTextColor = Color(0xFF1F2937),
+    settingScreenCardColor = Color(0xFFFFFFFF),
+    settingScreenBackgroundColor = Color(0xFFF9FAFB),
+    settingScreenCommonColor = Color(0x991F2937),
+    onSelectedButtonOverlay = Color(0x1A4F378B)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
