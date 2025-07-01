@@ -31,13 +31,10 @@ val LightCustomTheme = CustomTheme(
     settingScreenOnSurfaceColor = Color(0xFFFFFFFF),
     settingScreenSurfaceColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
-<<<<<<< Updated upstream
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
-    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
-=======
+    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     settingScreenPrimaryContainerAlpha01 = Color(0x1A4F378B)
->>>>>>> Stashed changes
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -45,13 +42,10 @@ val DarkCustomTheme = CustomTheme(
     settingScreenOnSurfaceColor = Color(0xFFFFFFFF),
     settingScreenSurfaceColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
-<<<<<<< Updated upstream
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
-    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5)
-=======
+    healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     settingScreenPrimaryContainerAlpha01 = Color(0x1A4F378B)
->>>>>>> Stashed changes
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
