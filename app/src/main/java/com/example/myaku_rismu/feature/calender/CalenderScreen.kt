@@ -39,8 +39,6 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-// --- 데이터 모델링 (변경 없음) ---
-
 enum class HealthMetricType { MOVE, HEART_RATE, SLEEP, STEPS, WALK_TIME }
 
 data class HealthData(
@@ -72,16 +70,14 @@ data class DailyHealthReport(
     }
 }
 
-// --- 샘플 데이터 (기간 수정) ---
-
+//sample just 7days
 fun generateSampleData(): Map<LocalDate, DailyHealthReport> {
-    val today = LocalDate.of(2025, 7, 1) // 오늘 날짜를 7월 1일로 고정
+    val today = LocalDate.of(2025, 7, 1)
     val data = mutableMapOf<LocalDate, DailyHealthReport>()
 
-    // 6월 25일부터 7월 1일까지 (총 7일) 데이터 생성
     for (i in 0..6) {
         val date = today.minusDays(i.toLong())
-        val randomFactor = (0.6f + (i * 0.05f)).coerceAtMost(1.0f) // 오래될수록 값이 낮아짐
+        val randomFactor = (0.6f + (i * 0.05f)).coerceAtMost(1.0f)
 
         val isToday = i == 0
         data[date] = DailyHealthReport(
@@ -96,8 +92,6 @@ fun generateSampleData(): Map<LocalDate, DailyHealthReport> {
 }
 
 
-// --- 화면 구현 ---
-
 @Composable
 fun HealthDashboardScreen() {
     val healthDataByDate by remember { mutableStateOf(generateSampleData()) }
@@ -110,7 +104,7 @@ fun HealthDashboardScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding(), // 하단 내비게이션 바 영역만 피하도록 수정
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -131,7 +125,7 @@ fun HealthDashboardScreen() {
             healthReports = healthDataByDate
         )
 
-        Spacer(modifier = Modifier.height(36.dp)) // <-- 이제 이 값을 조절하면 됩니다.
+        Spacer(modifier = Modifier.height(36.dp))
 
         val dateFormatter = DateTimeFormatter.ofPattern("M月d日", Locale.JAPAN)
         Text(
@@ -140,21 +134,19 @@ fun HealthDashboardScreen() {
             fontWeight = FontWeight.Bold
         )
 
-        // weight(1f)를 제거하고 크기를 직접 지정합니다.
         CircularHealthDashboard(
             report = dailyReport,
             selectedMetricType = selectedMetricType,
             onMetricSelected = { type -> selectedMetricType = type },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp) // <-- 원의 위아래 여백
-                .aspectRatio(1f) // 1:1 비율 (정사각형)
+                .padding(vertical = 16.dp)
+                .aspectRatio(1f)
         )
 
         val selectedData = dailyReport.getByType(selectedMetricType)
         HealthDetail(data = selectedData)
 
-        // 화면 하단과 HealthDetail 사이에 공간을 주기 위해 Spacer 추가
         Spacer(modifier = Modifier.weight(1f))
     }
 }
@@ -251,12 +243,9 @@ fun CircularHealthDashboard(
                 .background(mainData.primaryColor.copy(alpha = 0.1f))
         )
 
-        // --- 작은 링 ---
         val radius = boxSize * 0.25f
         val smallRingSize = boxSize * 0.28f
 
-        // ★★★ 1. 각 슬롯의 고정된 위치(각도)와 기본 타입을 정의합니다. ★★★
-        // 순서: 위(心拍数), 오른쪽(歩数), 아래(歩行時間), 왼쪽(睡眠時間)
         val slots = listOf(
             Pair(-Math.PI / 2, HealthMetricType.HEART_RATE),
             Pair(0.0, HealthMetricType.STEPS),
@@ -264,23 +253,17 @@ fun CircularHealthDashboard(
             Pair(Math.PI, HealthMetricType.SLEEP)
         )
 
-        // ★★★ 2. 고정된 슬롯을 기준으로 작은 링들을 그립니다. ★★★
         slots.forEach { (angle, defaultTypeInSlot) ->
 
-            // 이 슬롯에 실제로 표시될 타입을 결정합니다.
             val typeToShowInSlot = when {
-                // 만약 현재 선택된 타입이 'ムーブ'가 아니고, 이 슬롯의 기본 타입과 같다면,
-                // 이 슬롯에는 'ムーブ'를 표시합니다.
                 selectedMetricType != HealthMetricType.MOVE && defaultTypeInSlot == selectedMetricType -> {
                     HealthMetricType.MOVE
                 }
-                // 그 외의 모든 경우에는 슬롯의 기본 타입을 표시합니다.
                 else -> {
                     defaultTypeInSlot
                 }
             }
 
-            // 표시될 데이터
             val data = report.getByType(typeToShowInSlot)
 
             Box(
@@ -292,7 +275,7 @@ fun CircularHealthDashboard(
                         IntOffset(x, y)
                     }
                     .size(smallRingSize)
-                    .clickable { onMetricSelected(typeToShowInSlot) } // 표시된 타입을 클릭 이벤트에 전달
+                    .clickable { onMetricSelected(typeToShowInSlot) }
             ) {
                 HealthRing(
                     progress = data.progress,
