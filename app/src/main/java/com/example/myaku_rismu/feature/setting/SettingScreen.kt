@@ -199,6 +199,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 }
 
 
+
 @Composable
 private fun InfoItemLabel(
     modifier: Modifier = Modifier,
@@ -275,6 +276,7 @@ private fun InfoItemLabel(
     }
 }
 
+
 @Composable
 private fun TopTitleAndBackButton(
     icon: ImageVector,
@@ -302,7 +304,8 @@ private fun TopTitleAndBackButton(
         )
     }
 }
-// --- プロフィール情報表示用のカード ---
+
+
 @Composable
 private fun ProfileCard(
     icon: ImageVector,
@@ -340,7 +343,7 @@ private fun ProfileCard(
     }
 }
 
-// --- 活動レベルの選択肢 ---
+
 @Composable
 private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
     val resources = LocalContext.current.resources
@@ -402,7 +405,7 @@ private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
     }
 }
 
-// --- プロフィール情報表示用の小コンポーネント ---
+
 @Composable
 private fun InfoItem(
     label: String,
@@ -426,7 +429,6 @@ private fun InfoItem(
 }
 
 
-// --- クリック可能な情報表示フィールド ---
 @Composable
 private fun SelectableInfoField(
     text: String,
@@ -480,6 +482,7 @@ fun ProfileScreenPreview() {
     }
 }
 
+
 @Preview(showBackground = true, name = "身長ピッカー (100-220cm)")
 @Composable
 fun ModernNumberPickerDialogPreview_Height() {
@@ -514,6 +517,7 @@ fun ModernNumberPickerDialogPreview_Height() {
         }
     }
 }
+
 
 @Preview(showBackground = true, name = "体重ピッカー (30-150kg)")
 @Composable
@@ -577,6 +581,7 @@ fun ModernStringPickerDialogPreview_Gender() {
         }
     }
 }
+
 
 @Preview(showBackground = true, name = "生年月日ピッカー")
 @Composable
