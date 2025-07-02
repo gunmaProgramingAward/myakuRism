@@ -10,5 +10,18 @@ data class CustomTheme(
     val settingScreenCardColor: Color,
     val settingScreenBackgroundColor: Color,
     val settingScreenCommonColor: Color,
-    val onSelectedButtonOverlay: Color
+    val onSelectedButtonOverlay: Color,
+    val homeLowBpmColor: Color,
+    val homeMediumBpmColor: Color,
+    val homeHighBpmColor: Color,
+    val homeHeartRateColor: Color,
+    val homeMoveColor: Color,
+    val homeStepsColor: Color,
+    val homeSleepColor: Color,
+    val homeDistanceColor: Color,
+    val homeHeartRateBarColorFaded: Color,
+    val homeMoveBarColorFaded: Color,
+    val homeStepsBarColorFaded: Color,
+    val homeSleepBarColorFaded: Color,
+    val homeDistanceBarColorFaded: Color
 )

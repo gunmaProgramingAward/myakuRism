@@ -34,7 +34,20 @@ val LightCustomTheme = CustomTheme(
     settingScreenCardColor = Color(0xFFFFFFFF),
     settingScreenBackgroundColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
-    onSelectedButtonOverlay = Color(0x1A4F378B)
+    onSelectedButtonOverlay = Color(0x1A4F378B),
+    homeLowBpmColor = Color(0xFFA6E5EE),
+    homeMediumBpmColor = Color(0xFFF9B4DA),
+    homeHighBpmColor = Color(0xFFFDA5BF),
+    homeHeartRateColor = Color(0xFFFF467D),
+    homeMoveColor =Color(0xFF3CC9DF),
+    homeStepsColor = Color(0xFF0ECB9C),
+    homeDistanceColor = Color(0xFFFF4AA3),
+    homeSleepColor = Color(0xFFFFC100),
+    homeHeartRateBarColorFaded = Color(0x4DFF467D),
+    homeMoveBarColorFaded = Color(0x4D3CC9DF),
+    homeStepsBarColorFaded = Color(0x4D0ECB9C),
+    homeDistanceBarColorFaded = Color(0x4DFF4AA3),
+    homeSleepBarColorFaded = Color(0x4DFFC100)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -45,7 +58,20 @@ val DarkCustomTheme = CustomTheme(
     settingScreenCardColor = Color(0xFFFFFFFF),
     settingScreenBackgroundColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
-    onSelectedButtonOverlay = Color(0x1A4F378B)
+    onSelectedButtonOverlay = Color(0x1A4F378B),
+    homeLowBpmColor = Color(0xFFA6E5EE),
+    homeMediumBpmColor = Color(0xFFF9B4DA),
+    homeHighBpmColor = Color(0xFFFDA5BF),
+    homeHeartRateColor = Color(0xFFFF467D),
+    homeMoveColor =Color(0xFF3CC9DF),
+    homeStepsColor = Color(0xFF0ECB9C),
+    homeDistanceColor = Color(0xFFFF4AA3),
+    homeSleepColor = Color(0xFFFFC100),
+    homeHeartRateBarColorFaded = Color(0x4DFF467D),
+    homeMoveBarColorFaded = Color(0x4D3CC9DF),
+    homeStepsBarColorFaded = Color(0x4D0ECB9C),
+    homeDistanceBarColorFaded = Color(0x4DFF4AA3),
+    homeSleepBarColorFaded = Color(0x4DFFC100)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
