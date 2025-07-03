@@ -1,7 +1,6 @@
 package com.example.myaku_rismu.core.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
@@ -21,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.navigation.CalenderRoute
@@ -71,15 +70,13 @@ fun BottomNavigationBar(
     modifier: Modifier = Modifier
 ) {
     NavigationBar(
-        modifier = modifier,
-        containerColor = Color.White,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        containerColor = MaterialTheme.customTheme.bottomNavigationBarBackgroundColor,
+        contentColor = MaterialTheme.customTheme.bottomNavigationBarBackgroundColor,
+        modifier = modifier
     ) {
         items.forEach { item ->
             val isSelected = item == selectedItem
             val icon = if (isSelected) item.selectedIcon else item.unselectedIcon
-            val tint = if (isSelected) MaterialTheme.customTheme.healthDetailHeartRateThemeColor
-            else MaterialTheme.colorScheme.onSurfaceVariant
 
             NavigationBarItem(
                 selected = isSelected,
@@ -89,28 +86,25 @@ fun BottomNavigationBar(
                         is IconResource.Vector -> Icon(
                             imageVector = icon.imageVector,
                             contentDescription = stringResource(id = item.label),
-                            tint = tint
                         )
                         is IconResource.Drawable -> Icon(
                             painter = androidx.compose.ui.res.painterResource(id = icon.id),
                             contentDescription = stringResource(id = item.label),
-                            tint = tint
-                    )
+                        )
                     }
                 },
                 label = {
                     Text(
                         text = stringResource(id = item.label),
                         style = MaterialTheme.typography.labelMedium,
-                        color = tint
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                    selectedIconColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor,
+                    unselectedIconColor = MaterialTheme.customTheme.bottomNavigationBarUnSelectedColor,
+                    selectedTextColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor,
+                    unselectedTextColor = MaterialTheme.customTheme.bottomNavigationBarUnSelectedColor,
+                    indicatorColor = MaterialTheme.customTheme.bottomNavigationBarBackgroundColor
                 )
             )
         }

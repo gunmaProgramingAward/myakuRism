@@ -9,5 +9,8 @@ data class CustomTheme(
     val healthDetailSleepThemeColor: Color,
     val healthDetailWalkThemeColor: Color,
     val healthDetailPeriodTabColor: Color,
-    val healthDetailSelectedPeriodTabColor: Color
+    val healthDetailSelectedPeriodTabColor: Color,
+    val bottomNavigationBarBackgroundColor: Color,
+    val bottomNavigationBarSelectedColor: Color,
+    val bottomNavigationBarUnSelectedColor: Color,
 )
