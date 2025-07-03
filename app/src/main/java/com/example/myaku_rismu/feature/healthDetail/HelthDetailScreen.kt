@@ -19,7 +19,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
+import com.example.myaku_rismu.core.ui.TopBar
 import com.example.myaku_rismu.ui.theme.customTheme
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
@@ -56,10 +62,11 @@ import kotlin.math.roundToInt
 fun HealthDetailScreen(
     appState: AppState,
     viewModel: HealthDetailViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
     fun eventHandler(event: HealthDetailUiEvent) {
         when (event) {
             is HealthDetailUiEvent.OnClickPeriod -> {
@@ -68,14 +75,31 @@ fun HealthDetailScreen(
         }
     }
 
-    HealthDetail(
-        uiState = uiState,
-        onClickPeriod = { newPeriod ->
-            eventHandler(HealthDetailUiEvent.OnClickPeriod(newPeriod))
+    Scaffold (
+        topBar = {
+            TopBar(
+                title = uiState.healthType?.let { stringResource(it.titleResId) } ?: "",
+                navigationIcon = {
+                    IconButton(onClick = { appState.navigatePopUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.top_bar_back_icon)
+                        )
+                    }
+                }
+            )
         },
-        context = context,
-        modifier = modifier
-    )
+        modifier = modifier,
+        ) { padding ->
+        HealthDetail(
+            uiState = uiState,
+            onClickPeriod = { period ->
+                eventHandler(HealthDetailUiEvent.OnClickPeriod(period))
+            },
+            context = context,
+            modifier = Modifier.padding(padding)
+        )
+    }
 }
 
 @Composable
@@ -85,34 +109,12 @@ private fun HealthDetail(
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    val detailTitleText = when (uiState.selectedPeriods) {
-        0 -> stringResource(R.string.health_detail_all)
-        else -> stringResource(R.string.health_detail_daily_average)
-    }
-    val graphTitleText = when (uiState.selectedPeriods) {
-        0 -> stringResource(R.string.health_detail_all)
-        1 -> stringResource(R.string.health_detail_this_week)
-        2 -> uiState.monthlyGraphTitle
-        3 -> uiState.yearlyGraphTitle
-        else -> stringResource(R.string.health_detail_daily_average)
-    }
-    val healthTypeColor =  when (uiState.healthType) {
-        is HealthType.Move -> MaterialTheme.customTheme.healthDetailMoveThemeColor
-        is HealthType.MoveDistance -> MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor
-        is HealthType.HeartRate -> MaterialTheme.customTheme.healthDetailHeartRateThemeColor
-        is HealthType.SleepTime -> MaterialTheme.customTheme.healthDetailSleepThemeColor
-        is HealthType.Walk -> MaterialTheme.customTheme.healthDetailWalkThemeColor
-        null -> Color.Black
-    }
-    val healthTypeUnit = when (uiState.healthType) {
-        is HealthType.Move -> stringResource(R.string.health_detail_move_unit)
-        is HealthType.MoveDistance -> stringResource(R.string.health_detail_move_distance_unit)
-        is HealthType.HeartRate -> stringResource(R.string.health_detail_heart_rate_unit)
-        is HealthType.SleepTime -> stringResource(R.string.health_detail_sleep_time_unit)
-        is HealthType.Walk -> stringResource(R.string.health_detail_walk_unit)
-        null -> ""
-    }
     val periods = context.resources.getStringArray(R.array.health_detail_periods)
+    val title =  uiState.healthType?.let { stringResource(it.titleResId) } ?: ""
+    val healthTypeColor = uiState.healthType?.color
+        ?: MaterialTheme.customTheme.healthDetailHeartRateThemeColor
+    val healthTypeUnit = uiState.healthType?.let { stringResource(it.unitResId) } ?: ""
+    val graphTitleText = uiState.graphTitleText
 
     Column(
         modifier = modifier
@@ -126,7 +128,7 @@ private fun HealthDetail(
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
-            title = detailTitleText,
+            title = title,
             titleTextStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
