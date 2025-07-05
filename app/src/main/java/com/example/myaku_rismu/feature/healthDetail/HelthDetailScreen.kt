@@ -295,7 +295,7 @@ private fun PeriodTabList(
                     .width(tabWidth)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.customTheme.healthDetailSelectedPeriodTabColor,
+                        color = MaterialTheme.customTheme.healthDetailPeriodTabColor,
                         shape = RoundedCornerShape(6.dp)
                     )
             )
