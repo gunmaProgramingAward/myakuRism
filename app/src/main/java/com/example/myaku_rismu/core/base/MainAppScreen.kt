@@ -6,16 +6,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.navigation.AppNavigation
+import com.example.myaku_rismu.core.ui.BottomNavigationBar
+import com.example.myaku_rismu.core.ui.NavigationItem
 
 @Composable
 fun MainAppScreen(
     appState: AppState,
     modifier: Modifier = Modifier
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                items = NavigationItem.entries,
+                selectedItem = appState.selectedNavigationItem,
+                onNavigate =appState::bottomBarNavigateTo,
+                modifier = Modifier
+            )
+        },
+        modifier = modifier
+    ) { innerPadding ->
         AppNavigation(
             appState = appState,
-            modifier = modifier.padding(innerPadding)
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         )
     }
 }

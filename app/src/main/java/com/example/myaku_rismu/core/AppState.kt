@@ -6,14 +6,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.myaku_rismu.core.navigation.CalendarRoute
+import com.example.myaku_rismu.core.navigation.CalenderRoute
 import com.example.myaku_rismu.core.navigation.HealthDetailRoute
 import com.example.myaku_rismu.core.navigation.HomeRoute
 import com.example.myaku_rismu.core.navigation.LibraryRoute
 import com.example.myaku_rismu.core.navigation.ProfileDetailRoute
 import com.example.myaku_rismu.core.navigation.SettingsRoute
+import com.example.myaku_rismu.core.ui.NavigationItem
 
 @Composable
 fun rememberAppState(
@@ -46,6 +48,15 @@ class AppState(
             } ?: previousDestination.value
         }
 
+    val selectedNavigationItem: NavigationItem
+        @Composable
+        get() {
+            val currentRoute = currentDestination?.route
+            return NavigationItem.entries.find { item ->
+                currentRoute == item.route::class.qualifiedName
+            } ?: NavigationItem.HOME
+        }
+
     fun navigateToHome(userId: String?) {
         navController.navigate(HomeRoute(userId = userId))
     }
@@ -59,7 +70,7 @@ class AppState(
     }
 
     fun navigateToCalender() {
-        navController.navigate(CalendarRoute)
+        navController.navigate(CalenderRoute)
     }
 
     fun navigateToLibrary() {
@@ -68,5 +79,19 @@ class AppState(
 
     fun navigateToHealthDetail() {
         navController.navigate(HealthDetailRoute)
+    }
+
+    fun navigatePopUp() {
+        navController.popBackStack()
+    }
+
+    fun bottomBarNavigateTo(item: NavigationItem) {
+        navController.navigate(item.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+         }
     }
 }
