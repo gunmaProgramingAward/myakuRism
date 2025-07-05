@@ -75,7 +75,7 @@ fun HealthDetailScreen(
         }
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopBar(
                 title = uiState.healthType?.let { stringResource(it.titleResId) } ?: "",
@@ -89,15 +89,15 @@ fun HealthDetailScreen(
                 }
             )
         },
-        modifier = modifier,
-        ) { padding ->
+        modifier = modifier
+    ){ innerPadding ->
         HealthDetail(
             uiState = uiState,
             onClickPeriod = { period ->
                 eventHandler(HealthDetailUiEvent.OnClickPeriod(period))
             },
             context = context,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         )
     }
 }

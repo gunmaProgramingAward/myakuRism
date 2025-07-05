@@ -27,7 +27,7 @@ fun MainAppScreen(
     ) { innerPadding ->
         AppNavigation(
             appState = appState,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         )
     }
 }
