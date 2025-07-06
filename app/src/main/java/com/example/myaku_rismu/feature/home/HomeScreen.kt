@@ -35,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.feature.home.components.BarChart
 import com.example.myaku_rismu.feature.home.components.DonutChart
@@ -46,12 +45,12 @@ import com.example.myaku_rismu.core.AppState
 
 
 @Composable
-private fun HomeScreen(
+fun HomeScreen(
     appState: AppState,
     modifier: Modifier = Modifier
 ) {
     Scaffold(modifier = modifier) { innerPadding ->
-        HomeDetail(
+        HomeContent(
             appState = appState,
             modifier = Modifier
                 .fillMaxSize()
@@ -59,8 +58,9 @@ private fun HomeScreen(
         )
     }
 }
+
 @Composable
-fun HomeDetail(
+fun HomeContent(
     appState: AppState,
     modifier: Modifier = Modifier
 ) {
@@ -156,32 +156,23 @@ fun HomeDetail(
 
 
 // --- メインの画面レイアウト ---
+    Column(modifier = modifier) {
+        BpmPlayerCard(
+            modifier = Modifier,
+            bpmCount = bpmPlayerValue,
+            bpmColor = bpmPlayerColor
+        )
         Column(
-            modifier = modifier.fillMaxSize()
+            modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
         ) {
-            BpmPlayerCard(
-                modifier = Modifier,
-                bpmCount = bpmPlayerValue,
-                bpmColor = bpmPlayerColor
+            HealthMetricsSection(
+                metrics = healthMetricsData,
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
             )
-            Column(
-                modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
-            ) {
-                HealthMetricsSection(
-                    metrics = healthMetricsData,
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
-                )
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                ) {
-                }
-            }
         }
     }
-
+}
 
 
 @Composable
@@ -250,57 +241,57 @@ fun HealthMetricCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         if (metric.titleResId == (R.string.current_heart_rate)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
+            ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp)
+                        .wrapContentSize()
+                        .align(Alignment.CenterStart)
+                        .padding(start = 8.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
+                    DonutChart(
+                        progress = metric.progress,
+                        progressColor = metric.cardThemeColor,
+                        barColorFaded = metric.barColorFaded,
                         modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.CenterStart)
-                            .padding(start = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        DonutChart(
-                            progress = metric.progress,
-                            progressColor = metric.cardThemeColor,
-                            barColorFaded = metric.barColorFaded,
-                            modifier = Modifier
-                        )
-                        Icon(
-                            painter = painterResource(id = metric.iconResId),
-                            contentDescription = null,
-                            tint = metric.cardThemeColor
-                        )
-                    }
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    )
+                    Icon(
+                        painter = painterResource(id = metric.iconResId),
+                        contentDescription = null,
+                        tint = metric.cardThemeColor
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(metric.titleResId),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.customTheme.settingScreenTextColor
+                    )
+                    Row {
                         Text(
-                            text = stringResource(metric.titleResId),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.customTheme.settingScreenTextColor
+                            text = metric.currentValue.toString(),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = metric.cardThemeColor,
+                            modifier = Modifier.alignByBaseline()
                         )
-                        Row{
-                            Text(
-                                text = metric.currentValue.toString(),
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = metric.cardThemeColor,
-                                modifier = Modifier.alignByBaseline()
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(
-                                text = stringResource(metric.unitResId ?: R.string.unit_null),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = metric.cardThemeColor,
-                                modifier = Modifier.alignByBaseline()
-                            )
-                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = stringResource(metric.unitResId ?: R.string.unit_null),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = metric.cardThemeColor,
+                            modifier = Modifier.alignByBaseline()
+                        )
                     }
                 }
+            }
         } else {
             Column(
                 modifier = Modifier
@@ -382,14 +373,12 @@ fun HealthMetricsSection(
 }
 
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     Myaku_rismuTheme {
-        HomeDetail(
-            appState = AppState( navController = androidx.navigation.compose.rememberNavController() )
+        HomeContent(
+            appState = AppState(navController = androidx.navigation.compose.rememberNavController())
         )
     }
 }
