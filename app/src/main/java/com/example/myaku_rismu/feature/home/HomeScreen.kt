@@ -45,9 +45,23 @@ import androidx.compose.material3.Scaffold
 import com.example.myaku_rismu.core.AppState
 
 
-
 @Composable
-fun HomeScreen(appState: AppState,
+private fun HomeScreen(
+    appState: AppState,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(modifier = modifier) { innerPadding ->
+        HomeDetail(
+            appState = appState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = innerPadding.calculateTopPadding())
+        )
+    }
+}
+@Composable
+fun HomeDetail(
+    appState: AppState,
     modifier: Modifier = Modifier
 ) {
     // --- 心拍数の表示値　---
@@ -142,17 +156,6 @@ fun HomeScreen(appState: AppState,
 
 
 // --- メインの画面レイアウト ---
-    Scaffold(modifier = modifier) { innerPadding ->
-        // TODO: 仮のボタン
-        Button(
-            onClick = {
-                appState.navigateToHealthDetail()
-            },
-            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
-        ) {
-            Text("Go to Health Detail")
-        }
-
         Column(
             modifier = modifier.fillMaxSize()
         ) {
@@ -178,7 +181,7 @@ fun HomeScreen(appState: AppState,
             }
         }
     }
-}
+
 
 
 @Composable
@@ -194,7 +197,7 @@ fun BpmPlayerCard(
             .background(bpmColor)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.shape),
+            painter = painterResource(id = R.drawable.shape),// TODO: 仮の画像
             contentDescription = null,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -205,16 +208,12 @@ fun BpmPlayerCard(
         ) {
             Text(
                 text = "$bpmCount",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 40.sp
-                ),
+                style = MaterialTheme.typography.displayLarge,
                 modifier = Modifier.padding(top = 14.dp)
             )
             Text(
                 text = stringResource(R.string.bpm),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontSize = 20.sp
-                ),
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.offset(y = (-8).dp)
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -222,7 +221,7 @@ fun BpmPlayerCard(
                 onClick = { /*音楽生成*/ },
                 modifier = Modifier
                     .padding(bottom = 12.dp)
-                    .height(36.dp)
+                    .height(30.dp)
                     .fillMaxWidth(0.3f),
                 contentPadding = PaddingValues(vertical = 0.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.settingScreenCardColor),
@@ -231,7 +230,7 @@ fun BpmPlayerCard(
                 Text(
                     text = stringResource(R.string.play),
                     color = MaterialTheme.customTheme.settingScreenTextColor,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }
@@ -282,13 +281,13 @@ fun HealthMetricCard(
                     ) {
                         Text(
                             text = stringResource(metric.titleResId),
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.customTheme.settingScreenTextColor
                         )
                         Row{
                             Text(
                                 text = metric.currentValue.toString(),
-                                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                                style = MaterialTheme.typography.headlineLarge,
                                 color = metric.cardThemeColor,
                                 modifier = Modifier.alignByBaseline()
                             )
@@ -318,21 +317,21 @@ fun HealthMetricCard(
                 Row(modifier = Modifier.offset(y = (-4).dp)) {
                     Text(
                         text = metric.currentValue.toString(),
-                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                        style = MaterialTheme.typography.headlineLarge,
                         color = metric.cardThemeColor,
                         modifier = Modifier.alignByBaseline()
                     )
                     Spacer(modifier = Modifier.width(2.dp))
                     Text(
                         text = stringResource(metric.unitResId ?: R.string.unit_null),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.headlineMedium,
                         color = metric.cardThemeColor,
                         modifier = Modifier.alignByBaseline()
                     )
                 }
                 Text(
                     text = stringResource(metric.titleResId),
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 12.sp),
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.customTheme.settingScreenTextColor,
                     modifier = Modifier.offset(y = (-8).dp)
                 )
@@ -362,9 +361,8 @@ fun HealthMetricsSection(
                 .height(100.dp),
             metric = metrics[0]
         )
-        val remainingMetrics = metrics.drop(1)
 
-        remainingMetrics.chunked(2).forEach { rowItems ->
+        metrics.drop(1).chunked(2).forEach { rowItems ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -390,7 +388,7 @@ fun HealthMetricsSection(
 @Composable
 fun HomeScreenPreview() {
     Myaku_rismuTheme {
-        HomeScreen(
+        HomeDetail(
             appState = AppState( navController = androidx.navigation.compose.rememberNavController() )
         )
     }
