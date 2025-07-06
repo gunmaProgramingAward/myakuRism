@@ -41,10 +41,15 @@ import com.example.myaku_rismu.feature.home.components.BarChart
 import com.example.myaku_rismu.feature.home.components.DonutChart
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
+import androidx.compose.material3.Scaffold
+import com.example.myaku_rismu.core.AppState
+
+
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-
+fun HomeScreen(appState: AppState,
+    modifier: Modifier = Modifier
+) {
     // --- 心拍数の表示値　---
     var bpmPlayerValue by remember { mutableIntStateOf(0) }
     // --- 各健康メトリックの値 ---
@@ -137,26 +142,39 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 
 // --- メインの画面レイアウト ---
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        BpmPlayerCard(
-            modifier = Modifier,
-            bpmCount = bpmPlayerValue,
-            bpmColor = bpmPlayerColor
-        )
-        Column(
-            modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
+    Scaffold(modifier = modifier) { innerPadding ->
+        // TODO: 仮のボタン
+        Button(
+            onClick = {
+                appState.navigateToHealthDetail()
+            },
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         ) {
-            HealthMetricsSection(
-                metrics = healthMetricsData,
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
+            Text("Go to Health Detail")
+        }
+
+        Column(
+            modifier = modifier.fillMaxSize()
+        ) {
+            BpmPlayerCard(
+                modifier = Modifier,
+                bpmCount = bpmPlayerValue,
+                bpmColor = bpmPlayerColor
             )
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
+            Column(
+                modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
             ) {
+                HealthMetricsSection(
+                    metrics = healthMetricsData,
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
+                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                ) {
+                }
             }
         }
     }
@@ -372,8 +390,8 @@ fun HealthMetricsSection(
 @Composable
 fun HomeScreenPreview() {
     Myaku_rismuTheme {
-        HomeScreen()
+        HomeScreen(
+            appState = AppState( navController = androidx.navigation.compose.rememberNavController() )
+        )
     }
 }
-
-

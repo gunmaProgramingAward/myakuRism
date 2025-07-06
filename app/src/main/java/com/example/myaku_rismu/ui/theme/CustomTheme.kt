@@ -4,6 +4,10 @@ import androidx.compose.ui.graphics.Color
 
 data class CustomTheme(
     val healthDetailMoveThemeColor: Color,
+    val healthDetailMoveDistanceThemeColor: Color,
+    val healthDetailHeartRateThemeColor: Color,
+    val healthDetailSleepThemeColor: Color,
+    val healthDetailWalkThemeColor: Color,
     val healthDetailPeriodTabColor: Color,
     val healthDetailSelectedPeriodTabColor: Color,
     val settingScreenTextColor: Color,
@@ -11,6 +15,9 @@ data class CustomTheme(
     val settingScreenBackgroundColor: Color,
     val settingScreenCommonColor: Color,
     val onSelectedButtonOverlay: Color,
+    val bottomNavigationBarBackgroundColor: Color,
+    val bottomNavigationBarSelectedColor: Color,
+    val bottomNavigationBarUnSelectedColor: Color,
     val homeLowBpmColor: Color,
     val homeMediumBpmColor: Color,
     val homeHighBpmColor: Color,
@@ -23,5 +30,5 @@ data class CustomTheme(
     val homeMoveBarColorFaded: Color,
     val homeStepsBarColorFaded: Color,
     val homeSleepBarColorFaded: Color,
-    val homeDistanceBarColorFaded: Color
+    val homeDistanceBarColorFaded: Color,
 )
