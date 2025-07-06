@@ -145,6 +145,20 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             bpmCount = bpmPlayerValue,
             bpmColor = bpmPlayerColor
         )
+        Column(
+            modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
+        ) {
+            HealthMetricsSection(
+                metrics = healthMetricsData,
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
+            )
+            Card(modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+            ) {
+            }
+        }
     }
 }
 
@@ -206,6 +220,150 @@ fun BpmPlayerCard(
     }
 }
 
+
+@Composable
+fun HealthMetricCard(
+    modifier: Modifier = Modifier,
+    metric: HealthMetric,
+) {
+    Card(
+        modifier = modifier
+            .clickable { /*HealthDetailScreenに画面推移*/ },
+        colors = CardDefaults.cardColors(Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        if (metric.titleResId == (R.string.current_heart_rate)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.CenterStart)
+                            .padding(start = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DonutChart(
+                            progress = metric.progress,
+                            progressColor = metric.cardThemeColor,
+                            barColorFaded = metric.barColorFaded,
+                            modifier = Modifier
+                        )
+                        Icon(
+                            painter = painterResource(id = metric.iconResId),
+                            contentDescription = null,
+                            tint = metric.cardThemeColor
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(metric.titleResId),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.customTheme.settingScreenTextColor
+                        )
+                        Row{
+                            Text(
+                                text = metric.currentValue.toString(),
+                                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                                color = metric.cardThemeColor,
+                                modifier = Modifier.alignByBaseline()
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text(
+                                text = stringResource(metric.unitResId ?: R.string.unit_null),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = metric.cardThemeColor,
+                                modifier = Modifier.alignByBaseline()
+                            )
+                        }
+                    }
+                }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 15.dp, bottom = 10.dp, start = 12.dp, end = 12.dp),
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(metric.iconResId),
+                    contentDescription = stringResource(metric.titleResId),
+                    tint = metric.cardThemeColor,
+                )
+                Row(modifier = Modifier.offset(y = (-4).dp)) {
+                    Text(
+                        text = metric.currentValue.toString(),
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                        color = metric.cardThemeColor,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = stringResource(metric.unitResId ?: R.string.unit_null),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = metric.cardThemeColor,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                }
+                Text(
+                    text = stringResource(metric.titleResId),
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 12.sp),
+                    color = MaterialTheme.customTheme.settingScreenTextColor,
+                    modifier = Modifier.offset(y = (-8).dp)
+                )
+                BarChart(
+                    progress = metric.progress,
+                    progressColor = metric.cardThemeColor,
+                    barColorFaded = metric.barColorFaded,
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun HealthMetricsSection(
+    metrics: List<HealthMetric>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(9.dp)
+    ) {
+        HealthMetricCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            metric = metrics[0]
+        )
+        val remainingMetrics = metrics.drop(1)
+
+        remainingMetrics.chunked(2).forEach { rowItems ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
+            ) {
+                rowItems.forEach { metric ->
+                    HealthMetricCard(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(100.dp),
+                        metric = metric
+                    )
+                }
+            }
+        }
+    }
+}
 
 
 
