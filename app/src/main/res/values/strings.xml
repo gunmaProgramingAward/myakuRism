@@ -15,4 +15,19 @@
         <item>月</item>
         <item>年</item>
     </string-array>
+    // HomeScreen
+    <string name="play">Play</string>
+    <string name="bpm">BPM</string>
+    <string name="current_heart_rate">現在の心拍数</string>
+    <string name="steps">歩数</string>
+    <string name="move">消費カロリー</string>
+    <string name="sleep">睡眠時間</string>
+    <string name="distance">移動距離</string>
+
+    <string name="unit_bpm">BPM</string>
+    <string name="unit_steps">歩</string>
+    <string name="unit_kcal">kcal</string>
+    <string name="unit_hours">h</string> <string name="unit_minutes">m</string>
+    <string name="unit_km">km</string>
+    <string name="unit_null"> </string>
 </resources>
