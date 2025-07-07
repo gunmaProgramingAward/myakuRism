@@ -19,7 +19,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
+import com.example.myaku_rismu.core.ui.TopBar
 import com.example.myaku_rismu.ui.theme.customTheme
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
@@ -53,41 +60,61 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HealthDetailScreen(
+    appState: AppState,
     viewModel: HealthDetailViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    HealthDetail(
-        uiState = uiState,
-        onPeriodSelected = { newPeriod ->
-            viewModel.changeSelectedPeriod(newPeriod)
+    fun eventHandler(event: HealthDetailUiEvent) {
+        when (event) {
+            is HealthDetailUiEvent.OnClickPeriod -> {
+                viewModel.changeSelectedPeriod(event.period)
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = uiState.healthType?.let { stringResource(it.titleResId) } ?: "",
+                navigationIcon = {
+                    IconButton(onClick = { appState.navigatePopUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.top_bar_back_icon)
+                        )
+                    }
+                }
+            )
         },
-        context = context,
         modifier = modifier
-    )
+    ){ innerPadding ->
+        HealthDetail(
+            uiState = uiState,
+            onClickPeriod = { period ->
+                eventHandler(HealthDetailUiEvent.OnClickPeriod(period))
+            },
+            context = context,
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+        )
+    }
 }
 
 @Composable
-fun HealthDetail(
+private fun HealthDetail(
     uiState: HealthDetailState,
-    onPeriodSelected: (Int) -> Unit,
+    onClickPeriod: (Int) -> Unit,
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    val detailTitleText = when (uiState.selectedPeriods) {
-        0 -> stringResource(R.string.health_detail_all)
-        else -> stringResource(R.string.health_detail_daily_average)
-    }
-    val graphTitleText = when (uiState.selectedPeriods) {
-        0 -> stringResource(R.string.health_detail_all)
-        1 -> stringResource(R.string.health_detail_this_week)
-        2 -> uiState.monthlyGraphTitle
-        3 -> uiState.yearlyGraphTitle
-        else -> stringResource(R.string.health_detail_daily_average)
-    }
     val periods = context.resources.getStringArray(R.array.health_detail_periods)
+    val title =  uiState.healthType?.let { stringResource(it.titleResId) } ?: ""
+    val healthTypeColor = uiState.healthType?.color
+        ?: MaterialTheme.customTheme.healthDetailHeartRateThemeColor
+    val healthTypeUnit = uiState.healthType?.let { stringResource(it.unitResId) } ?: ""
+    val graphTitleText = uiState.graphTitleText
 
     Column(
         modifier = modifier
@@ -97,47 +124,22 @@ fun HealthDetail(
         PeriodTabList(
             periods = periods.toList(),
             selectedPeriod = uiState.selectedPeriods,
-            onPeriodSelected = { onPeriodSelected(it) },
+            onClickPeriod = { onClickPeriod(it) },
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         TitleAndSubComponent(
-            title = detailTitleText,
+            title = title,
             titleTextStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             ),
             subComponent = {
-                Row(
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Text(
-                        text = uiState.dailyAverage,
-                        color = MaterialTheme.customTheme.healthDetailMoveThemeColor,
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "/",
-                        color = MaterialTheme.customTheme.healthDetailMoveThemeColor,
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "130",
-                        color = MaterialTheme.customTheme.healthDetailMoveThemeColor,
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.health_detail_unit),
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                }
+                HealthMetric(
+                    uiState = uiState,
+                    healthTypeColor = healthTypeColor,
+                    healthTypeUnit = healthTypeUnit
+                )
             },
             modifier = Modifier.padding(horizontal = 20.dp)
         )
@@ -152,6 +154,7 @@ fun HealthDetail(
                 BarChart(
                     uiState = uiState,
                     data = uiState.stepData,
+                    healthTypeColor = healthTypeColor,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp)
@@ -165,9 +168,56 @@ fun HealthDetail(
 }
 
 @Composable
-fun BarChart(
+private fun HealthMetric(
+    uiState: HealthDetailState,
+    healthTypeColor: Color,
+    healthTypeUnit: String,
+    modifier: Modifier = Modifier
+) {
+    val healthType = uiState.healthType
+
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        modifier = modifier
+    ) {
+        if (healthType != null) {
+            Text(
+                text = uiState.dailyAverage,
+                color = healthTypeColor,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        if (healthType is HealthType.Move) {
+        Text(
+            text = stringResource(R.string.health_detail_move_slash),
+            color = healthTypeColor,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = healthType.target.toString(),
+                color = healthTypeColor,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold
+        )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = healthTypeUnit,
+            color = Color.Black,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun BarChart(
     uiState: HealthDetailState,
     data: List<Int>,
+    healthTypeColor: Color,
     modifier: Modifier = Modifier
 ) {
     val chartRenderData = rememberChartRenderData(uiState = uiState, data = data) ?: return
@@ -184,7 +234,7 @@ fun BarChart(
         chart = columnChart(
             columns = listOf(
                 LineComponent(
-                    color = MaterialTheme.customTheme.healthDetailMoveThemeColor.toArgb(),
+                    color = healthTypeColor.toArgb(),
                     thicknessDp = 6f
                 )
             ),
@@ -203,10 +253,10 @@ fun BarChart(
 }
 
 @Composable
-fun PeriodTabList(
+private fun PeriodTabList(
     periods: List<String>,
     selectedPeriod: Int,
-    onPeriodSelected: (Int) -> Unit,
+    onClickPeriod: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -245,7 +295,7 @@ fun PeriodTabList(
                     .width(tabWidth)
                     .fillMaxHeight()
                     .background(
-                        color = MaterialTheme.customTheme.healthDetailSelectedPeriodTabColor,
+                        color = MaterialTheme.customTheme.healthDetailPeriodTabColor,
                         shape = RoundedCornerShape(6.dp)
                     )
             )
@@ -260,7 +310,7 @@ fun PeriodTabList(
                             .clickable(
                                 interactionSource = interactionSource,
                                 indication = null,
-                                onClick = { onPeriodSelected(index) }
+                                onClick = { onClickPeriod(index) }
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -284,7 +334,7 @@ fun HealthDetailScreenPreview() {
 
     HealthDetail(
         uiState = uiState,
-        onPeriodSelected = { newPeriod ->
+        onClickPeriod = { newPeriod ->
             viewModel.changeSelectedPeriod(newPeriod)
         },
         context = context
