@@ -13,4 +13,10 @@ data class CustomTheme(
     val bottomNavigationBarBackgroundColor: Color,
     val bottomNavigationBarSelectedColor: Color,
     val bottomNavigationBarUnSelectedColor: Color,
+    val settingScreenTextColor: Color,
+    val settingScreenBackgroundColor: Color,
+    val switchCheckedThumbColor: Color,
+    val switchUncheckedThumbColor: Color,
+    val switchCheckedTrackColor: Color,
+    val switchUncheckedTrackColor: Color
 )

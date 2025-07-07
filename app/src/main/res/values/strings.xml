@@ -35,4 +35,11 @@
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="include_lyrics">歌詞を含める</string>
+    <string name="music_generation_notification">音楽生成通知</string>
+    <string name="collaboration_with_healthcare">ヘルスケアとの連携</string>
+    <string name="sync_with_your_smartwatch">スマートウォッチと同期</string>
+    <string name="profile">プロフィール</string>
+    <string name="personal_information_and_health_goal_setting">個人情報と健康目標の設定</string>
+    <string name="advanced_settings">詳細設定</string>
 </resources>

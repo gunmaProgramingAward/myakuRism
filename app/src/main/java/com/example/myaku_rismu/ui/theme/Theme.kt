@@ -36,7 +36,14 @@ val LightCustomTheme = CustomTheme(
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
-    bottomNavigationBarUnSelectedColor = Color(0xFF474747)
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    settingScreenTextColor = Color(0xFF1F2937),
+    settingScreenBackgroundColor = Color(0xFFF9FAFB),
+    switchCheckedThumbColor = Color(0xFFE2E2E2),
+    switchUncheckedThumbColor = Color(0xFF777777),
+    switchCheckedTrackColor = Color(0xFF1F2937),
+    switchUncheckedTrackColor = Color(0xFFE2E2E2)
+
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -49,7 +56,13 @@ val DarkCustomTheme = CustomTheme(
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
-    bottomNavigationBarUnSelectedColor = Color(0xFF474747)
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    settingScreenTextColor = Color(0xFF1F2937),
+    settingScreenBackgroundColor = Color(0xFFF9FAFB),
+    switchCheckedThumbColor = Color(0xFFE2E2E2),
+    switchUncheckedThumbColor = Color(0xFF777777),
+    switchCheckedTrackColor = Color(0xFF1F2937),
+    switchUncheckedTrackColor = Color(0xFFE2E2E2)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
