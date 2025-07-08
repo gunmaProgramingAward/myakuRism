@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.core.ui.TitleAndSubComponent
 import com.example.myaku_rismu.ui.theme.customTheme
 
 @Composable
@@ -42,7 +44,7 @@ fun ProfileDetailScreen(
 ) {
     Scaffold(modifier = modifier) { innerPadding ->
         ProfileDetail(
-            appState = appState,
+//            appState = appState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
@@ -53,7 +55,7 @@ fun ProfileDetailScreen(
 
 @Composable
 fun ProfileDetail(
-    appState: AppState,
+//    appState: AppState,
     modifier: Modifier = Modifier
 ) {
 
@@ -99,7 +101,6 @@ fun ProfileDetail(
                 .clickable { /*settingScreen*/ },
             icon = R.drawable.profile,
             title = R.string.profile,
-            subTitle = stringResource(R.string.personal_information_and_health_goal_setting),
         )
         Text(
             text = stringResource(R.string.advanced_settings),
@@ -111,7 +112,9 @@ fun ProfileDetail(
                 icon = item.iconResId,
                 title = item.title,
                 switchChecked = item.isSwitchEnabled,
-                onSwitchCheckedChange = { switchableCardItems[index] = item.copy(isSwitchEnabled = it) }
+                onSwitchCheckedChange = {
+                    switchableCardItems[index] = item.copy(isSwitchEnabled = it)
+                }
             )
         }
     }
@@ -122,7 +125,6 @@ fun ProfileDetailCard(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     @StringRes title: Int,
-    subTitle: String? = null,
     switchChecked: Boolean? = null,
     onSwitchCheckedChange: ((Boolean) -> Unit)? = null,
 ) {
@@ -146,30 +148,34 @@ fun ProfileDetailCard(
                 modifier = Modifier.size(46.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            if (switchChecked != null && onSwitchCheckedChange != null) {
                 Text(
                     text = stringResource(title),
                     style = MaterialTheme.typography.titleMedium
                 )
-                subTitle?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-            }
-            Spacer(Modifier.weight(1f))
-            if(switchChecked != null && onSwitchCheckedChange!= null) {
+                Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     modifier = Modifier,
                     checked = switchChecked,
                     onCheckedChange = onSwitchCheckedChange,
-                    colors = androidx.compose.material3.SwitchDefaults.colors(
+                    colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.customTheme.switchCheckedThumbColor,
                         uncheckedThumbColor = MaterialTheme.customTheme.switchUncheckedThumbColor,
                         checkedTrackColor = MaterialTheme.customTheme.switchCheckedTrackColor,
                         uncheckedTrackColor = MaterialTheme.customTheme.switchUncheckedTrackColor
                     )
+                )
+            } else {
+                TitleAndSubComponent(
+                    title = stringResource(title),
+                    subComponent = {
+                        Text(
+                            text = stringResource(R.string.personal_information_and_health_goal_setting),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    titleTextStyle = MaterialTheme.typography.titleMedium,
+                    spacerHeight = 4.dp
                 )
             }
         }
@@ -177,11 +183,13 @@ fun ProfileDetailCard(
 }
 
 
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun ProfileDetailPreview() {
-    ProfileDetailScreen(
-        appState = AppState(navController = androidx.navigation.compose.rememberNavController()),
+    ProfileDetail(
         modifier = Modifier.fillMaxSize()
     )
 }
