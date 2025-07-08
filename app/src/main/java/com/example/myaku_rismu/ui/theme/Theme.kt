@@ -28,8 +28,15 @@ private val LightColorScheme = lightColorScheme(
 
 val LightCustomTheme = CustomTheme(
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
+    healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
+    healthDetailSleepThemeColor = Color(0xFF00C3E0),
+    healthDetailWalkThemeColor = Color(0xFF0ECB9C),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
+    bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
+    bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
     settingScreenTextColor = Color(0xFF1F2937),
     settingScreenCardColor = Color(0xFFFFFFFF),
     settingScreenBackgroundColor = Color(0xFFF9FAFB),
@@ -39,13 +46,21 @@ val LightCustomTheme = CustomTheme(
 
 val DarkCustomTheme = CustomTheme(
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
+    healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
+    healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
+    healthDetailSleepThemeColor = Color(0xFF00C3E0),
+    healthDetailWalkThemeColor = Color(0xFF0ECB9C),
     healthDetailPeriodTabColor = Color(0xFFE8E8E8),
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
+    bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
+    bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
     settingScreenTextColor = Color(0xFF1F2937),
     settingScreenCardColor = Color(0xFFFFFFFF),
     settingScreenBackgroundColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
-    onSelectedButtonOverlay = Color(0x1A4F378B)
+    onSelectedButtonOverlay = Color(0x1A4F378B),
+
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

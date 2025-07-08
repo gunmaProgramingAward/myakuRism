@@ -61,7 +61,10 @@ import java.util.Calendar
 
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun SettingScreen(
+//    appState: AppState,
+    modifier: Modifier = Modifier
+) {
     // --- 定数 ---
     val commonPlaceholder = stringResource(R.string.not_set)
     val unSetValue = -1 // 未設定を示す整数値
@@ -476,9 +479,9 @@ private fun SelectableInfoField(
 
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
-fun ProfileScreenPreview() {
+fun SettingScreenPreview() {
     Myaku_rismuTheme {
-        ProfileScreen()
+        SettingScreen()
     }
 }
 
