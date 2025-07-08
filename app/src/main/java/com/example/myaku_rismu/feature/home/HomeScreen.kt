@@ -235,10 +235,10 @@ fun HealthMetricCard(
     metric: HealthMetric,
 ) {
     Card(
-        modifier = modifier
-            .clickable { /*HealthDetailScreenに画面推移*/ },
+        modifier = modifier,
         colors = CardDefaults.cardColors(Color.White),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        onClick = { /*HealthDetailScreenに画面推移*/ },
     ) {
         if (metric.titleResId == (R.string.current_heart_rate)) {
             Box(

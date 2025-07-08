@@ -56,7 +56,10 @@ fun DonutChart(
     barColorFaded: Color,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
         Canvas(
             modifier = Modifier
                 .height(80.dp)
