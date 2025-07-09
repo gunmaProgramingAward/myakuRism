@@ -1,8 +1,6 @@
 package com.example.myaku_rismu.feature.musicDetail
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -16,27 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myaku_rismu.R
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Myaku_rismuTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MusicPlayerScreen()
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun MusicPlayerScreen() {
-    // UI의 상태를 기억하는 변수들
     var isPlaying by remember { mutableStateOf(false) }
     var isFavorite by remember { mutableStateOf(false) }
     var sliderPosition by remember { mutableStateOf(0.3f) }
@@ -127,18 +109,17 @@ fun PlayerControls(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = {}) {
-            // 이제 이 아이콘들을 찾을 수 있습니다.
-            Icon(Icons.Default.SkipPrevious, contentDescription = "이전 곡", modifier = Modifier.size(40.dp))
+            Icon(Icons.Default.SkipPrevious, contentDescription = stringResource(id = R.string.music_detail_previous_track), modifier = Modifier.size(40.dp))
         }
         IconButton(onClick = onPlayPauseClick) {
             Icon(
                 imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                contentDescription = if (isPlaying) "일시정지" else "재생",
+                contentDescription = stringResource(if (isPlaying) R.string.music_detail_pause else R.string.music_detail_play),
                 modifier = Modifier.size(64.dp)
             )
         }
         IconButton(onClick = {}) {
-            Icon(Icons.Default.SkipNext, contentDescription = "다음 곡", modifier = Modifier.size(40.dp))
+            Icon(Icons.Default.SkipNext, contentDescription = stringResource(id = R.string.music_detail_next_track), modifier = Modifier.size(40.dp))
         }
     }
 }
@@ -169,15 +150,15 @@ fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
         IconButton(onClick = onFavoriteClick) {
             Icon(
                 imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = "즐겨찾기",
+                contentDescription = stringResource(id = R.string.music_detail_favorite),
                 tint = if (isFavorite) Color.Red else LocalContentColor.current
             )
         }
         IconButton(onClick = {}) {
-            Icon(Icons.Default.Shuffle, contentDescription = "셔플")
+            Icon(Icons.Default.Shuffle, contentDescription = stringResource(id = R.string.music_detail_suffle))
         }
         IconButton(onClick = {}) {
-            Icon(Icons.Default.Share, contentDescription = "공유")
+            Icon(Icons.Default.Share, contentDescription = stringResource(id = R.string.music_detail_share))
         }
     }
 }
@@ -186,7 +167,6 @@ fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun MusicPlayerScreenPreview() {
-    // 여기도 MyakuRismuTheme로 수정합니다.
     Myaku_rismuTheme {
         MusicPlayerScreen()
     }
