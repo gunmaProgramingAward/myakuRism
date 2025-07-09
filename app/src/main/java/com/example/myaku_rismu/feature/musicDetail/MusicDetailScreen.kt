@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,7 +15,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.ui.theme.Typography
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun MusicPlayerScreen() {
@@ -30,7 +49,6 @@ fun MusicPlayerScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TopAppBar()
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,9 +74,10 @@ fun MusicPlayerScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            PlaybackSlider(
+            CustomSlider(
                 value = sliderPosition,
-                onValueChange = { newPosition -> sliderPosition = newPosition }
+                onValueChange = { newPosition -> sliderPosition = newPosition },
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
         }
 
@@ -70,32 +89,17 @@ fun MusicPlayerScreen() {
 }
 
 @Composable
-fun TopAppBar() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = {}) {
-            Icon(Icons.Default.KeyboardArrowDown, contentDescription = "닫기")
-        }
-        IconButton(onClick = {}) {
-            Icon(Icons.Default.Info, contentDescription = "정보")
-        }
-    }
-}
-
-@Composable
 fun TrackInfo() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Title by AI1",
-            style = MaterialTheme.typography.headlineSmall
+            text = "Title by AI1",//TODO
+            style = Typography.headlineSmall,
+            color = Color.Black
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "2025.06.04",
-            style = MaterialTheme.typography.bodyMedium,
+            text = "2025.06.04",//TODO
+            style = Typography.bodyMedium,
             color = Color.Gray
         )
     }
@@ -124,19 +128,7 @@ fun PlayerControls(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
     }
 }
 
-@Composable
-fun PlaybackSlider(value: Float, onValueChange: (Float) -> Unit) {
-    Slider(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        colors = SliderDefaults.colors(
-            thumbColor = MaterialTheme.colorScheme.primary,
-            activeTrackColor = MaterialTheme.colorScheme.primary,
-            inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    )
-}
+
 
 @Composable
 fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
@@ -163,6 +155,80 @@ fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
     }
 }
 
+@Composable
+fun CustomSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val thumbPainter = painterResource(id = R.drawable.slider_thumb)
+    val trackPainter = painterResource(id = R.drawable.slider_track)
+    val progressPainter = painterResource(id = R.drawable.slider_progress)
+
+    var sliderWidth by remember { mutableStateOf(0) }
+    val density = LocalDensity.current.density
+    val thumbSize = 24.dp //下で使ってるのに、、、
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .onSizeChanged { newSize ->
+                sliderWidth = newSize.width
+            }
+            .pointerInput(sliderWidth) {
+                if (sliderWidth == 0) return@pointerInput
+
+                detectDragGestures { change, _ ->
+                    val newPosition = change.position.x
+                    val newValue = (newPosition / sliderWidth).coerceIn(0f, 1f)
+                    onValueChange(newValue)
+                    change.consume()
+                }
+            },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        val thumbSize = 24.dp
+        val trackHeight = 8.dp
+
+        if (sliderWidth > 0) {
+            val thumbSizePx = thumbSize.value * density
+            val thumbOffset = (sliderWidth * value) - (thumbSizePx / 2)
+
+            Image(
+                painter = trackPainter,
+                contentDescription = stringResource(id = R.string.music_detail_track),
+                modifier = Modifier.fillMaxWidth().height(trackHeight),
+                contentScale = ContentScale.FillBounds //これを使うと線が太くなりますが、使わないと線の太さが薄くなったり太くなったりします。
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(value)
+                    .height(trackHeight)
+                    .clip(RoundedCornerShape(topStart = 100f, bottomStart = 100f))
+            ) {
+                Image(
+                    painter = progressPainter,
+                    contentDescription = stringResource(id = R.string.music_detail_progress),
+                    modifier = Modifier.fillMaxWidth().height(trackHeight),
+                    contentScale = ContentScale.FillBounds,//これを使うと線が太くなりますが、使わないと線の太さが薄くなったり太くなったりします。
+                    colorFilter = ColorFilter.tint(Color.Black)
+                )
+            }
+
+            Image(
+                painter = thumbPainter,
+                contentDescription = stringResource(id = R.string.music_detail_thumb),
+                modifier = Modifier
+                    .offset(x = (thumbOffset / LocalDensity.current.density).dp)
+                    .size(thumbSize),
+                contentScale = ContentScale.FillBounds
+
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

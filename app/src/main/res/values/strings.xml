@@ -16,6 +16,9 @@
     <string name="music_detail_favorite">お気に入り</string>
     <string name="music_detail_share">シェア</string>
     <string name="music_detail_suffle">シャッフル</string>
+    <string name="music_detail_track">全体</string>
+    <string name="music_detail_progress">進行</string>
+    <string name="music_detail_thumb">ボタン</string>
     <string-array name="health_detail_periods">
         <item>日</item>
         <item>週</item>
