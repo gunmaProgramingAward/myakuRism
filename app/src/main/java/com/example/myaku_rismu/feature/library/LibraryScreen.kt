@@ -7,8 +7,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import com.example.myaku_rismu.ui.theme.Typography
 
-// --- 데이터 클래스 정의 (UI 데모용 임시 데이터) ---
 data class MusicTrack(
     val id: Int,
     val title: String,
@@ -27,6 +25,7 @@ data class MusicTrack(
     val category: String
 )
 
+// TODO 一時的な変数です
 val allTracks = listOf(
     MusicTrack(1, "Title by AI1", "2025.06.04", "Happy"),
     MusicTrack(2, "Title by AI2", "2025.06.04", "Sad"),
@@ -54,7 +53,6 @@ fun MusicLibraryScreen() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        LibraryTopAppBar()
         CategoryChips(
             categories = categories,
             selectedCategory = selectedCategory,
@@ -66,22 +64,6 @@ fun MusicLibraryScreen() {
     }
 }
 
-@Composable
-fun LibraryTopAppBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = "Your Library", style = MaterialTheme.typography.headlineLarge)
-        IconButton(onClick = {}) {
-            Icon(Icons.Default.Add, contentDescription = "추가", modifier = Modifier.size(32.dp))
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryChips(
@@ -89,18 +71,19 @@ fun CategoryChips(
     selectedCategory: String,
     onCategorySelected: (String) -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .horizontalScroll(rememberScrollState()), // ★★★ 이 한 줄을 추가! ★★★
+            .horizontalScroll(scrollState),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         categories.forEach { category ->
             FilterChip(
                 selected = (category == selectedCategory),
                 onClick = { onCategorySelected(category) },
-                label = { Text(category) }, // Text의 maxLines를 설정해 줄바꿈을 막습니다.
+                label = { Text(category) },
                 shape = RoundedCornerShape(16.dp),
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
@@ -148,9 +131,9 @@ fun AlbumItem(track: MusicTrack) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(text = track.title, style = MaterialTheme.typography.bodyLarge)
-        Text(text = track.date, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-    }
+        Text(text = track.title, style = Typography.bodyLarge)
+        Text(text = track.date, style = Typography.bodySmall, color = Color.Gray)
+   }
 }
 
 @Preview(showBackground = true)
