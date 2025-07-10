@@ -31,4 +31,7 @@ data class CustomTheme(
     val homeStepsBarColorFaded: Color,
     val homeSleepBarColorFaded: Color,
     val homeDistanceBarColorFaded: Color,
+    val homeLowBpmRippleColor: Color,
+    val homeMediumBpmRippleColor: Color,
+    val homeHighBpmRippleColor: Color,
 )

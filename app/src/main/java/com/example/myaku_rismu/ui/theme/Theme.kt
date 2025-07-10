@@ -54,7 +54,10 @@ val LightCustomTheme = CustomTheme(
     homeMoveBarColorFaded = Color(0x4D3CC9DF),
     homeStepsBarColorFaded = Color(0x4D0ECB9C),
     homeDistanceBarColorFaded = Color(0x4DFF4AA3),
-    homeSleepBarColorFaded = Color(0x4DFFC100)
+    homeSleepBarColorFaded = Color(0x4DFFC100),
+    homeLowBpmRippleColor = Color(0xFF3CC9DF),
+    homeMediumBpmRippleColor = Color(0xFFF686C1),
+    homeHighBpmRippleColor = Color(0xFFFF5F8E)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -85,7 +88,10 @@ val DarkCustomTheme = CustomTheme(
     homeMoveBarColorFaded = Color(0x4D3CC9DF),
     homeStepsBarColorFaded = Color(0x4D0ECB9C),
     homeDistanceBarColorFaded = Color(0x4DFF4AA3),
-    homeSleepBarColorFaded = Color(0x4DFFC100)
+    homeSleepBarColorFaded = Color(0x4DFFC100),
+    homeLowBpmRippleColor = Color(0xFF3CC9DF),
+    homeMediumBpmRippleColor = Color(0xFFF686C1),
+    homeHighBpmRippleColor = Color(0xFFFF5F8E)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

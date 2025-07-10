@@ -1,6 +1,5 @@
 package com.example.myaku_rismu.feature.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +41,7 @@ import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
 import androidx.compose.material3.Scaffold
 import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.feature.home.components.LoopingRipple
 
 
 @Composable
@@ -65,7 +65,7 @@ fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     // --- 心拍数の表示値　---
-    var bpmPlayerValue by remember { mutableIntStateOf(0) }
+    var bpmPlayerValue by remember { mutableIntStateOf(120) }
     // --- 各健康メトリックの値 ---
     var metricHeartRateCurrentValue by remember { mutableIntStateOf(0) }
     var metricStepsCurrentValue by remember { mutableIntStateOf(0) }
@@ -160,7 +160,8 @@ fun HomeContent(
         BpmPlayerCard(
             modifier = Modifier,
             bpmCount = bpmPlayerValue,
-            bpmColor = bpmPlayerColor
+            bpmColor = bpmPlayerColor,
+            bpmData = BpmData()
         )
         Column(
             modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
@@ -179,7 +180,8 @@ fun HomeContent(
 fun BpmPlayerCard(
     modifier: Modifier = Modifier,
     bpmCount: Int,
-    bpmColor: Color
+    bpmColor: Color,
+    bpmData: BpmData
 ) {
     Box(
         modifier = modifier
@@ -187,10 +189,11 @@ fun BpmPlayerCard(
             .height(310.dp)
             .background(bpmColor)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.shape),// TODO: 仮の画像
-            contentDescription = null,
-            modifier = Modifier.align(Alignment.Center)
+        LoopingRipple(
+            modifier = Modifier.align(Alignment.Center),
+            beatIntervalMs = bpmData.beatIntervalMs,
+            newRippleStartIntervalMs = bpmData.newRippleStartIntervalMs,
+            bpmPlayerColor = bpmData.bpmPlayerColor
         )
         Column(
             modifier = Modifier
