@@ -16,6 +16,7 @@ import com.example.myaku_rismu.core.navigation.AppNavigation
 import com.example.myaku_rismu.core.ui.BottomNavigationBar
 import com.example.myaku_rismu.core.ui.NavigationItem
 import com.example.myaku_rismu.core.ui.dialog.HealthConnectUnavailableDialog
+import com.example.myaku_rismu.core.ui.dialog.HealthConnectUpdateDialog
 import com.example.myaku_rismu.core.ui.dialog.PermissionHealthConnectDialog
 import com.example.myaku_rismu.domain.model.PermissionResult
 
@@ -28,6 +29,30 @@ fun MainAppScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
+    fun eventHandler(event: MainAppUiEvent) {
+        when (event) {
+            is MainAppUiEvent.LaunchPlayStoreForHealthConnect -> {
+                viewModel.launchPlayStoreForHealthConnect(event.context)
+            }
+
+            is MainAppUiEvent.LaunchSettingApp -> {
+                viewModel.launchSettingApp(event.context)
+            }
+
+            is MainAppUiEvent.ChangeHealthConnectUnavailableDialog -> {
+                viewModel.changeHealthConnectUnavailableDialog(event.value)
+            }
+
+            is MainAppUiEvent.ChangeIsShowPermissionHealthConnectDialog -> {
+                viewModel.changeIsShowPermissionHealthConnectDialog(event.value)
+            }
+
+            is MainAppUiEvent.ChangeIsShowHealthConnectUpdateDialog -> {
+                viewModel.changeIsShowHealthConnectUpdateDialog(event.value)
+            }
+        }
+    }
+
     val requiredPermissions = viewModel.getRequiredPermissions()
     val requestPermission = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract()
@@ -35,7 +60,7 @@ fun MainAppScreen(
         if (granted.containsAll(requiredPermissions)) {
             // TODO: 現時点では何もしない
         } else {
-            viewModel.changeIsShowPermissionHealthConnectDialog(true)
+            eventHandler(MainAppUiEvent.ChangeIsShowPermissionHealthConnectDialog(true))
         }
     }
 
@@ -52,11 +77,11 @@ fun MainAppScreen(
             }
 
             is PermissionResult.UpdateRequired -> {
-                viewModel.launchPlayStoreForHealthConnect(context)
+                eventHandler(MainAppUiEvent.ChangeIsShowHealthConnectUpdateDialog(true))
             }
 
             is PermissionResult.HealthConnectUnavailable -> {
-                viewModel.changeHealthConnectUnavailableDialog(true)
+                eventHandler(MainAppUiEvent.ChangeHealthConnectUnavailableDialog(true))
             }
         }
     }
@@ -75,14 +100,28 @@ fun MainAppScreen(
 
         if (uiState.isShowHealthConnectUnavailableDialog) {
             HealthConnectUnavailableDialog(
-                onDismiss = { viewModel.changeHealthConnectUnavailableDialog(false) }
+                onConfirm = { eventHandler(MainAppUiEvent.LaunchPlayStoreForHealthConnect(context)) },
+                onDismiss = {
+                    eventHandler(MainAppUiEvent.ChangeHealthConnectUnavailableDialog(true))
+                }
             )
         }
 
         if (uiState.isShowPermissionHealthConnectDialog) {
             PermissionHealthConnectDialog(
-                onConfirm = { viewModel.launchSettingApp(context) },
-                onDismiss = { viewModel.changeIsShowPermissionHealthConnectDialog(false) }
+                onConfirm = { eventHandler(MainAppUiEvent.LaunchSettingApp(context)) },
+                onDismiss = {
+                    eventHandler(MainAppUiEvent.ChangeIsShowPermissionHealthConnectDialog(false))
+                }
+            )
+        }
+
+        if (uiState.isShowHealthConnectUpdateDialog) {
+            HealthConnectUpdateDialog(
+                onConfirm = { eventHandler(MainAppUiEvent.LaunchPlayStoreForHealthConnect(context)) },
+                onDismiss = {
+                    eventHandler(MainAppUiEvent.ChangeIsShowHealthConnectUpdateDialog(false))
+                },
             )
         }
 

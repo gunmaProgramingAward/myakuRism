@@ -19,7 +19,8 @@ fun PermissionHealthConnectDialog(
     // TODO: 後ほどUIのデザインシステムを統一したダイアログを実装
     AppDialog(
         title = "権限が必要です",
-        message = "この機能を利用するにはHealth Connectの権限が必要です。\n設定アプリから『Health Connect』→『アプリの権限』→『（本アプリ名）』で権限をONにしてください。",
+        message = "この機能にはHealth Connectの権限が必要です。" +
+                "\n「設定を開く」から本アプリの権限をONにしてください。",
         icon = { Icon(
             Icons.Default.Lock,
             contentDescription = null,

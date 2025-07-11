@@ -49,4 +49,12 @@ class MainAppViewModel @Inject constructor(
             )
         }
     }
+
+    fun changeIsShowHealthConnectUpdateDialog(value: Boolean) {
+        _uiState.update {
+            it.copy(
+                isShowHealthConnectUpdateDialog = value
+            )
+        }
+    }
 }

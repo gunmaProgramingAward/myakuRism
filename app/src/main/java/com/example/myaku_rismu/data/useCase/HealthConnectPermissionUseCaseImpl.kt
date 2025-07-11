@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.net.toUri
+import androidx.health.connect.client.HealthConnectClient
 import com.example.myaku_rismu.core.base.constants.HealthConnectConstants.PACKAGE
 import com.example.myaku_rismu.core.base.constants.HealthConnectConstants.PROVIDER_PACKAGE_NAME
 import com.example.myaku_rismu.core.base.constants.PlayStoreConstants.CALLER_ID_EXTRA
@@ -50,9 +51,7 @@ class HealthConnectPermissionUseCaseImpl @Inject constructor(
     }
 
     override fun launchSettingApp(context: Context) {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts(PACKAGE, context.packageName, null)
-        }
+        val intent = Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
         context.startActivity(intent)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myaku_rismu.ui.theme.customTheme
 
 
 @Composable
@@ -26,7 +27,7 @@ fun AppDialog(
     onConfirm: () -> Unit,
     dismissText: String? = null,
     onDismiss: (() -> Unit)? = null,
-    accentColor: Color = Color(0xFFFF4AA3)
+    accentColor: Color = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
 ) {
     // TODO: 後ほどUIのデザインシステムを統一したダイアログを実装
     AlertDialog(
