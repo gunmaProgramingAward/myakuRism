@@ -1,33 +1,52 @@
 package com.example.myaku_rismu.core.base
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.ViewModel
+import com.example.myaku_rismu.domain.model.PermissionResult
+import com.example.myaku_rismu.domain.useCase.HealthConnectPermissionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel@Inject constructor() : ViewModel() {
+class MainAppViewModel @Inject constructor(
+    private val healthConnectPermissionUseCase: HealthConnectPermissionUseCase
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(MainAppUiState())
+    val uiState: StateFlow<MainAppUiState> = _uiState.asStateFlow()
 
-    fun checkStatus(context: Context) {
-        val providerPackageName = "com.google.android.apps.healthdata"
-        val status = HealthConnectClient.getSdkStatus(context, providerPackageName)
-        if (status == HealthConnectClient.SDK_UNAVAILABLE) {
-            return
-        }
-        if (status == HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED) {
-            val uriString = "market://details?id=$providerPackageName&url=healthconnect%3A%2F%2Fonboarding"
-            context.startActivity(
-                Intent(Intent.ACTION_VIEW).apply {
-                    setPackage("com.android.vending")
-                    data = Uri.parse(uriString)
-                    putExtra("overlay", true)
-                    putExtra("callerId", context.packageName)
-                }
+    suspend fun checkPermissions(context: Context): PermissionResult {
+        return healthConnectPermissionUseCase.checkPermissions(context)
+    }
+
+    fun getRequiredPermissions(): Set<String> {
+        return healthConnectPermissionUseCase.getRequiredPermissions()
+    }
+
+    fun launchPlayStoreForHealthConnect(context: Context) {
+        healthConnectPermissionUseCase.launchPlayStoreForHealthConnect(context)
+    }
+
+    fun launchSettingApp(context: Context) {
+        healthConnectPermissionUseCase.launchSettingApp(context)
+    }
+
+    fun changeHealthConnectUnavailableDialog(value: Boolean) {
+        _uiState.update {
+            it.copy(
+                isShowHealthConnectUnavailableDialog = value
             )
-            return
+        }
+    }
+
+    fun changeIsShowPermissionHealthConnectDialog(value: Boolean) {
+        _uiState.update {
+            it.copy(
+                isShowPermissionHealthConnectDialog = value
+            )
         }
     }
 }
