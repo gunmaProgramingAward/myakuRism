@@ -6,7 +6,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -19,7 +18,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -38,8 +36,17 @@ import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
+import com.example.myaku_rismu.R
 
-enum class HealthMetricType { MOVE, HEART_RATE, SLEEP, STEPS, WALK_TIME }
+
+enum class HealthMetricType { MOVE,
+    HEART_RATE,
+    SLEEP,
+    STEPS,
+    WALK_TIME }
 
 data class HealthData(
     val type: HealthMetricType,
@@ -72,7 +79,7 @@ data class DailyHealthReport(
 
 //sample just 7days
 fun generateSampleData(): Map<LocalDate, DailyHealthReport> {
-    val today = LocalDate.of(2025, 7, 1)
+    val today = LocalDate.now()
     val data = mutableMapOf<LocalDate, DailyHealthReport>()
 
     for (i in 0..6) {
@@ -95,10 +102,16 @@ fun generateSampleData(): Map<LocalDate, DailyHealthReport> {
 @Composable
 fun HealthDashboardScreen() {
     val healthDataByDate by remember { mutableStateOf(generateSampleData()) }
-    var selectedDate by remember { mutableStateOf(LocalDate.of(2025, 7, 1)) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedMetricType by remember { mutableStateOf(HealthMetricType.MOVE) }
 
     val dailyReport = healthDataByDate[selectedDate] ?: healthDataByDate.values.first()
+
+    val dateFormatPattern = stringResource(id = R.string.calender_screen_date)
+    val dateFormatter = remember(dateFormatPattern) {
+        DateTimeFormatter.ofPattern(dateFormatPattern, Locale.JAPAN)
+    }
+    val selectedData = dailyReport.getByType(selectedMetricType)
 
     Column(
         modifier = Modifier
@@ -107,13 +120,7 @@ fun HealthDashboardScreen() {
             .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Calender",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Start)
-        )
+        Spacer(modifier = Modifier.height(24.dp))
 
         WeeklyCalendar(
             selectedDate = selectedDate,
@@ -127,7 +134,6 @@ fun HealthDashboardScreen() {
 
         Spacer(modifier = Modifier.height(36.dp))
 
-        val dateFormatter = DateTimeFormatter.ofPattern("M月d日", Locale.JAPAN)
         Text(
             text = selectedDate.format(dateFormatter),
             style = MaterialTheme.typography.headlineMedium,
@@ -140,14 +146,11 @@ fun HealthDashboardScreen() {
             onMetricSelected = { type -> selectedMetricType = type },
             modifier = Modifier
                 .fillMaxWidth()
+                .weight(1f)
                 .padding(vertical = 16.dp)
-                .aspectRatio(1f)
         )
 
-        val selectedData = dailyReport.getByType(selectedMetricType)
-        HealthDetail(data = selectedData)
-
-        Spacer(modifier = Modifier.weight(1f))
+        HealthDetailText(data = selectedData)
     }
 }
 
@@ -158,6 +161,7 @@ fun WeeklyCalendar(
     healthReports: Map<LocalDate, DailyHealthReport>
 ) {
     var displayDate by remember(selectedDate) { mutableStateOf(selectedDate) }
+    val weekStart = displayDate.minusDays(3)
 
     Row(
         modifier = Modifier
@@ -167,14 +171,14 @@ fun WeeklyCalendar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(onClick = { displayDate = displayDate.minusDays(1) }) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "이전")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = stringResource(id = R.string.calender_screen_previous))
         }
 
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val weekStart = displayDate.minusDays(3)
             for (i in 0..6) {
                 val date = weekStart.plusDays(i.toLong())
                 val hasData = healthReports.containsKey(date)
@@ -203,11 +207,11 @@ fun WeeklyCalendar(
         }
 
         IconButton(onClick = { displayDate = displayDate.plusDays(1) }) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "다음")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = stringResource(id = R.string.calender_screen_next))
         }
     }
 }
-
 
 @Composable
 fun CircularHealthDashboard(
@@ -223,28 +227,19 @@ fun CircularHealthDashboard(
         animationSpec = tween(durationMillis = 1000), label = "main progress animation"
     )
 
-    BoxWithConstraints(
-        modifier = modifier.padding(24.dp),
+    Box(
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        val boxSize = minOf(maxWidth, maxHeight)
-
-        // --- 큰 링 ---
         HealthRing(
             progress = animatedProgress,
             color = mainData.primaryColor,
-            size = boxSize,
+            size = LocalConfiguration.current.screenWidthDp.dp * 0.9f,
             strokeWidth = 20.dp
         )
-        Box(
-            modifier = Modifier
-                .size(boxSize - 40.dp)
-                .clip(CircleShape)
-                .background(mainData.primaryColor.copy(alpha = 0.1f))
-        )
 
-        val radius = boxSize * 0.25f
-        val smallRingSize = boxSize * 0.28f
+        val radius = 80.dp
+        val smallRingSize = 80.dp
 
         val slots = listOf(
             Pair(-Math.PI / 2, HealthMetricType.HEART_RATE),
@@ -254,16 +249,12 @@ fun CircularHealthDashboard(
         )
 
         slots.forEach { (angle, defaultTypeInSlot) ->
-
             val typeToShowInSlot = when {
                 selectedMetricType != HealthMetricType.MOVE && defaultTypeInSlot == selectedMetricType -> {
                     HealthMetricType.MOVE
                 }
-                else -> {
-                    defaultTypeInSlot
-                }
+                else -> defaultTypeInSlot
             }
-
             val data = report.getByType(typeToShowInSlot)
 
             Box(
@@ -328,29 +319,44 @@ fun HealthRing(
 
 
 @Composable
-fun HealthDetail(data: HealthData) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+fun HealthDetailText(data: HealthData) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Icon(
-            imageVector = data.icon,
-            contentDescription = data.name,
-            tint = data.primaryColor,
-            modifier = Modifier.size(24.dp)
-        )
-        Text(text = data.name, fontSize = 16.sp)
         Text(
-            text = "${data.currentValue.toInt()}/${data.goalValue.toInt()}",
-            color = data.primaryColor,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            text = data.name,
+            fontSize = 20.sp,
+            color = Color.Black
         )
-        Text(text = data.unit, fontSize = 16.sp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = data.icon,
+                contentDescription = data.name,
+                tint = data.primaryColor,
+                modifier = Modifier.size(32.dp)
+            )
+            Text(
+                text = "${data.currentValue.toInt()}/${data.goalValue.toInt()}",
+                color = data.primaryColor,
+                fontWeight = FontWeight.Bold,
+                fontSize = 32.sp
+            )
+            Text(
+                text = data.unit,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.DarkGray,
+                modifier = Modifier.align(Alignment.Bottom).padding(bottom = 4.dp)
+            )
+        }
     }
 }
 
-@Preview(showBackground = true, device = "id:pixel_6")
+@Preview(showBackground = true)
 @Composable
 fun HealthDashboardScreenPreview() {
     MaterialTheme {
