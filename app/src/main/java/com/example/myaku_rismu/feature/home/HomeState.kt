@@ -12,9 +12,22 @@ import com.example.myaku_rismu.ui.theme.customTheme
 
 data class HomeState(
     val screenState: ScreenState = ScreenState.Initializing(),
-    val bpmPlayerValue: Int = 0,
-    val metrics: List<HealthMetric> = emptyList(),
+    val bpmPlayerValue: Int = 85,
+    val metrics: List<HealthMetric> = emptyList()
 ) {
+    val beatIntervalMs: Float
+        get() = if(bpmPlayerValue > 0) (60000f / bpmPlayerValue) else 0f
+    val newRippleStartIntervalMs: Int
+        get() = beatIntervalMs.toInt() * 4
+
+    val bpmPlayerRippleColor: Color
+    @Composable
+    get() = when (bpmPlayerValue) {
+        in 81..140 -> MaterialTheme.customTheme.homeMediumBpmRippleColor
+        in 140..300 -> MaterialTheme.customTheme.homeHighBpmRippleColor
+        else -> MaterialTheme.customTheme.homeLowBpmRippleColor
+    }
+
     val bpmPlayerColor: Color
     @Composable
     get() = when (bpmPlayerValue) {
@@ -39,26 +52,6 @@ data class HealthMetric(
     val barColorFaded: Color @Composable get() = type.barColorFaded
 }
 
-data class WaveState(
-    val scale: Animatable<Float, AnimationVector1D>,
-    val alpha: Animatable<Float, AnimationVector1D>
-)
-
-data class BpmData(
-    val bpmPlayerValue: Int = 120, // BPMの値を保持するプロパティ
-) {
-    val beatIntervalMs: Float
-        get() = if(bpmPlayerValue > 0) (60f / bpmPlayerValue) * 1000f else 0f
-    val newRippleStartIntervalMs: Int
-        get() = beatIntervalMs.toInt() * 4
-    val bpmPlayerColor: Color
-        @Composable
-        get() = when (bpmPlayerValue) {
-            in 81..140 -> MaterialTheme.customTheme.homeMediumBpmRippleColor
-            in 140..300 -> MaterialTheme.customTheme.homeHighBpmRippleColor
-            else -> MaterialTheme.customTheme.homeLowBpmRippleColor
-    }
-}
 
 sealed interface HomeHealthType {
     data object Move: HomeHealthType
@@ -111,3 +104,8 @@ val HomeHealthType.barColorFaded: Color
         is HomeHealthType.SleepTime -> MaterialTheme.customTheme.homeSleepBarColorFaded
         is HomeHealthType.Walk -> MaterialTheme.customTheme.homeStepsBarColorFaded
     }
+
+data class WaveState(
+    val scale: Animatable<Float, AnimationVector1D>,
+    val alpha: Animatable<Float, AnimationVector1D>
+)
