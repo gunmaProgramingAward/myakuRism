@@ -70,8 +70,8 @@ fun DonutChart(
             if (sweepAngle < 360f) {
                 drawArc(
                     color = barColorFaded,
-                    startAngle = 270f + sweepAngle,
-                    sweepAngle = 360f - sweepAngle,
+                    startAngle = 0f,
+                    sweepAngle = 360f,
                     useCenter = false,
                     style = Stroke(
                         width = size.width * 0.2f,
@@ -85,7 +85,7 @@ fun DonutChart(
                     sweepAngle = sweepAngle,
                     useCenter = false,
                     style = Stroke(
-                        width = size.width * 0.2f,
+                        width = size.width * 0.15f,
                         cap = StrokeCap.Round
                     )
                 )
