@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import com.example.myaku_rismu.core.rememberAppState
+import com.example.myaku_rismu.feature.home.HomeScreen
 import com.example.myaku_rismu.ui.theme.DarkCustomTheme
 import com.example.myaku_rismu.ui.theme.LightCustomTheme
 import com.example.myaku_rismu.ui.theme.LocalCustomTheme
@@ -31,7 +32,9 @@ class MainActivity : ComponentActivity() {
 
                 CompositionLocalProvider(LocalCustomTheme provides customTheme) {
                     MaterialTheme {
-                        MainAppScreen(appState = appState)
+                        HomeScreen(
+                            appState = appState,
+                        )
                     }
                 }
             }
