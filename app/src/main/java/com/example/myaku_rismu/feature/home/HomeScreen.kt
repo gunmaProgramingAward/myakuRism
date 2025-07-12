@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.feature.home.components.BarChart
 import com.example.myaku_rismu.feature.home.components.DonutChart
+import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
@@ -84,7 +86,6 @@ fun HomeContent(
     Column(modifier = modifier) {
         BpmPlayerCard(
             modifier = Modifier,
-            bpmData = BpmData(),
             uiState = uiState
         )
         Column(
@@ -103,7 +104,6 @@ fun HomeContent(
 @Composable
 fun BpmPlayerCard(
     modifier: Modifier = Modifier,
-    bpmData: BpmData,
     uiState: HomeState
 ) {
     Box(
@@ -114,9 +114,14 @@ fun BpmPlayerCard(
     ) {
         LoopingRipple(
             modifier = Modifier.align(Alignment.Center),
-            beatIntervalMs = bpmData.beatIntervalMs,
-            newRippleStartIntervalMs = bpmData.newRippleStartIntervalMs,
-            bpmPlayerColor = bpmData.bpmPlayerColor
+            beatIntervalMs = uiState.beatIntervalMs,
+            newRippleStartIntervalMs = uiState.newRippleStartIntervalMs,
+            bpmPlayerRippleColor = uiState.bpmPlayerRippleColor
+        )
+        GifImageLoader(
+            modifier = Modifier
+                .size(250.dp)
+                .align(Alignment.BottomCenter)
         )
         Column(
             modifier = Modifier
