@@ -12,6 +12,7 @@
     <string name="calender_screen_date">M月d日</string>
     <string name="calender_screen_previous">前</string>
     <string name="calender_screen_next">次</string>
+    <string name="calender_screen_animation">main progress animation</string>
     <string-array name="health_detail_periods">
         <item>日</item>
         <item>週</item>

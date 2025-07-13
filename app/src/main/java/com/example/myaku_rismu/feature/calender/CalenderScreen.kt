@@ -38,7 +38,6 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
 import com.example.myaku_rismu.R
 
 
@@ -137,7 +136,6 @@ fun HealthDashboardScreen() {
         Text(
             text = selectedDate.format(dateFormatter),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
         )
 
         CircularHealthDashboard(
@@ -182,8 +180,9 @@ fun WeeklyCalendar(
             for (i in 0..6) {
                 val date = weekStart.plusDays(i.toLong())
                 val hasData = healthReports.containsKey(date)
-                val progress = if(hasData) healthReports[date]!!.move.progress else 0f
-                val color = if(hasData) healthReports[date]!!.move.primaryColor else Color.LightGray
+                val report = healthReports[date]
+                val progress = report?.move?.progress ?: 0f
+                val color = report?.move?.primaryColor ?: Color.LightGray
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -224,7 +223,8 @@ fun CircularHealthDashboard(
 
     val animatedProgress by animateFloatAsState(
         targetValue = mainData.progress,
-        animationSpec = tween(durationMillis = 1000), label = "main progress animation"
+        animationSpec = tween(durationMillis = 1000),
+        label = stringResource(id = R.string.calender_screen_animation)
     )
 
     Box(
@@ -326,8 +326,7 @@ fun HealthDetailText(data: HealthData) {
     ) {
         Text(
             text = data.name,
-            fontSize = 20.sp,
-            color = Color.Black
+            style = MaterialTheme.typography.headlineSmall
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -350,7 +349,6 @@ fun HealthDetailText(data: HealthData) {
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.DarkGray,
-                modifier = Modifier.align(Alignment.Bottom).padding(bottom = 4.dp)
             )
         }
     }
