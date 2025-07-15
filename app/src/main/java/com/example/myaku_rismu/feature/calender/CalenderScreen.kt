@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -151,6 +152,7 @@ fun HealthDashboardScreen() {
         HealthDetailText(data = selectedData)
     }
 }
+import com.example.myaku_rismu.core.AppState
 
 @Composable
 fun WeeklyCalendar(
@@ -360,4 +362,5 @@ fun HealthDashboardScreenPreview() {
     MaterialTheme {
         HealthDashboardScreen()
     }
+fun CalenderScreen(appState: AppState, modifier: Modifier = Modifier) {
 }
