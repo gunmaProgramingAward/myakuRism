@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +36,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun MusicPlayerScreen() {
-    var isPlaying by remember { mutableStateOf(false) }
-    var isFavorite by remember { mutableStateOf(false) }
+fun MusicPlayerScreen(
+    viewModel: MusicDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    fun eventhandler(event: MusicDetailUiEvent) {
+        when (event) {
+            is MusicDetailUiEvent.ChangeIsPlaying -> {
+                viewModel.changeIsPlaying(event.boolean)
+            }
+            is MusicDetailUiEvent.ChangeIsFavorite -> {
+                viewModel.changeIsFavorite(event.boolean)
+            }
+        }
+    }
+    
     var sliderPosition by remember { mutableStateOf(0.3f) }
 
     Column(
@@ -68,8 +84,8 @@ fun MusicPlayerScreen() {
             Spacer(modifier = Modifier.height(32.dp))
 
             PlayerControls(
-                isPlaying = isPlaying,
-                onPlayPauseClick = { isPlaying = !isPlaying }
+                isPlaying = uiState.isPlaying,
+                onPlayPauseClick = { eventhandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -82,8 +98,8 @@ fun MusicPlayerScreen() {
         }
 
         ActionButtons(
-            isFavorite = isFavorite,
-            onFavoriteClick = { isFavorite = !isFavorite }
+            isFavorite = uiState.isFavorite,
+            onFavoriteClick = { eventhandler(MusicDetailUiEvent.ChangeIsFavorite(!uiState.isFavorite)) }
         )
     }
 }
@@ -233,7 +249,8 @@ fun CustomSlider(
 @Preview(showBackground = true)
 @Composable
 fun MusicPlayerScreenPreview() {
+    val fakeViewModel: MusicDetailViewModel = viewModel()
     Myaku_rismuTheme {
-        MusicPlayerScreen()
+        MusicPlayerScreen(viewModel = fakeViewModel)
     }
 }
