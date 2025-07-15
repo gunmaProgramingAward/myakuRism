@@ -64,7 +64,6 @@ fun MusicLibraryScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryChips(
     categories: List<String>,
@@ -109,7 +108,6 @@ fun AlbumGrid(tracks: List<MusicTrack>) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumItem(track: MusicTrack) {
     Column(
