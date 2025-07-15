@@ -42,32 +42,44 @@ class HealthDetailViewModel : ViewModel() {
 
         _uiState.update {
             it.copy(
-                stepData = newStepData,
+                stepData = newStepData
             )
         }
 
-        updateAxisConfig()
         updateDailyAverage()
+        updateHealthType()
+        updateAxisConfig()
     }
 
-    private fun updateDailyAverage() {
-        val dailyAverage = calculateDailyAverage(
-            uiState.value.stepData,
-            uiState.value.selectedPeriods
-        )
-        _uiState.update { it.copy(dailyAverage = dailyAverage) }
+private fun updateDailyAverage() {
+    val stepData = _uiState.value.stepData
+    val selectedPeriod = _uiState.value.selectedPeriods
+
+    val dailyAverage =  when (selectedPeriod) {
+        0 -> stepData.sum().toString()
+        1, 2 -> stepData.average().roundToInt().toString()
+        3 -> {
+            val totalSteps = stepData.sum().toDouble()
+            val daysInYear = LocalDate.now().lengthOfYear().toDouble()
+            (totalSteps / daysInYear).roundToInt().toString()
+        }
+        else -> "0"
     }
 
-    private fun calculateDailyAverage(stepData: List<Int>, selectedPeriod: Int): String {
-        return when (selectedPeriod) {
-            0 -> stepData.sum().toString()
-            1, 2 -> stepData.average().roundToInt().toString()
-            3 -> {
-                val totalSteps = stepData.sum().toDouble()
-                val daysInYear = LocalDate.now().lengthOfYear().toDouble()
-                (totalSteps / daysInYear).roundToInt().toString()
-            }
-            else -> "0"
+    _uiState.update { currentState ->
+        currentState.copy(dailyAverage = dailyAverage)
+    }
+}
+
+
+    private fun updateHealthType() {
+        // TODO :　仮のデータなので後で置き換え
+        val moveTarget = 300
+        // TODO :　仮のデータなので後で置き換え
+        val healthType = HealthType.Move(moveTarget)
+
+        _uiState.update { currentState ->
+            currentState.copy(healthType = healthType)
         }
     }
 
