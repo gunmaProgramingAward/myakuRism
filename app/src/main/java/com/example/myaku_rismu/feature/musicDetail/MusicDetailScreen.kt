@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,24 +16,24 @@ import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.ui.theme.Typography
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.Dp
 
 @Composable
 fun MusicPlayerScreen() {
@@ -63,21 +62,19 @@ fun MusicPlayerScreen() {
                     .background(Color.LightGray)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-            TrackInfo()
-            Spacer(modifier = Modifier.height(32.dp))
+            TrackInfo(modifier = Modifier.padding(32.dp))
 
             PlayerControls(
                 isPlaying = isPlaying,
                 onPlayPauseClick = { isPlaying = !isPlaying }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             CustomSlider(
                 value = sliderPosition,
                 onValueChange = { newPosition -> sliderPosition = newPosition },
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
         }
 
@@ -89,8 +86,11 @@ fun MusicPlayerScreen() {
 }
 
 @Composable
-fun TrackInfo() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun TrackInfo(modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
         Text(
             text = "Title by AI1",//TODO
             style = Typography.headlineSmall,
@@ -113,7 +113,11 @@ fun PlayerControls(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = {}) {
-            Icon(Icons.Default.SkipPrevious, contentDescription = stringResource(id = R.string.music_detail_previous_track), modifier = Modifier.size(40.dp))
+            Icon(
+                Icons.Default.SkipPrevious,
+                contentDescription = stringResource(id = R.string.music_detail_previous_track),
+                modifier = Modifier.size(40.dp)
+            )
         }
         IconButton(onClick = onPlayPauseClick) {
             Icon(
@@ -123,12 +127,14 @@ fun PlayerControls(isPlaying: Boolean, onPlayPauseClick: () -> Unit) {
             )
         }
         IconButton(onClick = {}) {
-            Icon(Icons.Default.SkipNext, contentDescription = stringResource(id = R.string.music_detail_next_track), modifier = Modifier.size(40.dp))
+            Icon(
+                Icons.Default.SkipNext,
+                contentDescription = stringResource(id = R.string.music_detail_next_track),
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
-
-
 
 @Composable
 fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
@@ -159,73 +165,83 @@ fun ActionButtons(isFavorite: Boolean, onFavoriteClick: () -> Unit) {
 fun CustomSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trackColor: Color = Color.LightGray,
+    progressColor: Color = Color.Black,
+    thumbColor: Color = Color.Black,
+    trackHeight: Dp = 6.dp,
+    thumbRadius: Dp = 10.dp
 ) {
-    val thumbPainter = painterResource(id = R.drawable.slider_thumb)
-    val trackPainter = painterResource(id = R.drawable.slider_track)
-    val progressPainter = painterResource(id = R.drawable.slider_progress)
-
-    var sliderWidth by remember { mutableStateOf(0) }
-    val density = LocalDensity.current.density
-    val thumbSize = 24.dp //下で使ってるのに、、、
+    val density = LocalDensity.current
+    var sliderWidthPx by remember { mutableStateOf(0f) }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .onSizeChanged { newSize ->
-                sliderWidth = newSize.width
+            .height(thumbRadius * 2 + trackHeight)
+            .onSizeChanged {
+                sliderWidthPx = it.width.toFloat()
             }
-            .pointerInput(sliderWidth) {
-                if (sliderWidth == 0) return@pointerInput
+            .pointerInput(sliderWidthPx) {
+                if (sliderWidthPx == 0f) return@pointerInput
 
-                detectDragGestures { change, _ ->
-                    val newPosition = change.position.x
-                    val newValue = (newPosition / sliderWidth).coerceIn(0f, 1f)
+                detectDragGestures(
+                    onDragStart = { startOffset ->
+                        val newValue = (startOffset.x / sliderWidthPx).coerceIn(0f, 1f)
+                        onValueChange(newValue)
+                    },
+                    onDrag = { change, _ ->
+                        val newPosition = change.position.x
+                        val newValue = (newPosition / sliderWidthPx).coerceIn(0f, 1f)
+                        onValueChange(newValue)
+                        change.consume()
+                    }
+                )
+            }
+            .pointerInput(sliderWidthPx) {
+                if (sliderWidthPx == 0f) return@pointerInput
+                detectTapGestures { offset ->
+                    val newValue = (offset.x / sliderWidthPx).coerceIn(0f, 1f)
                     onValueChange(newValue)
-                    change.consume()
                 }
             },
         contentAlignment = Alignment.CenterStart
     ) {
-        val thumbSize = 24.dp
-        val trackHeight = 8.dp
+        if (sliderWidthPx > 0f) {
+            val trackHeightPx = with(density) { trackHeight.toPx() }
+            val thumbRadiusPx = with(density) { thumbRadius.toPx() }
 
-        if (sliderWidth > 0) {
-            val thumbSizePx = thumbSize.value * density
-            val thumbOffset = (sliderWidth * value) - (thumbSizePx / 2)
-
-            Image(
-                painter = trackPainter,
-                contentDescription = stringResource(id = R.string.music_detail_track),
-                modifier = Modifier.fillMaxWidth().height(trackHeight),
-                contentScale = ContentScale.FillBounds //これを使うと線が太くなりますが、使わないと線の太さが薄くなったり太くなったりします。
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(value)
-                    .height(trackHeight)
-                    .clip(RoundedCornerShape(topStart = 100f, bottomStart = 100f))
-            ) {
-                Image(
-                    painter = progressPainter,
-                    contentDescription = stringResource(id = R.string.music_detail_progress),
-                    modifier = Modifier.fillMaxWidth().height(trackHeight),
-                    contentScale = ContentScale.FillBounds,//これを使うと線が太くなりますが、使わないと線の太さが薄くなったり太くなったりします。
-                    colorFilter = ColorFilter.tint(Color.Black)
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawLine(
+                    color = trackColor,
+                    start = Offset(thumbRadiusPx, center.y),
+                    end = Offset(sliderWidthPx - thumbRadiusPx, center.y),
+                    strokeWidth = trackHeightPx,
+                    cap = StrokeCap.Round
                 )
             }
 
-            Image(
-                painter = thumbPainter,
-                contentDescription = stringResource(id = R.string.music_detail_thumb),
-                modifier = Modifier
-                    .offset(x = (thumbOffset / LocalDensity.current.density).dp)
-                    .size(thumbSize),
-                contentScale = ContentScale.FillBounds
+            val progressEndX = (sliderWidthPx - thumbRadiusPx * 2) * value + thumbRadiusPx
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                if (progressEndX > thumbRadiusPx) {
+                    drawLine(
+                        color = progressColor,
+                        start = Offset(thumbRadiusPx, center.y),
+                        end = Offset(progressEndX, center.y),
+                        strokeWidth = trackHeightPx,
+                        cap = StrokeCap.Round
+                    )
+                }
+            }
 
-            )
+            val thumbCenterX = (sliderWidthPx - thumbRadiusPx * 2) * value + thumbRadiusPx
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawCircle(
+                    color = thumbColor,
+                    radius = thumbRadiusPx,
+                    center = Offset(thumbCenterX, center.y)
+                )
+            }
         }
     }
 }
