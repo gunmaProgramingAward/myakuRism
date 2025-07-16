@@ -15,14 +15,19 @@
     <string name="height">身長</string>
     <string name="unit_of_height">cm</string>
     <string name="unit_of_weight">kg</string>
-    <string name="date_format_jp">%1$s年 %2$s月 %3$s日</string>
+    <string name="date_format_jp">%1$s/%2$s/%3$s</string>
     <string name="height_display_format">%1$s cm</string>
     <string name="weight_display_format">%1$s kg</string>
+    <string name="cancel">キャンセル</string>
+    <string name="ok">OK</string>
+    <string name="select_your_date_of_birth">生年月日を選択</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
     <string-array name="gender_display_options">
         <item>男性</item>
         <item>女性</item>
         <item>その他</item>
-        <item>回答しない</item>
     </string-array>
     <string-array name="activity_level_main_texts">
         <item>低い</item>
