@@ -3,9 +3,7 @@ package com.example.myaku_rismu.ui.theme
 import androidx.compose.ui.graphics.Color
 
 data class CustomTheme(
-    val settingScreenBackgroundColor: Color,
-    val settingScreenCardColor: Color,
-    val settingScreenTextColor: Color,
+    val myakuRismuBackgroundColor: Color,
     val healthDetailMoveThemeColor: Color,
     val healthDetailMoveDistanceThemeColor: Color,
     val healthDetailHeartRateThemeColor: Color,
@@ -13,6 +11,7 @@ data class CustomTheme(
     val healthDetailWalkThemeColor: Color,
     val healthDetailPeriodTabColor: Color,
     val settingScreenCommonColor: Color,
+    val settingScreenNormalTextColor: Color,
     val onSelectedButtonOverlay: Color,
     val healthDetailSelectedPeriodTabColor: Color,
     val bottomNavigationBarBackgroundColor: Color,
