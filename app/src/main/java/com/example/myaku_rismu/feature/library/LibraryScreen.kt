@@ -19,6 +19,7 @@ import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myaku_rismu.core.AppState
 
 data class MusicTrack(
     val id: Int,
@@ -40,9 +41,12 @@ val allTracks = listOf(
     MusicTrack(8, "Title by AI8", "2025.06.05", "Angry"),
 )
 */
+@Composable
+fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
+}
 
 @Composable
-fun LibraryScreen(
+fun MusicLibraryScreen(
     viewModel: LibraryViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -137,6 +141,6 @@ fun AlbumItem(track: MusicTrack) {
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        LibraryScreen()
+        MusicLibraryScreen()
     }
 }

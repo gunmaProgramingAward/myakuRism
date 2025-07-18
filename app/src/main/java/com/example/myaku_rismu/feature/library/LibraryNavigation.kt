@@ -7,7 +7,7 @@ import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.navigation.LibraryRoute
 
 fun NavGraphBuilder.libraryScreen(appState: AppState, modifier: Modifier = Modifier) {
-//    composable<LibraryRoute> {
-//        LibraryScreen(appState = appState, modifier = modifier)
-//    }
+    composable<LibraryRoute> {
+        LibraryScreen(appState = appState, modifier = modifier)
+    }
 }
