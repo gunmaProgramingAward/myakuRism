@@ -40,7 +40,11 @@ val allTracks = listOf(
 )
 
 @Composable
-fun LibraryScreen() {
+fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
+}
+
+@Composable
+fun MusicLibraryScreen() {
     val categories = listOf("All", "Happy", "Sad", "Angry", "Surprised")
     var selectedCategory by remember { mutableStateOf("All") }
 
@@ -140,6 +144,6 @@ fun AlbumItem(track: MusicTrack) {
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        LibraryScreen()
+        MusicLibraryScreen()
     }
 }
