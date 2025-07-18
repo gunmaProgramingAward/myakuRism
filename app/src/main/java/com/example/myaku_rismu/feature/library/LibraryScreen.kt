@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 data class MusicTrack(
     val id: Int,
@@ -26,6 +27,7 @@ data class MusicTrack(
     val category: String
 )
 
+/*
 // TODO 一時的な変数です
 val allTracks = listOf(
     MusicTrack(1, "Title by AI1", "2025.06.04", "Happy"),
@@ -37,17 +39,13 @@ val allTracks = listOf(
     MusicTrack(7, "Title by AI7", "2025.06.05", "Happy"),
     MusicTrack(8, "Title by AI8", "2025.06.05", "Angry"),
 )
+*/
 
 @Composable
-fun MusicLibraryScreen() {
-    val categories = listOf("All", "Happy", "Sad", "Angry", "Surprised")
-    var selectedCategory by remember { mutableStateOf("All") }
-
-    val filteredTracks = if (selectedCategory == "All") {
-        allTracks
-    } else {
-        allTracks.filter { it.category == selectedCategory }
-    }
+fun LibraryScreen(
+    viewModel: LibraryViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -55,15 +53,15 @@ fun MusicLibraryScreen() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         CategoryChips(
-            categories = categories,
-            selectedCategory = selectedCategory,
+            categories = uiState.categories,
+            selectedCategory = uiState.selectedCategory,
             onCategorySelected = { category ->
-                selectedCategory = category
+                viewModel.onEvent(LibraryUiEvent.SelectCategory(category))
             }
         )
-        AlbumGrid(tracks = filteredTracks)
-    }
+        AlbumGrid(tracks = uiState.tracks)    }
 }
+
 
 @Composable
 fun CategoryChips(
@@ -75,7 +73,7 @@ fun CategoryChips(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp)
             .horizontalScroll(scrollState),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -132,13 +130,13 @@ fun AlbumItem(track: MusicTrack) {
 
         Text(text = track.title, style = Typography.bodyLarge)
         Text(text = track.date, style = Typography.bodySmall, color = Color.Gray)
-   }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        MusicLibraryScreen()
+        LibraryScreen()
     }
 }
