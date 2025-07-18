@@ -40,6 +40,7 @@ import kotlin.math.sin
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.core.AppState
 
 
 enum class HealthMetricType { MOVE,
@@ -98,6 +99,9 @@ fun generateSampleData(): Map<LocalDate, DailyHealthReport> {
     return data
 }
 
+@Composable
+fun CalenderScreen(appState: AppState, modifier: Modifier = Modifier) {
+}
 
 @Composable
 fun HealthDashboardScreen() {
@@ -152,7 +156,6 @@ fun HealthDashboardScreen() {
         HealthDetailText(data = selectedData)
     }
 }
-import com.example.myaku_rismu.core.AppState
 
 @Composable
 fun WeeklyCalendar(
@@ -362,5 +365,4 @@ fun HealthDashboardScreenPreview() {
     MaterialTheme {
         HealthDashboardScreen()
     }
-fun CalenderScreen(appState: AppState, modifier: Modifier = Modifier) {
 }
