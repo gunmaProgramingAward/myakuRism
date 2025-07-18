@@ -10,13 +10,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.example.myaku_rismu.core.AppState
 
 data class MusicTrack(
     val id: Int,
@@ -92,9 +94,6 @@ fun CategoryChips(
         }
     }
 }
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.example.myaku_rismu.core.AppState
 
 @Composable
 fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
