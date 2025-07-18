@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.myaku_rismu.core.AppState
 
 data class MusicTrack(
     val id: Int,
@@ -95,9 +94,6 @@ fun CategoryChips(
     }
 }
 
-@Composable
-fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
-}
 @Composable
 fun AlbumGrid(tracks: List<MusicTrack>) {
     LazyVerticalGrid(
