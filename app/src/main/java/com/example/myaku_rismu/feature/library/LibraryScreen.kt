@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.myaku_rismu.core.AppState
 
 data class MusicTrack(
     val id: Int,
@@ -39,7 +40,7 @@ val allTracks = listOf(
 )
 
 @Composable
-fun MusicLibraryScreen() {
+fun LibraryScreen() {
     val categories = listOf("All", "Happy", "Sad", "Angry", "Surprised")
     var selectedCategory by remember { mutableStateOf("All") }
 
@@ -139,6 +140,6 @@ fun AlbumItem(track: MusicTrack) {
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        MusicLibraryScreen()
+        LibraryScreen()
     }
 }
