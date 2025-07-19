@@ -42,6 +42,11 @@
     <string name="unit_km">km</string>
     <string name="unit_null"> </string>
 
+    <string name="edm">EDM</string>
+    <string name="pops">POPS</string>
+    <string name="classic">クラシック</string>
+    <string name="rock">ロック</string>
+
     // BottomNavigationBar
     <string name="bottom_navigation_bar_home">ホーム</string>
     <string name="bottom_navigation_bar_calendar">カレンダー</string>
@@ -50,4 +55,8 @@
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="select_genre">ジャンルを選択してください</string>
+    <string name="choose_whether_to_include_lyrics">歌詞を含めるかを選択してください</string>
+    <string name="create_music">音楽を作成する</string>
+    <string name="instrumental">インストゥルメンタル</string>
 </resources>
