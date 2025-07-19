@@ -23,6 +23,28 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun showBottomSheet() {
+        _uiState.update { it.copy(showBottomSheet = true) }
+    }
+
+    fun hideBottomSheet() {
+        _uiState.update { it.copy(showBottomSheet = false) }
+    }
+
+    fun selectMusicGenre(metric: HealthMetric) {
+        _uiState.update {
+            it.copy(selectedGenre = metric)
+        }
+    }
+
+    fun onSwitchCheckedChange(isChecked: Boolean) {
+        _uiState.update {
+            it.copy(
+                isSwitchChecked = isChecked,
+            )
+        }
+    }
+
     fun changeBpmPlayerValue(value: Int) {
         _uiState.update {
             it.copy(
@@ -36,7 +58,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         val metrics = listOf(
             HealthMetric(
                 type = HomeHealthType.HeartRate,
-                currentValue = 70,
+                currentValue = 200,
                 targetValue = 180
             ),
             HealthMetric(
@@ -51,7 +73,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             ),
             HealthMetric(
                 type = HomeHealthType.SleepTime,
-                currentValue = 6,
+                currentValue = 9,
                 targetValue = 8
             ),
             HealthMetric(
@@ -61,5 +83,6 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             )
         )
         _uiState.update { it.copy(metrics = metrics) }
+
     }
 }
