@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
@@ -32,10 +33,9 @@ import com.example.myaku_rismu.ui.theme.customTheme
 
 @Composable
 fun ProfileDetailScreen(
+    modifier: Modifier = Modifier,
     appState: AppState,
-    viewModel: ProfileDetailViewModel = viewModel(),
-    onNavigateToSettingScreen: () -> Unit,
-    modifier: Modifier = Modifier
+    viewModel: ProfileDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -46,14 +46,13 @@ fun ProfileDetailScreen(
                 viewModel.toggleSwitch(event.switchType)
             }
             is ProfileDetailUiEvent.OnClickSetting -> {
-                onNavigateToSettingScreen()
+                appState.navigateToSetting()
             }
         }
     }
 
     Scaffold(modifier = modifier) { innerPadding ->
         ProfileDetail(
-//            appState = appState,
             uiState = uiState,
             onClickSwitch = { switchType ->
                 eventHandler(ProfileDetailUiEvent.OnClickSwitch(switchType))
@@ -69,7 +68,6 @@ fun ProfileDetailScreen(
 
 @Composable
 fun ProfileDetail(
-//    appState: AppState,
     uiState: ProfileDetailState,
     onClickSwitch: (Int) -> Unit,
     onClickSetting: () -> Unit,

@@ -15,9 +15,6 @@ fun NavGraphBuilder.profileDetailScreen(
         ProfileDetailScreen(
             appState = appState,
             modifier = modifier,
-            onNavigateToSettingScreen = {
-                appState.navController.navigate(SettingsRoute)
-            }
         )
     }
 }
