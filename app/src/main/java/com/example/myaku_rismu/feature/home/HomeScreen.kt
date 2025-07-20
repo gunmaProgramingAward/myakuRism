@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -63,7 +64,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     appState: AppState,
     viewModel: HomeViewModel = hiltViewModel(),
-
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
