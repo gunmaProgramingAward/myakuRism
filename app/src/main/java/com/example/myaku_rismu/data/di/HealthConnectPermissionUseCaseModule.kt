@@ -1,5 +1,7 @@
 package com.example.myaku_rismu.data.di
 
+import com.example.myaku_rismu.data.datasource.HealthConnectDataSource
+import com.example.myaku_rismu.data.datasource.HealthConnectDataSourceImpl
 import com.example.myaku_rismu.data.repository.HealthConnectRepositoryImpl
 import com.example.myaku_rismu.data.useCase.HealthConnectPermissionUseCaseImpl
 import com.example.myaku_rismu.domain.repository.HealthConnectRepository
@@ -25,4 +27,9 @@ abstract class HealthConnectPermissionUseCaseModule {
     abstract fun bindHealthConnectPermissionUseCase(
         healthConnectPermissionUseCaseImpl: HealthConnectPermissionUseCaseImpl
     ): HealthConnectPermissionUseCase
+
+    @Binds
+    abstract fun bindHealthConnectDataSource(
+        impl: HealthConnectDataSourceImpl
+    ): HealthConnectDataSource
 }
