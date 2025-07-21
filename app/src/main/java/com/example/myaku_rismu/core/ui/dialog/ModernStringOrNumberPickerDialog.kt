@@ -1,4 +1,4 @@
-package com.example.myaku_rismu.feature.setting.components
+package com.example.myaku_rismu.core.ui.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -54,7 +54,7 @@ private const val defaultPickerVisibleItemsCount = 5
 private val defaultPickerTextStyleNormal = 20.sp
 private val defaultPickerTextStyleSelected = 28.sp
 
-// --- 文字列または数値選択用のモダンなピッカーダイアログ ---
+
 @Composable
 fun ModernStringOrNumberPickerDialog(
     title: String,
