@@ -1,6 +1,7 @@
 package com.example.myaku_rismu.feature.home
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -26,13 +27,21 @@ fun HomeScreen(
 
     Scaffold(modifier = modifier) { innerPadding ->
         // TODO: 仮のボタン
-        Button(
-            onClick = {
-                appState.navigateToHealthDetail()
-            },
-            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
-        ) {
-            Text("Go to Health Detail")
+        Column {
+            Button(
+                onClick = {
+                    appState.navigateToHealthDetail()
+                },
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            ) {
+                Text("Go to Health Detail")
+            }
+
+            Button(
+                onClick = {
+                    viewModel.generateMusic(prompt = "hiphop")
+                }
+            ) { }
         }
     }
 }
