@@ -45,7 +45,7 @@ fun MusicPlayerScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    fun eventhandler(event: MusicDetailUiEvent) {
+    fun eventHandler(event: MusicDetailUiEvent) {
         when (event) {
             is MusicDetailUiEvent.ChangeIsPlaying -> {
                 viewModel.changeIsPlaying(event.boolean)
@@ -85,7 +85,7 @@ fun MusicPlayerScreen(
 
             PlayerControls(
                 isPlaying = uiState.isPlaying,
-                onPlayPauseClick = { eventhandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying)) }
+                onPlayPauseClick = { eventHandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +99,7 @@ fun MusicPlayerScreen(
 
         ActionButtons(
             isFavorite = uiState.isFavorite,
-            onFavoriteClick = { eventhandler(MusicDetailUiEvent.ChangeIsFavorite(!uiState.isFavorite)) }
+            onFavoriteClick = { eventHandler(MusicDetailUiEvent.ChangeIsFavorite(!uiState.isFavorite)) }
         )
     }
 }
