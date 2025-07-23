@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:sleep.urbandroid.org)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": []
+  }
+}
