@@ -14,7 +14,8 @@ data class HomeState(
     val metrics: List<HealthMetric> = emptyList(),
     val selectedGenre: HealthMetric? = null,
     val isSwitchChecked: Boolean = false,
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val createMusic: Boolean = false
 ) {
     val beatIntervalMs: Float
         get() = if(bpmPlayerValue > 0) (60000f / bpmPlayerValue) else 0f

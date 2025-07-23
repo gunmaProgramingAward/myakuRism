@@ -30,8 +30,12 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = true) }
     }
 
-    fun hideBottomSheet() {
+    fun dismissBottomSheet() {
         _uiState.update { it.copy(showBottomSheet = false) }
+    }
+
+    fun createNewMusic() {
+        _uiState.update { it.copy(createMusic = true) }
     }
 
     fun selectMusicGenre(metric: HealthMetric) {
