@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
@@ -61,7 +62,7 @@ import kotlin.math.roundToInt
 @Composable
 fun HealthDetailScreen(
     appState: AppState,
-    viewModel: HealthDetailViewModel = viewModel(),
+    viewModel: HealthDetailViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()

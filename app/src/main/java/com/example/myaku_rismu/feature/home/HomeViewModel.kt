@@ -2,12 +2,16 @@ package com.example.myaku_rismu.feature.home
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.navigation.toRoute
-import com.example.myaku_rismu.core.navigation.HomeRoute
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel@Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val args: HomeRoute = savedStateHandle.toRoute()
-    val userId: String? = args.userId
+    private val _uiState = MutableStateFlow(HomeState())
+    val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 }
