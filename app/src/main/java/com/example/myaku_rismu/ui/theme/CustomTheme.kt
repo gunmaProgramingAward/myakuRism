@@ -18,6 +18,7 @@ data class CustomTheme(
     val bottomNavigationBarBackgroundColor: Color,
     val bottomNavigationBarSelectedColor: Color,
     val bottomNavigationBarUnSelectedColor: Color,
+    val myakuRismuCardColor: Color,
     val homeLowBpmColor: Color,
     val homeMediumBpmColor: Color,
     val homeHighBpmColor: Color,

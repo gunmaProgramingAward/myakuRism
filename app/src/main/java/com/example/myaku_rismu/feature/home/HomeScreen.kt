@@ -167,8 +167,7 @@ fun HealthMetricCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(Color.White),
-        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.customTheme.myakuRismuCardColor),
         onClick = { /*HealthDetailScreenに画面推移*/ },
     ) {
         if (metric.titleResId == (R.string.current_heart_rate)) {
