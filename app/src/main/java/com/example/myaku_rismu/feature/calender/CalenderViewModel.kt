@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -33,13 +34,17 @@ class CalenderViewModel @Inject constructor(
             }
 
             is CalenderUiEvent.OnDateSelected -> {
-                _uiState.value = _uiState.value.copy(selectedDate = event.date)
+                _uiState.update { currentState ->
+                    currentState.copy(selectedDate = event.date)
+                }
             }
         }
     }
 
     fun getHealthData(dateForweek: LocalDate) {
-        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        _uiState.update { currentState ->
+            currentState.copy(isLoading = true, error = null)
+        }
         viewModelScope.launch {
             try {
                 val stepsData = useCase.fetchRecordsByGranularity(
@@ -68,31 +73,36 @@ class CalenderViewModel @Inject constructor(
                     granularity = HealthDataGranularity.WEEKLY
                 )
 
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    selectedDate = dateForweek,
-                    weeklySteps = stepsData,
-                    weeklyCalories = caloriesData,
-                    weeklyDistance = distanceData,
-                    weeklyHeartRate = heartRateData,
-                    weeklySleep = sleepData
-                )
-                Log.d("ddd", "steps${stepsData}")
-                Log.d("ddd", "calories${caloriesData}")
-                Log.d("ddd", "distance${distanceData}")
-                Log.d("ddd", "heart_rate${heartRateData}")
-                Log.d("ddd", "sleep${sleepData}")
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = "data error: ${e.localizedMessage}"
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                        selectedDate = dateForweek,
+                        weeklySteps = stepsData,
+                        weeklyCalories = caloriesData,
+                        weeklyDistance = distanceData,
+                        weeklyHeartRate = heartRateData,
+                        weeklySleep = sleepData
+                    )
+                }
+                    Log.d("ddd", "steps${stepsData}")
+                    Log.d("ddd", "calories${caloriesData}")
+                    Log.d("ddd", "distance${distanceData}")
+                    Log.d("ddd", "heart_rate${heartRateData}")
+                    Log.d("ddd", "sleep${sleepData}")
+                } catch (e: Exception) {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            isLoading = false,
+                            error = "data error: ${e.localizedMessage}"
+                        )
+                    }
+                }
             }
         }
-    }
-    init {
-        getHealthData(LocalDate.now())
-    }
+
+        init {
+            getHealthData(LocalDate.now())
+        }
 
     private fun calculateStartOfWeek(date: LocalDate): Instant {
         return Instant.now()
