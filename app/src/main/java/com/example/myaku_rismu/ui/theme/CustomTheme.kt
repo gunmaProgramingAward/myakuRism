@@ -11,6 +11,7 @@ data class CustomTheme(
     val healthDetailWalkThemeColor: Color,
     val healthDetailPeriodTabColor: Color,
     val settingScreenCommonColor: Color,
+    val settingScreenNormalTextColor: Color,
     val onSelectedButtonOverlay: Color,
     val settingScreenNormalTextColor: Color,
     val healthDetailSelectedPeriodTabColor: Color,
