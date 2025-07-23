@@ -242,27 +242,27 @@ fun BottomSheetContentPreview() {
     val uiState = HomeState(
         metrics = listOf(
             HealthMetric(
-                type = HomeHealthType.HeartRate,
+                type = HomeHealthType.HEART_RATE,
                 currentValue = 200,
                 targetValue = 180
             ),
             HealthMetric(
-                type = HomeHealthType.Walk,
+                type = HomeHealthType.STEPS,
                 currentValue = 5000,
                 targetValue = 10000
             ),
             HealthMetric(
-                type = HomeHealthType.Move,
+                type = HomeHealthType.CALORIES,
                 currentValue = 1200,
                 targetValue = 2000
             ),
             HealthMetric(
-                type = HomeHealthType.SleepTime,
+                type = HomeHealthType.SLEEP_TIME,
                 currentValue = 9,
                 targetValue = 8
             ),
             HealthMetric(
-                type = HomeHealthType.MoveDistance,
+                type = HomeHealthType.DISTANCE,
                 currentValue = 2,
                 targetValue = 5
             )

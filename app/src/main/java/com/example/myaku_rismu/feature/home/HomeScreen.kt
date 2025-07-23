@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.feature.home.components.BarChart
@@ -50,10 +51,10 @@ import com.example.myaku_rismu.ui.theme.customTheme
 import kotlinx.coroutines.launch
 
 data class HealthMetricCardUi(
-    val title : Int,
-    val genre : Int,
-    val unit : Int,
-    val icon : Int,
+    val title: Int,
+    val genre: Int,
+    val unit: Int,
+    val icon: Int,
     val color: Color,
     val barColorFaded: Color,
 )
@@ -69,25 +70,31 @@ fun HomeScreen(
 
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
-            is HomeUiEvent.changeBpmPlayerValue -> {
+            is HomeUiEvent.ChangeBpmPlayerValue -> {
                 viewModel.changeBpmPlayerValue(event.value)
             }
-            is HomeUiEvent.selectMusicGenre -> {
+
+            is HomeUiEvent.SelectMusicGenre -> {
                 viewModel.selectMusicGenre(event.metric)
             }
-            is HomeUiEvent.onSwitchCheckedChange -> {
+
+            is HomeUiEvent.OnSwitchCheckedChange -> {
                 viewModel.onSwitchCheckedChange(event.isChecked)
             }
-            is HomeUiEvent.dismissBottomSheet -> {
+
+            is HomeUiEvent.DismissBottomSheet -> {
                 viewModel.dismissBottomSheet()
             }
+
             is HomeUiEvent.ShowBottomSheet -> {
                 viewModel.showBottomSheet()
             }
-            is HomeUiEvent.selectHealthMetric -> {
+
+            is HomeUiEvent.SelectHealthMetric -> {
                 appState.navigateToHealthDetail(metricType = event.type)
             }
-            is HomeUiEvent.createNewMusic -> {
+
+            is HomeUiEvent.CreateNewMusic -> {
                 viewModel.createNewMusic()
             }
         }
@@ -163,10 +170,16 @@ fun HomeContent(
     HomeBottomSheet(
         show = uiState.showBottomSheet,
         sheetState = sheetState,
-        onDismiss = { eventHandler(HomeUiEvent.dismissBottomSheet) },
-        onCreate = { eventHandler(HomeUiEvent.createNewMusic) },
-        onClick = { metric -> eventHandler(HomeUiEvent.selectMusicGenre(metric)) },
-        onSwitchCheckedChange = { isChecked -> eventHandler(HomeUiEvent.onSwitchCheckedChange(isChecked)) },
+        onDismiss = { eventHandler(HomeUiEvent.DismissBottomSheet) },
+        onCreate = { eventHandler(HomeUiEvent.CreateNewMusic) },
+        onClick = { metric -> eventHandler(HomeUiEvent.SelectMusicGenre(metric)) },
+        onSwitchCheckedChange = { isChecked ->
+            eventHandler(
+                HomeUiEvent.OnSwitchCheckedChange(
+                    isChecked
+                )
+            )
+        },
         uiState = uiState,
         cardList = cardList
     )
@@ -188,7 +201,7 @@ fun HomeContent(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp),
                 onClick = { metric ->
-                    eventHandler(HomeUiEvent.selectHealthMetric(metric.type.toString()))
+                    eventHandler(HomeUiEvent.SelectHealthMetric(metric.type.toString()))
                 }
             )
         }
@@ -417,54 +430,82 @@ fun HealthMetricsSection(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    val viewModel: HomeViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
+    val dummyUiState = HomeState(
+        metrics = listOf(
+            HealthMetric(
+                type = HomeHealthType.HEART_RATE,
+                currentValue = 200,
+                targetValue = 180
+            ),
+            HealthMetric(
+                type = HomeHealthType.STEPS,
+                currentValue = 5000,
+                targetValue = 10000
+            ),
+            HealthMetric(
+                type = HomeHealthType.CALORIES,
+                currentValue = 1200,
+                targetValue = 2000
+            ),
+            HealthMetric(
+                type = HomeHealthType.SLEEP_TIME,
+                currentValue = 9,
+                targetValue = 8
+            ),
+            HealthMetric(
+                type = HomeHealthType.DISTANCE,
+                currentValue = 2,
+                targetValue = 5
+            )
+        )
+    )
+    val dummyCardList = listOf(
+        HealthMetricCardUi(
+            title = R.string.current_heart_rate,
+            genre = R.string.unit_null,
+            unit = R.string.bpm,
+            icon = R.drawable.heartrate,
+            color = MaterialTheme.customTheme.healthDetailMoveThemeColor,
+            barColorFaded = MaterialTheme.customTheme.homeHeartRateBarColorFaded,
+        ),
+        HealthMetricCardUi(
+            title = R.string.steps,
+            genre = R.string.edm,
+            unit = R.string.unit_steps,
+            icon = R.drawable.steps,
+            color = MaterialTheme.customTheme.healthDetailWalkThemeColor,
+            barColorFaded = MaterialTheme.customTheme.homeWalkBarColorFaded,
+        ),
+        HealthMetricCardUi(
+            title = R.string.move,
+            genre = R.string.pops,
+            unit = R.string.unit_kcal,
+            icon = R.drawable.move,
+            color = MaterialTheme.customTheme.healthDetailHeartRateThemeColor,
+            barColorFaded = MaterialTheme.customTheme.homeMoveBarColorFaded,
+        ),
+        HealthMetricCardUi(
+            title = R.string.sleep,
+            genre = R.string.classic,
+            unit = R.string.unit_hours,
+            icon = R.drawable.sleep,
+            color = MaterialTheme.customTheme.healthDetailSleepThemeColor,
+            barColorFaded = MaterialTheme.customTheme.homeSleepBarColorFaded,
+        ),
+        HealthMetricCardUi(
+            title = R.string.distance,
+            genre = R.string.rock,
+            unit = R.string.unit_km,
+            icon = R.drawable.distance,
+            color = MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor,
+            barColorFaded = MaterialTheme.customTheme.homeMoveDistanceBarColorFaded,
+        )
+    )
     Myaku_rismuTheme {
         HomeContent(
-            uiState = uiState,
+            uiState = dummyUiState,
             eventHandler = {},
-            cardList = listOf(
-                HealthMetricCardUi(
-                    title = R.string.current_heart_rate,
-                    genre = R.string.unit_null,
-                    unit = R.string.bpm,
-                    icon = R.drawable.heartrate,
-                    color = MaterialTheme.customTheme.healthDetailMoveThemeColor,
-                    barColorFaded = MaterialTheme.customTheme.homeHeartRateBarColorFaded,
-                ),
-                HealthMetricCardUi(
-                    title = R.string.steps,
-                    genre = R.string.edm,
-                    unit = R.string.unit_steps,
-                    icon = R.drawable.steps,
-                    color = MaterialTheme.customTheme.healthDetailWalkThemeColor,
-                    barColorFaded = MaterialTheme.customTheme.homeWalkBarColorFaded,
-                ),
-                HealthMetricCardUi(
-                    title = R.string.move,
-                    genre = R.string.pops,
-                    unit = R.string.unit_kcal,
-                    icon = R.drawable.move,
-                    color = MaterialTheme.customTheme.healthDetailHeartRateThemeColor,
-                    barColorFaded = MaterialTheme.customTheme.homeMoveBarColorFaded,
-                ),
-                HealthMetricCardUi(
-                    title = R.string.sleep,
-                    genre = R.string.classic,
-                    unit = R.string.unit_hours,
-                    icon = R.drawable.sleep,
-                    color = MaterialTheme.customTheme.healthDetailSleepThemeColor,
-                    barColorFaded = MaterialTheme.customTheme.homeSleepBarColorFaded,
-                ),
-                HealthMetricCardUi(
-                    title = R.string.distance,
-                    genre = R.string.rock,
-                    unit = R.string.unit_km,
-                    icon = R.drawable.distance,
-                    color = MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor,
-                    barColorFaded = MaterialTheme.customTheme.homeMoveDistanceBarColorFaded,
-                )
-            )
+            cardList = dummyCardList
         )
     }
 }

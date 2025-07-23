@@ -48,12 +48,12 @@ data class HealthMetric(
         get() = if (targetValue > 0) (currentValue.toFloat() / targetValue).coerceIn(0f, 1f) else 0f
 }
 
-sealed interface HomeHealthType {
-    data object Move: HomeHealthType
-    data object MoveDistance: HomeHealthType
-    data object HeartRate: HomeHealthType
-    data object SleepTime: HomeHealthType
-    data object Walk: HomeHealthType
+enum class HomeHealthType {
+    HEART_RATE,
+    STEPS,
+    CALORIES,
+    SLEEP_TIME,
+    DISTANCE,
 }
 
 data class WaveState(
