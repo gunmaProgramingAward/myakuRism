@@ -1,4 +1,8 @@
 package com.example.myaku_rismu.data.model
 
-enum class HealthDetaGranularity {
+enum class HealthDataGranularity {
+    HOURLY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY
 }

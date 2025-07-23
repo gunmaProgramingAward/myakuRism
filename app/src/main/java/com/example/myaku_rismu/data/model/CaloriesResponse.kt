@@ -1,5 +1,3 @@
 package com.example.myaku_rismu.data.model
 
-data class CaloriesResponse(
-    val calories: Int
-)
+data class CaloriesResponse()
