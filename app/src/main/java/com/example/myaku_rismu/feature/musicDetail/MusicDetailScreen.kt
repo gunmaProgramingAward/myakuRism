@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.geometry.Offset
@@ -36,9 +38,22 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 
 @Composable
-fun MusicPlayerScreen() {
-    var isPlaying by remember { mutableStateOf(false) }
-    var isFavorite by remember { mutableStateOf(false) }
+fun MusicPlayerScreen(
+    viewModel: MusicDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    fun eventHandler(event: MusicDetailUiEvent) {
+        when (event) {
+            is MusicDetailUiEvent.ChangeIsPlaying -> {
+                viewModel.changeIsPlaying(event.boolean)
+            }
+            is MusicDetailUiEvent.ChangeIsFavorite -> {
+                viewModel.changeIsFavorite(event.boolean)
+            }
+        }
+    }
+
     var sliderPosition by remember { mutableStateOf(0.3f) }
 
     Column(
@@ -65,8 +80,8 @@ fun MusicPlayerScreen() {
             TrackInfo(modifier = Modifier.padding(32.dp))
 
             PlayerControls(
-                isPlaying = isPlaying,
-                onPlayPauseClick = { isPlaying = !isPlaying }
+                isPlaying = uiState.isPlaying,
+                onPlayPauseClick = { eventHandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -74,13 +89,13 @@ fun MusicPlayerScreen() {
             CustomSlider(
                 value = sliderPosition,
                 onValueChange = { newPosition -> sliderPosition = newPosition },
-                modifier = Modifier.padding(horizontal = 24.dp),
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
         }
 
         ActionButtons(
-            isFavorite = isFavorite,
-            onFavoriteClick = { isFavorite = !isFavorite }
+            isFavorite = uiState.isFavorite,
+            onFavoriteClick = { eventHandler(MusicDetailUiEvent.ChangeIsFavorite(!uiState.isFavorite)) }
         )
     }
 }
