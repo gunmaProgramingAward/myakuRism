@@ -24,20 +24,16 @@
     <string name="year">年</string>
     <string name="month">月</string>
     <string name="day">日</string>
+    <string name="activity_level_low_main">低い</string>
+    <string name="activity_level_medium_main">普通</string>
+    <string name="activity_level_high_main">高い</string>
+    <string name="activity_level_low_sub">座りがちな生活</string>
+    <string name="activity_level_medium_sub">週2–3回の軽い運動</string>
+    <string name="activity_level_high_sub">週4回以上の運動</string>
     <string-array name="gender_display_options">
         <item>男性</item>
         <item>女性</item>
         <item>その他</item>
-    </string-array>
-    <string-array name="activity_level_main_texts">
-        <item>低い</item>
-        <item>普通</item>
-        <item>高い</item>
-    </string-array>
-    <string-array name="activity_level_sub_texts">
-        <item>座りがちな生活</item>
-        <item>週2–3回の軽い運動</item>
-        <item>週4回以上の運動</item>
     </string-array>
 
 

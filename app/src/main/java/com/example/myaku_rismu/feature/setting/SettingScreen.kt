@@ -58,6 +58,7 @@ import com.example.myaku_rismu.feature.setting.components.GenderDialog
 import com.example.myaku_rismu.feature.setting.components.HeightDialog
 import com.example.myaku_rismu.feature.setting.components.WeightDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
+import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.ui.theme.customTheme
 
 
@@ -73,36 +74,38 @@ fun SettingScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingViewModel = hiltViewModel(),
     appState: AppState
-){
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        viewModel.loadProfileData()
-    }
 
     fun eventHandler(event: SettingUiEvent) {
         when (event) {
             is SettingUiEvent.DismissDialog -> {
                 viewModel.dismissDialog()
             }
+
             is SettingUiEvent.ShowDialog -> {
                 viewModel.showDialog(event.dialog)
             }
+
             is SettingUiEvent.BirthdateSelected -> {
                 viewModel.selectBirthdate(event.year, event.month, event.day)
             }
+
             is SettingUiEvent.HeightSelected -> {
                 viewModel.selectHeight(event.height)
             }
+
             is SettingUiEvent.WeightSelected -> {
                 viewModel.selectWeight(event.weight)
             }
+
             is SettingUiEvent.GenderSelected -> {
                 viewModel.selectGender(event.index)
             }
+
             is SettingUiEvent.ActivityLevelSelected -> {
-                viewModel.selectActivityLevel(event.index)
+                viewModel.selectActivityLevel(event.level)
             }
         }
     }
@@ -163,7 +166,8 @@ fun SettingDetail(
     context: Context = LocalContext.current
 ) {
     val commonPlaceholder = stringResource(R.string.not_set)
-    val genderDisplayOptions = remember { context.resources.getStringArray(R.array.gender_display_options).toList() }
+    val genderDisplayOptions =
+        remember { context.resources.getStringArray(R.array.gender_display_options).toList() }
 
     val infoItems = listOf(
         InfoItemData(
@@ -181,21 +185,32 @@ fun SettingDetail(
         ),
         InfoItemData(
             label = stringResource(R.string.height),
-            value = uiState.display.heightCm?.let { stringResource(R.string.height_display_format, it) }
+            value = uiState.display.heightCm?.let {
+                stringResource(
+                    R.string.height_display_format,
+                    it
+                )
+            }
                 ?: commonPlaceholder,
             onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Height)) },
             isSelected = uiState.display.heightCm != null
         ),
         InfoItemData(
             label = stringResource(R.string.body_weight),
-            value = uiState.display.weightKg?.let { stringResource(R.string.weight_display_format, it) }
+            value = uiState.display.weightKg?.let {
+                stringResource(
+                    R.string.weight_display_format,
+                    it
+                )
+            }
                 ?: commonPlaceholder,
             onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Weight)) },
             isSelected = uiState.display.weightKg != null
         ),
         InfoItemData(
             label = stringResource(R.string.gender),
-            value = uiState.display.gender?.let { genderDisplayOptions.getOrNull(it) } ?: commonPlaceholder,
+            value = uiState.display.gender?.let { genderDisplayOptions.getOrNull(it) }
+                ?: commonPlaceholder,
             onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Gender)) },
             isSelected = uiState.display.gender != null
         )
@@ -221,10 +236,9 @@ fun SettingDetail(
             contentBottomPadding = PaddingValues(bottom = 12.dp),
         ) {
             ActivityLevelLabel(
-                context = context,
-                selectedActivity = uiState.activityLevelIndex,
-                onActivitySelected = { index ->
-                    eventHandler(SettingUiEvent.ActivityLevelSelected(index))
+                selectedActivity = uiState.display.activityLevel,
+                onActivitySelected = { level ->
+                    eventHandler(SettingUiEvent.ActivityLevelSelected(level))
                 }
             )
         }
@@ -343,55 +357,43 @@ private fun InfoItemLabel(
 @Composable
 private fun ActivityLevelLabel(
     modifier: Modifier = Modifier,
-    context: Context,
-    selectedActivity: Int,
-    onActivitySelected: (Int) -> Unit
+    selectedActivity: ActivityLevel,
+    onActivitySelected: (ActivityLevel) -> Unit
 ) {
-    val activityLevels = remember {
-        context.resources.getStringArray(R.array.activity_level_main_texts)
-            .zip(context.resources.getStringArray(R.array.activity_level_sub_texts))
-    }
-
-
-    activityLevels.forEachIndexed { index, (mainText, subText) ->
+    ActivityLevel.entries.forEach { level ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .shadow(2.dp, RoundedCornerShape(12.dp))
-                .background(
-                    Color.White,
-                    RoundedCornerShape(12.dp)
-                )
+                .background(Color.White, RoundedCornerShape(12.dp))
                 .fillMaxWidth()
                 .border(
-                    width = if (selectedActivity == index) 1.5.dp else 1.dp,
+                    width = if (selectedActivity == level) 1.5.dp else 1.dp,
                     color = Color.Black,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .selectable(
-                    selected = selectedActivity == index,
-                    onClick = { onActivitySelected(index)},
+                    selected = selectedActivity == level,
+                    onClick = { onActivitySelected(level) },
                     role = Role.RadioButton
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column(
-                horizontalAlignment = Alignment.Start
-            ) {
+            Column(horizontalAlignment = Alignment.Start) {
                 Text(
-                    text = mainText,
+                    text = stringResource(id = level.mainTextRes),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = subText,
+                    text = stringResource(id = level.subTextRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.customTheme.settingScreenCommonColor
                 )
             }
             RadioButton(
-                selected = selectedActivity == index,
-                onClick = { onActivitySelected(index) },
+                selected = selectedActivity == level,
+                onClick = { onActivitySelected(level) },
                 colors = RadioButtonDefaults.colors(
                     selectedColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
                 )

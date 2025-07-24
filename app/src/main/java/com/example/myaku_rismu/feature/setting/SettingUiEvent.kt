@@ -1,6 +1,7 @@
 package com.example.myaku_rismu.feature.setting
 
 import com.example.myaku_rismu.core.UiEvent
+import com.example.myaku_rismu.domain.model.ActivityLevel
 
 sealed interface SettingUiEvent : UiEvent {
     data object DismissDialog : SettingUiEvent
@@ -9,5 +10,5 @@ sealed interface SettingUiEvent : UiEvent {
     data class HeightSelected(val height: Int) : SettingUiEvent
     data class WeightSelected(val weight: Int) : SettingUiEvent
     data class GenderSelected(val index: Int) : SettingUiEvent
-    data class ActivityLevelSelected(val index: Int) : SettingUiEvent
+    data class ActivityLevelSelected(val level: ActivityLevel) : SettingUiEvent
 }
