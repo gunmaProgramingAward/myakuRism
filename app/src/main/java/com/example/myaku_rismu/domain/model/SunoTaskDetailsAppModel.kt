@@ -10,7 +10,7 @@ data class SunoTaskDetailAppModel(
     val taskId: String,
     val parentMusicId: String,
     val param: String,
-    val response: SunoResponseDateAppModel,
+    val response: SunoTrackDataAppModel?,
     val status: String,
     val type: String,
     val operationType: String,
@@ -19,19 +19,11 @@ data class SunoTaskDetailAppModel(
     val createTime: Long,
 )
 
-data class SunoResponseDateAppModel(
-    val taskId: String,
-    val sunoData: List<SunoTrackDataAppModel>,
-)
-
 data class SunoTrackDataAppModel(
     val id: String,
+    val taskId: String,
     val audioUrl: String,
-    val sourceAudioUrl: String,
-    val streamAudioUrl: String,
-    val sourceStreamAudioUrl: String,
     val imageUrl: String,
-    val sourceImageUrl: String,
     val modelName: String,
     val title: String,
     val tags: List<String>,

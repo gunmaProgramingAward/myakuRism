@@ -4,7 +4,7 @@ import com.example.myaku_rismu.data.constants.SubStyleConstants
 import com.example.myaku_rismu.data.model.RecordType
 
 data class CreateMusicModel(
-    val recordType: RecordType?,
+    val recordType: RecordType,
     val bpm: Int,
     val isInstrumental: Boolean,
     val currentDate: String,

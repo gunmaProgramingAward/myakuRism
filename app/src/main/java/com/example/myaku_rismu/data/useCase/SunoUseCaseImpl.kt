@@ -2,7 +2,6 @@ package com.example.myaku_rismu.data.useCase
 
 import com.example.myaku_rismu.data.constants.GenreConstants
 import com.example.myaku_rismu.data.constants.NegativeTabsConstants
-import com.example.myaku_rismu.data.constants.SubStyleConstants
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.model.ClassicSubGenreModel
 import com.example.myaku_rismu.domain.model.CreateMusicModel
@@ -44,30 +43,27 @@ class SunoUseCaseImpl @Inject constructor(
         return sunoRepository.getMusic(taskId)
     }
 
-    private fun getPrompt(recordType: RecordType?): String = when (recordType) {
+    private fun getPrompt(recordType: RecordType): String = when (recordType) {
         RecordType.STEPS -> GenreConstants.STEPS
         RecordType.DISTANCE -> GenreConstants.DISTANCE
         RecordType.SLEEP_TIME -> GenreConstants.SLEEP_TIME
         RecordType.CALORIES -> GenreConstants.CALORIES
-        null -> GenreConstants.UNSELECT
         else -> ""
     }
 
-    private fun getStyle(recordType: RecordType?, bpm: Int): String = when (recordType) {
+    private fun getStyle(recordType: RecordType, bpm: Int): String = when (recordType) {
         RecordType.STEPS -> "${bpm}bpm, ${HIPHOPSubGenreModel.random().description}"
         RecordType.DISTANCE -> "${bpm}bpm, ${EDMSubGenreModel.random().description}"
         RecordType.SLEEP_TIME -> "${bpm}bpm, ${ClassicSubGenreModel.random().description}"
         RecordType.CALORIES -> "${bpm}bpm, ${POPSSubGenreModel.random().description}"
-        null -> "${bpm}bpm, ${SubStyleConstants.UNSELECT}"
         else -> ""
     }
 
-    private fun getNegativeTags(recordType: RecordType?): String = when (recordType) {
+    private fun getNegativeTags(recordType: RecordType): String = when (recordType) {
         RecordType.STEPS -> NegativeTabsConstants.STEP
         RecordType.DISTANCE -> NegativeTabsConstants.DISTANCE
         RecordType.SLEEP_TIME -> NegativeTabsConstants.SLEEP_TIME
         RecordType.CALORIES -> NegativeTabsConstants.CALORIES
-        null -> NegativeTabsConstants.UNSELECT
         else -> ""
     }
 }

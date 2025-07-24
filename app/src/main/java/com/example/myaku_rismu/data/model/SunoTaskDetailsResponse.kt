@@ -49,5 +49,4 @@ data class SunoTrackDataResponse(
     val bestAudioUrl: String? get() = audioUrl ?: sourceAudioUrl
     val bestStreamUrl: String? get() = streamAudioUrl ?: sourceStreamAudioUrl
     val bestImageUrl: String? get() = imageUrl ?: sourceImageUrl
-    val isPlayable: Boolean get() = bestStreamUrl != null || bestAudioUrl != null
 }
