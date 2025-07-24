@@ -53,8 +53,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
-import com.example.myaku_rismu.feature.setting.components.ModernBirthdatePickerDialog
-import com.example.myaku_rismu.feature.setting.components.ModernStringOrNumberPickerDialog
+import com.example.myaku_rismu.core.ui.dialog.ModernBirthdatePickerDialog
+import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
 import java.util.Calendar
@@ -110,7 +110,7 @@ fun SettingScreen(
     }
 
     if (showHeightDialog) {
-        ModernStringOrNumberPickerDialog(
+        VerticalWheelPickerDialog(
             title = stringResource(R.string.select_height),
             options = (100..220).map { it.toString() },
             currentValue = currentHeightCm?.toString(),
@@ -124,7 +124,7 @@ fun SettingScreen(
     }
 
     if (showWeightDialog) {
-        ModernStringOrNumberPickerDialog(
+        VerticalWheelPickerDialog(
             title = stringResource(R.string.select_weight),
             options = remember { (30..150).map { it.toString() } },
             currentValue = currentWeightKg?.toString(),
@@ -138,7 +138,7 @@ fun SettingScreen(
     }
 
     if (showGenderDialog) {
-        ModernStringOrNumberPickerDialog(
+        VerticalWheelPickerDialog(
             title = stringResource(R.string.select_gender),
             options = genderDisplayOptions,
             currentValue = if (selectedGenderIndex != unSetValue && selectedGenderIndex in genderDisplayOptions.indices) {
@@ -156,8 +156,8 @@ fun SettingScreen(
     Surface(
         modifier = modifier
             .fillMaxSize(),
-        color = MaterialTheme.customTheme.settingScreenBackgroundColor,
-        contentColor = MaterialTheme.customTheme.settingScreenTextColor
+        color = MaterialTheme.customTheme.myakuRismuBackgroundColor,
+        contentColor = Color.Black
     ) {
         Column(
             modifier = modifier
@@ -322,8 +322,7 @@ private fun ProfileCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.customTheme.settingScreenCardColor,
-            contentColor = MaterialTheme.customTheme.settingScreenTextColor
+            containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
     ) {
         Column(modifier = modifier.padding(20.dp)) {
@@ -371,7 +370,7 @@ private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
                 .border(
                     width = 1.5.dp,
                     color = if (selectedActivity == index) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.customTheme.settingScreenTextColor,
+                    else Color.Black,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .selectable(
@@ -420,7 +419,6 @@ private fun InfoItem(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 13.sp),
-            color = MaterialTheme.customTheme.settingScreenTextColor,
             modifier = Modifier.padding(start = 2.dp, bottom = 2.dp)
         )
         SelectableInfoField(
@@ -449,7 +447,7 @@ private fun SelectableInfoField(
             )
             .border(
                 width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                brush = SolidColor(MaterialTheme.customTheme.settingScreenTextColor),
+                brush = SolidColor(Color.Black),
                 shape = OutlinedTextFieldDefaults.shape
             )
             .clickable(
@@ -468,7 +466,7 @@ private fun SelectableInfoField(
             color = if (enabled) {
                 MaterialTheme.customTheme.settingScreenCommonColor
             } else {
-                MaterialTheme.customTheme.settingScreenTextColor
+                Color.Black
             },
             textAlign = TextAlign.Start
         )
@@ -494,7 +492,7 @@ fun ModernNumberPickerDialogPreview_Height() {
         var selectedValue by remember { mutableStateOf<String?>("170") }
 
         if (showDialog) {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_height),
                 options = (100..220).map { it.toString() },
                 currentValue = selectedValue,
@@ -531,7 +529,7 @@ fun ModernNumberPickerDialogPreview_Weight_Min() {
         var selectedValue by remember { mutableStateOf<String?>(weightOptions[(weightOptions.size / 2)]) }
 
         if (showDialog) {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_weight),
                 options = weightOptions,
                 currentValue = selectedValue,
@@ -564,7 +562,7 @@ fun ModernStringPickerDialogPreview_Gender() {
         var selectedValue by remember { mutableStateOf<String?>(listOf("男性", "女性", "その他", "回答しない")[0]) }
 
         if (showDialog) {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_gender),
                 options = listOf("男性", "女性", "その他", "回答しない"),
                 currentValue = selectedValue,

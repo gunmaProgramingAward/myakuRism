@@ -27,6 +27,8 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val LightCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -37,13 +39,14 @@ val LightCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
     onSelectedButtonOverlay = Color(0x10000000),
     settingScreenNormalTextColor = Color(0x801F2937),
 )
 
 val DarkCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -54,7 +57,6 @@ val DarkCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
     settingScreenCommonColor = Color(0x991F2937),
     onSelectedButtonOverlay = Color(0x10000000),
     settingScreenNormalTextColor = Color(0x801F2937),
