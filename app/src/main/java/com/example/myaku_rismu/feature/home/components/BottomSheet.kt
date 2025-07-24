@@ -1,6 +1,5 @@
 package com.example.myaku_rismu.feature.home.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -363,10 +362,6 @@ fun BottomSheetContentPreview() {
                 onClick = {},
                 colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.buttonBackgroundColor),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                border = BorderStroke(
-                    width = 0.5.dp,
-                    color = MaterialTheme.customTheme.borderGrayColor
-                )
             ) {
                 Text(
                     text = stringResource(R.string.create_music),
