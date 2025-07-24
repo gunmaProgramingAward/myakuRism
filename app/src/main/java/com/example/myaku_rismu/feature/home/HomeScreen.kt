@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -265,8 +265,8 @@ fun HealthMetricCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(Color.White),
-        elevation = CardDefaults.cardElevation(4.dp),
+        shape = RoundedCornerShape(5.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.customTheme.myakuRismuCardColor),
         onClick = { onClick() },
     ) {
         if (cardUi.title == (R.string.current_heart_rate)) {

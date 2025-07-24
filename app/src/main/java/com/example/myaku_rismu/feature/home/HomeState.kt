@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.ui.theme.customTheme
 
+
 data class HomeState(
     val screenState: ScreenState = ScreenState.Initializing(),
     val bpmPlayerValue: Int = 85,
@@ -17,17 +18,25 @@ data class HomeState(
     val showBottomSheet: Boolean = false
 ) {
     val beatIntervalMs: Float
-        get() = if(bpmPlayerValue > 0) (60000f / bpmPlayerValue) else 0f
+        get() {
+            val millisPerMinute = 60_000f
+            return if (bpmPlayerValue > 0) (millisPerMinute / bpmPlayerValue) else 0f
+        }
     val newRippleStartIntervalMs: Int
         get() = beatIntervalMs.toInt() * 4
 
     val bpmPlayerRippleColor: Color
-    @Composable
-    get() = when (bpmPlayerValue) {
-        in 81..140 -> MaterialTheme.customTheme.homeMediumBpmRippleColor
-        in 140..300 -> MaterialTheme.customTheme.homeHighBpmRippleColor
-        else -> MaterialTheme.customTheme.homeLowBpmRippleColor
-    }
+        @Composable
+        get() {
+            val bpmMediumMin = 81
+            val bpmHighMin = 140
+            val bpmMax = 300
+            return when (bpmPlayerValue) {
+                in bpmMediumMin until bpmHighMin -> MaterialTheme.customTheme.homeMediumBpmRippleColor
+                in bpmHighMin..bpmMax -> MaterialTheme.customTheme.homeHighBpmRippleColor
+                else -> MaterialTheme.customTheme.homeLowBpmRippleColor
+            }
+        }
 
     val bpmPlayerColor: Color
     @Composable

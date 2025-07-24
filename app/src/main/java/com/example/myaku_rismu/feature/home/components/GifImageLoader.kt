@@ -9,6 +9,7 @@ import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.ImageLoader
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.example.myaku_rismu.R
 
 @Composable
@@ -32,7 +33,7 @@ fun GifImageLoader(modifier: Modifier = Modifier) {
                 .build(),
             imageLoader = imageLoader
         ),
-        contentDescription = "GIF Animation",
+        contentDescription = stringResource(R.string.gif_animation),
         modifier = modifier
     )
 }
