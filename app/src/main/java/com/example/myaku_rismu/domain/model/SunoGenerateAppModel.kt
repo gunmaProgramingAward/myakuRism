@@ -1,11 +1,7 @@
 package com.example.myaku_rismu.domain.model
 
 data class SunoGenerateAppModel(
-    val isSuccess: Boolean,
+    val statusCode: Int,
     val message: String,
-    val taskId: SunoTaskAppModel,
-)
-
-data class SunoTaskAppModel(
-    val taskId: String
+    val taskId: String?,
 )

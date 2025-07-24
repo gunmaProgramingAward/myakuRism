@@ -1,7 +1,7 @@
 package com.example.myaku_rismu.domain.model
 
 data class SunoTaskDetailsAppModel(
-    val isSuccess: Boolean,
+    val statusCode: Int,
     val message: String,
     val taskDetail: SunoTaskDetailAppModel,
 )
