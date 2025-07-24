@@ -45,7 +45,7 @@ val LightCustomTheme = CustomTheme(
     myakuRismuCardColor = Color(0xFFEDEDED),
     homeLowBpmColor = Color(0xFFA6E5EE),
     homeMediumBpmColor = Color(0xFFF9B4DA),
-    homeHighBpmColor = Color(0xFFFDA5BF),
+    homeHighBpmColor = Color(0xFFFF779F),
     homeHeartRateColor = Color(0xFFFF467D),
     homeMoveColor =Color(0xFF3CC9DF),
     homeStepsColor = Color(0xFF0ECB9C),
@@ -58,7 +58,7 @@ val LightCustomTheme = CustomTheme(
     homeSleepBarColorFaded = Color(0x4DFFC100),
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
-    homeHighBpmRippleColor = Color(0xFFFF5F8E)
+    homeHighBpmRippleColor = Color(0xFFFF2464)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -80,7 +80,7 @@ val DarkCustomTheme = CustomTheme(
     myakuRismuCardColor = Color(0xFFEDEDED),
     homeLowBpmColor = Color(0xFFA6E5EE),
     homeMediumBpmColor = Color(0xFFF9B4DA),
-    homeHighBpmColor = Color(0xFFFDA5BF),
+    homeHighBpmColor = Color(0xFFFF779F),
     homeHeartRateColor = Color(0xFFFF467D),
     homeMoveColor =Color(0xFF3CC9DF),
     homeStepsColor = Color(0xFF0ECB9C),
@@ -93,7 +93,7 @@ val DarkCustomTheme = CustomTheme(
     homeSleepBarColorFaded = Color(0x4DFFC100),
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
-    homeHighBpmRippleColor = Color(0xFFFF5F8E)
+    homeHighBpmRippleColor = Color(0xFFFF2464)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {
