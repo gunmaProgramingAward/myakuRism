@@ -1,6 +1,6 @@
 package com.example.myaku_rismu.data.di
 
-import com.example.myaku_rismu.core.base.constants.SecretContents
+import com.example.myaku_rismu.BuildConfig
 import com.example.myaku_rismu.core.base.constants.SunoContents
 import com.example.myaku_rismu.data.network.SunoApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -30,7 +30,7 @@ object NetworkModule {
             })
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${SecretContents.SUNO_API_KEY}")
+                    .addHeader("Authorization", "Bearer ${BuildConfig.SUNO_API_KEY}")
                     .addHeader("Content-Type", "application/json")
                     .build()
 
