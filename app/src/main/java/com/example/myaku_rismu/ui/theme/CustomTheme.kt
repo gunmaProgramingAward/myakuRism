@@ -19,7 +19,6 @@ data class CustomTheme(
     val myakuRismuCardColor: Color,
     val disabledBackgroundColor: Color,
     val buttonBackgroundColor: Color,
-    val borderGrayColor: Color,
     val homeLowBpmColor: Color,
     val homeMediumBpmColor: Color,
     val homeHighBpmColor: Color,
