@@ -78,7 +78,7 @@ class AppState(
         navController.navigate(LibraryRoute)
     }
 
-    fun navigateToHealthDetail(metricType: String) {
+    fun navigateToHealthDetail() {
         navController.navigate(HealthDetailRoute)
     }
 

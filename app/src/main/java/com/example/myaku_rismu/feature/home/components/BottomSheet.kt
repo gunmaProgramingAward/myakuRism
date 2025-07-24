@@ -36,9 +36,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.feature.home.HealthMetric
 import com.example.myaku_rismu.feature.home.HealthMetricCardUi
-import com.example.myaku_rismu.feature.home.HomeHealthType
 import com.example.myaku_rismu.feature.home.HomeState
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
@@ -122,11 +122,7 @@ fun HomeBottomSheet(
                         onCreate()
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.buttonBackgroundColor),
-                    elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                    border = BorderStroke(
-                        width = 0.5.dp,
-                        color = MaterialTheme.customTheme.borderGrayColor
-                    )
+                    elevation = ButtonDefaults.elevatedButtonElevation(4.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.create_music),
@@ -242,27 +238,27 @@ fun BottomSheetContentPreview() {
     val uiState = HomeState(
         metrics = listOf(
             HealthMetric(
-                type = HomeHealthType.HEART_RATE,
+                type = RecordType.HEART_RATE,
                 currentValue = 200,
                 targetValue = 180
             ),
             HealthMetric(
-                type = HomeHealthType.STEPS,
+                type = RecordType.STEPS,
                 currentValue = 5000,
                 targetValue = 10000
             ),
             HealthMetric(
-                type = HomeHealthType.CALORIES,
+                type = RecordType.CALORIES,
                 currentValue = 1200,
                 targetValue = 2000
             ),
             HealthMetric(
-                type = HomeHealthType.SLEEP_TIME,
+                type = RecordType.SLEEP_TIME,
                 currentValue = 9,
                 targetValue = 8
             ),
             HealthMetric(
-                type = HomeHealthType.DISTANCE,
+                type = RecordType.DISTANCE,
                 currentValue = 2,
                 targetValue = 5
             )

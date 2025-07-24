@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.ui.theme.customTheme
 
 data class HomeState(
@@ -40,7 +41,7 @@ data class HomeState(
 }
 
 data class HealthMetric(
-    val type: HomeHealthType,
+    val type: RecordType,
     val currentValue: Int,
     val targetValue: Int
 ) {
@@ -48,15 +49,16 @@ data class HealthMetric(
         get() = if (targetValue > 0) (currentValue.toFloat() / targetValue).coerceIn(0f, 1f) else 0f
 }
 
-enum class HomeHealthType {
-    HEART_RATE,
-    STEPS,
-    CALORIES,
-    SLEEP_TIME,
-    DISTANCE,
-}
-
 data class WaveState(
     val scale: Animatable<Float, AnimationVector1D>,
     val alpha: Animatable<Float, AnimationVector1D>
+)
+
+data class HealthMetricCardUi(
+    val title: Int,
+    val genre: Int,
+    val unit: Int,
+    val icon: Int,
+    val color: Color,
+    val barColorFaded: Color,
 )
