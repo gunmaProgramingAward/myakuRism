@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
+import com.example.myaku_rismu.domain.model.Gender
 import com.example.myaku_rismu.domain.model.SettingData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
@@ -20,28 +21,27 @@ class SettingDataSourceImpl @Inject constructor(
 
     private val heightKey = intPreferencesKey("heightCm")
     private val weightKey = intPreferencesKey("weightKg")
-    private val genderKey = intPreferencesKey("gender")
     private val birthYearKey = intPreferencesKey("birthYear")
     private val birthMonthKey = intPreferencesKey("birthMonth")
     private val birthdayKey = intPreferencesKey("birthday")
-    private val activityLevelKey = stringPreferencesKey("activityLevel")
+    private val genderKey = intPreferencesKey("gender")
+    private val activityLevelKey = intPreferencesKey("activityLevel")
 
     override suspend fun getSetting(): SettingData {
         val prefs = dataStore.data.first()
-        val activityLevelId = prefs[activityLevelKey]?.toIntOrNull() ?: ActivityLevel.LOW.id
 
         return SettingData(
             heightCm = prefs[heightKey],
             weightKg = prefs[weightKey],
-            gender = prefs[genderKey],
             birthYear = prefs[birthYearKey],
             birthMonth = prefs[birthMonthKey],
             birthDay = prefs[birthdayKey],
-            activityLevel = ActivityLevel.fromId(activityLevelId)
+            gender = Gender.fromId(prefs[genderKey]),
+            activityLevel = ActivityLevel.fromId(prefs[activityLevelKey])
         )
     }
 
-    override suspend fun updateSettingState(
+    override suspend fun updateHeightAndWeight(
         selectType: SettingType,
         value: Int
     ) {
@@ -49,13 +49,12 @@ class SettingDataSourceImpl @Inject constructor(
             when (selectType) {
                 SettingType.HEIGHT -> prefs[heightKey] = value
                 SettingType.WEIGHT -> prefs[weightKey] = value
-                SettingType.GENDER -> prefs[genderKey] = value
                 else -> {}
             }
         }
     }
 
-    override suspend fun updateSettingState(
+    override suspend fun updateBirthdate(
         selectType: SettingType,
         year: Int,
         month: Int,
@@ -68,9 +67,15 @@ class SettingDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateGender(gender: Gender) {
+        dataStore.edit { prefs ->
+            prefs[genderKey] = gender.id
+        }
+    }
+
     override suspend fun updateActivityLevel(level: ActivityLevel) {
         dataStore.edit { prefs ->
-            prefs[activityLevelKey] = level.id.toString()
+            prefs[activityLevelKey] = level.id
         }
     }
 }
