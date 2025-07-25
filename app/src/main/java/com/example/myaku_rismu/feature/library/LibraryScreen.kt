@@ -148,8 +148,7 @@ fun AlbumItem(track: MusicTrack) {
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        // Preview를 위한 가짜 LibraryState 생성
-        val previewUiState = LibraryState( // LibraryState로 변경 (이전에 LibraryUiState로 잘못 안내했을 수 있습니다)
+        val previewUiState = LibraryState(
             categories = MusicCategory.entries,
             selectedCategory = MusicCategory.ALL,
             tracks = listOf(
