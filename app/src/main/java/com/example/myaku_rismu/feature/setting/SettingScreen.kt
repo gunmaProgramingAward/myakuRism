@@ -32,10 +32,8 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -49,16 +47,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TopBar
+import com.example.myaku_rismu.data.model.SettingType
+import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.feature.setting.components.BirthdateDialog
 import com.example.myaku_rismu.feature.setting.components.GenderDialog
 import com.example.myaku_rismu.feature.setting.components.HeightDialog
 import com.example.myaku_rismu.feature.setting.components.WeightDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
-import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.ui.theme.customTheme
 
 
@@ -88,10 +86,6 @@ fun SettingScreen(
                 viewModel.showDialog(event.dialog)
             }
 
-            is SettingUiEvent.BirthdateSelected -> {
-                viewModel.selectBirthdate(event.year, event.month, event.day)
-            }
-
             is SettingUiEvent.HeightSelected -> {
                 viewModel.selectHeight(event.height)
             }
@@ -101,7 +95,11 @@ fun SettingScreen(
             }
 
             is SettingUiEvent.GenderSelected -> {
-                viewModel.selectGender(event.index)
+                viewModel.selectGender(event.gender)
+            }
+
+            is SettingUiEvent.BirthdateSelected -> {
+                viewModel.selectBirthdate(event.year, event.month, event.day)
             }
 
             is SettingUiEvent.ActivityLevelSelected -> {
@@ -136,7 +134,6 @@ fun SettingScreen(
         SettingDetail(
             uiState = uiState,
             eventHandler = { event -> eventHandler(event) },
-            context = context,
             modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         )
     }
@@ -144,16 +141,16 @@ fun SettingScreen(
 
 @Composable
 fun DialogHandler(
-    dialog: SettingDialog?,
+    dialog: SettingType?,
     uiState: SettingState,
     eventHandler: (SettingUiEvent) -> Unit,
     context: Context
 ) {
     when (dialog) {
-        SettingDialog.Birthdate -> BirthdateDialog(uiState, eventHandler)
-        SettingDialog.Height -> HeightDialog(uiState, eventHandler)
-        SettingDialog.Weight -> WeightDialog(uiState, eventHandler)
-        SettingDialog.Gender -> GenderDialog(uiState, eventHandler, context)
+        SettingType.HEIGHT -> HeightDialog(uiState, eventHandler)
+        SettingType.WEIGHT -> WeightDialog(uiState, eventHandler)
+        SettingType.GENDER -> GenderDialog(uiState, eventHandler, context)
+        SettingType.BIRTHDATE -> BirthdateDialog(uiState, eventHandler)
         null -> Unit
     }
 }
@@ -163,11 +160,8 @@ fun SettingDetail(
     modifier: Modifier = Modifier,
     uiState: SettingState,
     eventHandler: (SettingUiEvent) -> Unit,
-    context: Context = LocalContext.current
 ) {
     val commonPlaceholder = stringResource(R.string.not_set)
-    val genderDisplayOptions =
-        remember { context.resources.getStringArray(R.array.gender_display_options).toList() }
 
     val infoItems = listOf(
         InfoItemData(
@@ -180,7 +174,7 @@ fun SettingDetail(
                     uiState.display.birthDay
                 )
             } else commonPlaceholder,
-            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Birthdate)) },
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.BIRTHDATE)) },
             isSelected = uiState.display.birthYear != null && uiState.display.birthMonth != null && uiState.display.birthDay != null
         ),
         InfoItemData(
@@ -192,7 +186,7 @@ fun SettingDetail(
                 )
             }
                 ?: commonPlaceholder,
-            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Height)) },
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.HEIGHT)) },
             isSelected = uiState.display.heightCm != null
         ),
         InfoItemData(
@@ -204,17 +198,18 @@ fun SettingDetail(
                 )
             }
                 ?: commonPlaceholder,
-            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Weight)) },
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.WEIGHT)) },
             isSelected = uiState.display.weightKg != null
         ),
         InfoItemData(
             label = stringResource(R.string.gender),
-            value = uiState.display.gender?.let { genderDisplayOptions.getOrNull(it) }
+            value = uiState.display.gender?.let { stringResource(it.displayName) }
                 ?: commonPlaceholder,
-            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingDialog.Gender)) },
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.GENDER)) },
             isSelected = uiState.display.gender != null
         )
     )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -236,7 +231,7 @@ fun SettingDetail(
             contentBottomPadding = PaddingValues(bottom = 12.dp),
         ) {
             ActivityLevelLabel(
-                selectedActivity = uiState.display.activityLevel,
+                selectedActivity = uiState.display.activityLevel ?: ActivityLevel.LOW,
                 onActivitySelected = { level ->
                     eventHandler(SettingUiEvent.ActivityLevelSelected(level))
                 }
@@ -406,14 +401,9 @@ private fun ActivityLevelLabel(
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
 fun SettingScreenPreview() {
-    val viewModel: SettingViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
     Myaku_rismuTheme {
         SettingDetail(
-            uiState = uiState,
-            context = context,
+            uiState = SettingState(), // ダミーState
             eventHandler = {},
         )
     }
