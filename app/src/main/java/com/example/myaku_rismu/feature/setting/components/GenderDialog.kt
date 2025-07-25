@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.example.myaku_rismu.R
-import com.example.myaku_rismu.core.ui.dialog.ModernStringOrNumberPickerDialog
+import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
 import com.example.myaku_rismu.feature.setting.SettingState
 import com.example.myaku_rismu.feature.setting.SettingUiEvent
 
@@ -16,7 +16,7 @@ fun GenderDialog(
     context: Context
 ) {
     val genderDisplayOptions = remember { context.resources.getStringArray(R.array.gender_display_options).toList() }
-    ModernStringOrNumberPickerDialog(
+    VerticalWheelPickerDialog(
         title = stringResource(R.string.select_gender),
         options = genderDisplayOptions,
         currentValue = uiState.display.gender?.let { genderDisplayOptions.getOrNull(it) },

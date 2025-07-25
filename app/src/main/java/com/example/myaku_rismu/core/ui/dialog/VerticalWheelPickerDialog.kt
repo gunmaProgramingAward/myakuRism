@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,7 +55,7 @@ private val defaultPickerTextStyleSelected = 28.sp
 
 
 @Composable
-fun ModernStringOrNumberPickerDialog(
+fun VerticalWheelPickerDialog(
     title: String,
     options: List<String>,
     currentValue: String?,
@@ -124,7 +123,7 @@ fun ModernStringOrNumberPickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(8.dp),
-        containerColor = Color.White,
+        containerColor = MaterialTheme.customTheme.myakuRismuBackgroundColor,
         title = {
             Text(
                 title,
@@ -150,7 +149,7 @@ fun ModernStringOrNumberPickerDialog(
 
                     items(
                         options.size,
-                        key = { index -> options[index].hashCode()}) { optionIndex ->
+                        key = { index -> options[index].hashCode() }) { optionIndex ->
                         val optionValue = options[optionIndex]
                         val isSelected = optionIndex == centralVisibleOptionIndex
 
@@ -496,139 +495,40 @@ private fun ModernPickerColumnInternal(
                     )
             )
         }
-            Text(
-                text = unitSuffix,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.Black,
-                modifier = Modifier.padding(top = 2.dp)
-            )
+        Text(
+            text = unitSuffix,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            modifier = Modifier.padding(top = 2.dp)
+        )
     }
 }
 
-@Preview(showBackground = true, name = "身長ピッカー (100-220cm)")
+@Preview(showBackground = true)
 @Composable
-fun ModernNumberPickerDialogPreview_Height() {
+fun VerticalWheelPickerDialogPreview() {
     Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        var selectedValue by remember { mutableStateOf<String?>("170") }
-
-        if (showDialog) {
-            ModernStringOrNumberPickerDialog(
-                title = stringResource(R.string.select_height),
-                options = (100..220).map { it.toString() },
-                currentValue = selectedValue,
-                onValueSelected = {
-                    selectedValue = it
-                    // showDialog = false // デバッグ中はコメントアウトでダイアログ維持
-                },
-                onDismiss = { showDialog = false },
-                unitSuffix = "cm"
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-        ) {
-
-        }
+        VerticalWheelPickerDialog(
+            title = "タイトル",
+            options = (100..300).map { it.toString() },
+            currentValue = "150",
+            onValueSelected = {},
+            onDismiss = { },
+            unitSuffix = "単位"
+        )
     }
 }
 
-
-@Preview(showBackground = true, name = "体重ピッカー (30-150kg)")
+@Preview(showBackground = true)
 @Composable
-fun ModernNumberPickerDialogPreview_Weight_Min() {
+fun BirthdateVerticalWheelPickerDialogPreview() {
     Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        val weightOptions = remember { (30..150).map { it.toString() } }
-        var selectedValue by remember { mutableStateOf<String?>(weightOptions[(weightOptions.size / 2)]) }
-
-        if (showDialog) {
-            ModernStringOrNumberPickerDialog(
-                title = stringResource(R.string.select_weight),
-                options = weightOptions,
-                currentValue = selectedValue,
-                onValueSelected = { selectedValue = it },
-                onDismiss = { showDialog = false },
-                unitSuffix = "kg"
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-        }
-    }
-}
-
-
-@Preview(showBackground = true, name = "性別ピッカー")
-@Composable
-fun ModernStringPickerDialogPreview_Gender() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        var selectedValue by remember {
-            mutableStateOf<String?>(
-                listOf(
-                    "男性",
-                    "女性",
-                    "その他",
-                    "回答しない"
-                )[0]
-            )
-        }
-
-        if (showDialog) {
-            ModernStringOrNumberPickerDialog(
-                title = stringResource(R.string.select_gender),
-                options = listOf("男性", "女性", "その他", "回答しない"),
-                currentValue = selectedValue,
-                onValueSelected = { selectedValue = it },
-                onDismiss = { showDialog = false }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize()
-        ) {}
-    }
-}
-
-
-@Preview(showBackground = true, name = "生年月日ピッカー")
-@Composable
-fun ModernBirthdatePickerDialogPreview() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        val calendar = Calendar.getInstance()
-        var year by remember { mutableIntStateOf(calendar.get(Calendar.YEAR) - 30) }
-        var month by remember { mutableIntStateOf(calendar.get(Calendar.MONTH) + 1) }
-        var day by remember { mutableIntStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
-
-        if (showDialog) {
-            ModernBirthdatePickerDialog(
-                initialYear = year,
-                initialMonth = month,
-                initialDay = day,
-                onBirthdateSelected = { y, m, d ->
-                    year = y
-                    month = m
-                    day = d
-                    // showDialog = false
-                },
-                onDismiss = { showDialog = false }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-        ) {
-        }
+        ModernBirthdatePickerDialog(
+            initialYear = 1925,
+            initialMonth = 1,
+            initialDay = 1,
+            onBirthdateSelected = { _, _, _ -> },
+            onDismiss = {}
+        )
     }
 }

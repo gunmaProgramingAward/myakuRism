@@ -32,7 +32,6 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -57,6 +56,7 @@ import com.example.myaku_rismu.feature.setting.components.BirthdateDialog
 import com.example.myaku_rismu.feature.setting.components.GenderDialog
 import com.example.myaku_rismu.feature.setting.components.HeightDialog
 import com.example.myaku_rismu.feature.setting.components.WeightDialog
+import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.ui.theme.customTheme
@@ -255,11 +255,10 @@ private fun ProfileCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
     ) {
         Column(
@@ -406,14 +405,9 @@ private fun ActivityLevelLabel(
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
 fun SettingScreenPreview() {
-    val viewModel: SettingViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
     Myaku_rismuTheme {
         SettingDetail(
-            uiState = uiState,
-            context = context,
+            uiState = SettingState(),
             eventHandler = {},
         )
     }
