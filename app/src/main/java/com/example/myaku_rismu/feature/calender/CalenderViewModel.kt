@@ -1,7 +1,6 @@
 package com.example.myaku_rismu.feature.home
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.data.model.HealthDataGranularity
@@ -21,7 +20,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CalenderViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val useCase: HealthConnectUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CalenderState())

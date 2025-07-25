@@ -120,15 +120,12 @@ fun CalenderScreen(
         )
     HealthDashboardScreen(
         modifier = modifier,
-        isLoading = uiState.isLoading, // HealthDashboardScreen에 로딩 상태 전달 (부분 로딩 표시용)
+        isLoading = uiState.isLoading,
         currentDate = currentDisplayDate,
         healthReportsForWeek = healthDataByDateFromState,
         onDateSelected = { selectedDate ->
-            currentDisplayDate = selectedDate // UI 표시용 날짜 업데이트
-            // ViewModel에 날짜 선택 이벤트 전달 (데이터 로드 포함될 수 있음 - ViewModel 로직에 따라)
+            currentDisplayDate = selectedDate
             eventHandler(CalenderUiEvent.OnDateSelected(selectedDate))
-            // 만약 ViewModel의 OnDateSelected가 데이터 로드를 포함하지 않는다면, 여기서 LoadHealthData 호출
-            // eventHandler(CalenderUiEvent.LoadHealthData(selectedDate))
         }
     )
 }
@@ -180,7 +177,7 @@ fun HealthDashboardScreen(
                 report = dailyReport,
                 selectedMetricType = selectedMetricTypeState,
                 onMetricSelected = { type ->
-                    selectedMetricTypeState = type // 내부 상태 변경
+                    selectedMetricTypeState = type
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -268,22 +265,21 @@ fun CircularHealthDashboard(
         label = stringResource(id = R.string.calender_screen_animation)
     )
 
-    BoxWithConstraints( // Changed from Box to BoxWithConstraints
+    BoxWithConstraints(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // Use constraints to make the UI responsive
         val dashboardSize = minOf(maxWidth, maxHeight) * 0.95f
 
         HealthRing(
             progress = animatedProgress,
             color = mainData.primaryColor,
-            size = dashboardSize, // Use calculated size
-            strokeWidth = dashboardSize * 0.07f // Relative stroke width
+            size = dashboardSize,
+            strokeWidth = dashboardSize * 0.07f
         )
 
-        val radius = dashboardSize * 0.23f // Adjust radius based on dashboardSize
-        val smallRingSize = dashboardSize * 0.25f // Adjust small ring size
+        val radius = dashboardSize * 0.23f
+        val smallRingSize = dashboardSize * 0.25f
 
         val slots = listOf(
             Pair(-Math.PI / 2, HealthMetricType.HEART_RATE),
@@ -316,7 +312,7 @@ fun CircularHealthDashboard(
                     progress = data.progress,
                     color = data.primaryColor,
                     size = smallRingSize,
-                    strokeWidth = smallRingSize * 0.1f, // Relative stroke width for small rings
+                    strokeWidth = smallRingSize * 0.1f,
                 )
                 Icon(
                     imageVector = data.icon,
@@ -324,7 +320,7 @@ fun CircularHealthDashboard(
                     tint = data.primaryColor,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .size(smallRingSize * 0.4f) // Make icon size relative
+                        .size(smallRingSize * 0.4f)
                 )
             }
         }
@@ -415,7 +411,6 @@ private fun convertCalenderStateToHealthDataMap(
         val stepsGoal = 10000f
         val walkTimeGoal = 3f
 
-        // CalenderState의 데이터가 해당 주의 7일치 데이터를 순서대로 가지고 있다고 가정
         val currentSteps = calenderState.weeklySteps.getOrElse(i) { 0L }.toFloat()
         val currentCalories = calenderState.weeklyCalories.getOrElse(i) { 0L }.toFloat()
         val currentDistance = calenderState.weeklyDistance.getOrElse(i) { 0L }.toFloat() / 1000f
