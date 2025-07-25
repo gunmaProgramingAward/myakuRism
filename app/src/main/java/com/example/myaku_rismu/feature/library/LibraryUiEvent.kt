@@ -1,6 +1,5 @@
 package com.example.myaku_rismu.feature.library
 
-import com.example.myaku_rismu.core.UiEvent
-
-sealed interface LibraryUiEvent : UiEvent{
+sealed class LibraryUiEvent {
+    data class SelectCategory(val category: MusicCategory) : LibraryUiEvent()
 }

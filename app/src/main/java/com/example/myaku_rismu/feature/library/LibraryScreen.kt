@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,42 +18,44 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.example.myaku_rismu.core.AppState
+import androidx.hilt.navigation.compose.hiltViewModel
 
-data class MusicTrack(
-    val id: Int,
-    val title: String,
-    val date: String,
-    val category: String
-)
+enum class MusicCategory(val displayName: String) {
+    ALL("All"),
+    HAPPY("Happy"),
+    SAD("Sad"),
+    ANGRY("Angry"),
+    SURPRISED("Surprised");
 
-// TODO 一時的な変数です
-val allTracks = listOf(
-    MusicTrack(1, "Title by AI1", "2025.06.04", "Happy"),
-    MusicTrack(2, "Title by AI2", "2025.06.04", "Sad"),
-    MusicTrack(3, "Title by AI3", "2025.06.04", "Angry"),
-    MusicTrack(4, "Title by AI4", "2025.06.04", "Happy"),
-    MusicTrack(5, "Title by AI5", "2025.06.04", "Surprised"),
-    MusicTrack(6, "Title by AI6", "2025.06.04", "Sad"),
-    MusicTrack(7, "Title by AI7", "2025.06.05", "Happy"),
-    MusicTrack(8, "Title by AI8", "2025.06.05", "Angry"),
-)
-
+    companion object {
+        fun fromDisplayName(displayName: String): MusicCategory? {
+            return entries.find { it.displayName == displayName }
+        }
+    }
+}
 @Composable
-fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
+fun LibraryScreen(
+    appState: AppState,
+    modifier: Modifier = Modifier,
+    viewModel: LibraryViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    MusicLibraryScreen(
+        uiState = uiState,
+        onCategorySelected = { category ->
+            viewModel.onEvent(LibraryUiEvent.SelectCategory(category))
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
-fun MusicLibraryScreen() {
-    val categories = listOf("All", "Happy", "Sad", "Angry", "Surprised")
-    var selectedCategory by remember { mutableStateOf("All") }
-
-    val filteredTracks = if (selectedCategory == "All") {
-        allTracks
-    } else {
-        allTracks.filter { it.category == selectedCategory }
-    }
+fun MusicLibraryScreen(
+    uiState: LibraryState,
+    onCategorySelected: (MusicCategory) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     Column(
         modifier = Modifier
@@ -60,40 +63,41 @@ fun MusicLibraryScreen() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         CategoryChips(
-            categories = categories,
-            selectedCategory = selectedCategory,
-            onCategorySelected = { category ->
-                selectedCategory = category
-            }
+            categories = uiState.categories,
+            selectedCategory = uiState.selectedCategory,
+            onCategorySelected = onCategorySelected
         )
-        AlbumGrid(tracks = filteredTracks)
+        AlbumGrid(tracks = uiState.tracks)
     }
 }
 
+
 @Composable
 fun CategoryChips(
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit
+    categories: List<MusicCategory>,
+    selectedCategory: MusicCategory,
+    onCategorySelected: (MusicCategory) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp)
             .horizontalScroll(scrollState),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         categories.forEach { category ->
+            val isSelected = (category == selectedCategory)
             FilterChip(
-                selected = (category == selectedCategory),
+                selected = isSelected,
                 onClick = { onCategorySelected(category) },
-                label = { Text(category) },
-                shape = RoundedCornerShape(16.dp),
+                label = { Text(category.displayName) },
+                shape = RoundedCornerShape(8.dp),
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                )
+                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                border = null
             )
         }
     }
@@ -137,13 +141,28 @@ fun AlbumItem(track: MusicTrack) {
 
         Text(text = track.title, style = Typography.bodyLarge)
         Text(text = track.date, style = Typography.bodySmall, color = Color.Gray)
-   }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        MusicLibraryScreen()
+        val previewUiState = LibraryState(
+            categories = MusicCategory.entries,
+            selectedCategory = MusicCategory.ALL,
+            tracks = listOf(
+                MusicTrack(1, "Preview Track 1", "2023.01.01", MusicCategory.HAPPY),
+                MusicTrack(2, "Preview Track 2", "2023.01.02", MusicCategory.SAD),
+                MusicTrack(3, "Preview Track 3", "2023.01.03", MusicCategory.ANGRY),
+            )
+        )
+        MusicLibraryScreen(
+            uiState = previewUiState,
+            onCategorySelected = { selectedCategory ->
+                println("Preview: Category Selected - $selectedCategory") // 選択できているか確認用
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

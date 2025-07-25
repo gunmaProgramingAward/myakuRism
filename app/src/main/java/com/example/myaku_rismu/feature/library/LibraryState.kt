@@ -1,7 +1,14 @@
 package com.example.myaku_rismu.feature.library
 
-import com.example.myaku_rismu.core.ScreenState
-
 data class LibraryState(
-    val screenState: ScreenState = ScreenState.Initializing()
+    val categories: List<MusicCategory> = MusicCategory.entries,
+    val selectedCategory: MusicCategory = MusicCategory.ALL,
+    val tracks: List<MusicTrack> = emptyList()
+)
+
+data class MusicTrack(
+    val id: Int,
+    val title: String,
+    val date: String,
+    val category: MusicCategory
 )
