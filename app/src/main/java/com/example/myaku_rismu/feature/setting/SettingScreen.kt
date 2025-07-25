@@ -51,8 +51,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TopBar
-import com.example.myaku_rismu.feature.setting.components.ModernBirthdatePickerDialog
-import com.example.myaku_rismu.feature.setting.components.ModernStringOrNumberPickerDialog
+import com.example.myaku_rismu.core.ui.dialog.ModernBirthdatePickerDialog
+import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
 import java.util.Calendar
@@ -121,7 +121,7 @@ fun SettingDetail(
             )
         }
         SettingDialog.Height -> {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_height),
                 options = uiState.heightOptions,
                 currentValue = uiState.heightCm?.toString(),
@@ -133,7 +133,7 @@ fun SettingDetail(
             )
         }
         SettingDialog.Weight -> {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_weight),
                 options = uiState.weightOptions,
                 currentValue = uiState.weightKg?.toString(),
@@ -145,7 +145,7 @@ fun SettingDetail(
             )
         }
         SettingDialog.Gender -> {
-            ModernStringOrNumberPickerDialog(
+            VerticalWheelPickerDialog(
                 title = stringResource(R.string.select_gender),
                 options = genderDisplayOptions,
                 currentValue = uiState.genderIndex?.let { genderDisplayOptions.getOrNull(it) },
@@ -272,7 +272,7 @@ private fun ProfileCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
     ) {
         Column(

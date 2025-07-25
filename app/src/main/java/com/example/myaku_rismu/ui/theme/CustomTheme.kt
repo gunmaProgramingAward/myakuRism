@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 data class CustomTheme(
     val myakuRismuBackgroundColor: Color,
+    val myakuRismuCardColor: Color,
     val healthDetailMoveThemeColor: Color,
     val healthDetailMoveDistanceThemeColor: Color,
     val healthDetailHeartRateThemeColor: Color,
