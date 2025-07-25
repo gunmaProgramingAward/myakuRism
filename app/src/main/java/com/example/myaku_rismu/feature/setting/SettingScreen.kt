@@ -249,9 +249,8 @@ private fun ProfileCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(5.dp),
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
@@ -359,7 +358,7 @@ private fun ActivityLevelLabel(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .shadow(2.dp, RoundedCornerShape(12.dp))
-                .background(Color.White, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.customTheme.myakuRismuCardColor, RoundedCornerShape(12.dp))
                 .fillMaxWidth()
                 .border(
                     width = if (selectedActivity == level) 1.5.dp else 1.dp,
