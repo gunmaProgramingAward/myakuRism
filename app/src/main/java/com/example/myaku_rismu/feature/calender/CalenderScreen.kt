@@ -4,17 +4,11 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Hotel
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +21,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -47,19 +40,23 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.padding
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaku_rismu.feature.home.CalenderViewModel
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.blur
 
-enum class HealthMetricType {
-    MOVE,
-    HEART_RATE,
-    SLEEP,
-    STEPS,
-    WALK_TIME
+enum class HealthMetricType(
+    @DrawableRes val iconResId: Int
+) {
+    MOVE(R.drawable.move),
+    HEART_RATE(R.drawable.heart),
+    SLEEP(R.drawable.sleep),
+    STEPS(R.drawable.walk),
+    WALK_DISTANCE(R.drawable.distance)
 }
 
 data class HealthData(
     val type: HealthMetricType,
     val name: String,
-    val icon: ImageVector,
     val primaryColor: Color,
     val unit: String,
     val currentValue: Float,
@@ -74,14 +71,14 @@ data class DailyHealthReport(
     val heartRate: HealthData,
     val sleep: HealthData,
     val steps: HealthData,
-    val walkTime: HealthData
+    val walkDistance: HealthData
 ) {
     fun getByType(type: HealthMetricType): HealthData = when (type) {
         HealthMetricType.MOVE -> move
         HealthMetricType.HEART_RATE -> heartRate
         HealthMetricType.SLEEP -> sleep
         HealthMetricType.STEPS -> steps
-        HealthMetricType.WALK_TIME -> walkTime
+        HealthMetricType.WALK_DISTANCE -> walkDistance
     }
 }
 
@@ -130,6 +127,7 @@ fun CalenderScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HealthDashboardScreen(
     modifier: Modifier = Modifier,
@@ -148,31 +146,46 @@ fun HealthDashboardScreen(
     }
     val selectedData = dailyReport.getByType(selectedMetricTypeState)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(
+                    text = "Calender",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold
+                ) }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .navigationBarsPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        WeeklyCalendar(
-            selectedDate = currentDate,
-            onDateSelected = onDateSelected,
-            healthReports = healthReportsForWeek
-        )
+            WeeklyCalendar(
+                selectedDate = currentDate,
+                onDateSelected = onDateSelected,
+                healthReports = healthReportsForWeek
+            )
 
-        Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = currentDate.format(dateFormatter),
-            style = MaterialTheme.typography.headlineMedium,
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = currentDate.format(dateFormatter),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
 
-        if (isLoading && dailyReport.move.currentValue == 0f && healthReportsForWeek.containsKey(currentDate)) {
-            CircularProgressIndicator(modifier = Modifier.padding(vertical = 16.dp).weight(1f))
-        } else {
             CircularHealthDashboard(
                 report = dailyReport,
                 selectedMetricType = selectedMetricTypeState,
@@ -181,13 +194,17 @@ fun HealthDashboardScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = 8.dp)
             )
+
+            HealthDetailText(data = selectedData)
+
+            Spacer(modifier = Modifier.weight(1f))
         }
-        HealthDetailText(data = selectedData)
     }
 }
+
+
 
 @Composable
 fun WeeklyCalendar(
@@ -284,7 +301,7 @@ fun CircularHealthDashboard(
         val slots = listOf(
             Pair(-Math.PI / 2, HealthMetricType.HEART_RATE),
             Pair(0.0, HealthMetricType.STEPS),
-            Pair(Math.PI / 2, HealthMetricType.WALK_TIME),
+            Pair(Math.PI / 2, HealthMetricType.WALK_DISTANCE),
             Pair(Math.PI, HealthMetricType.SLEEP)
         )
 
@@ -314,14 +331,31 @@ fun CircularHealthDashboard(
                     size = smallRingSize,
                     strokeWidth = smallRingSize * 0.1f,
                 )
-                Icon(
-                    imageVector = data.icon,
-                    contentDescription = data.name,
-                    tint = data.primaryColor,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(smallRingSize * 0.4f)
-                )
+                Box(
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val yShadow = if (data.type == HealthMetricType.MOVE) 2.dp else 7.dp
+                    val yIcon = if (data.type == HealthMetricType.MOVE) 0.dp else 5.dp
+                    Icon(
+                        painter = painterResource(id = data.type.iconResId),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .offset(x = 2.dp, y = yShadow)
+                            .blur(radius = 3.dp)
+                            .size(smallRingSize * 0.4f),
+                        tint = Color.Black.copy(alpha = 0.3f)
+                    )
+                    Icon(
+                        painter = painterResource(id = data.type.iconResId),
+                        contentDescription = data.name,
+                        tint = data.primaryColor,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .offset(x = 0.dp, y = yIcon)
+                            .size(smallRingSize * 0.4f)
+                    )
+                }
             }
         }
     }
@@ -368,18 +402,34 @@ fun HealthDetailText(data: HealthData) {
     ) {
         Text(
             text = data.name,
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.bodyLarge
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(
-                imageVector = data.icon,
-                contentDescription = data.name,
-                tint = data.primaryColor,
-                modifier = Modifier.size(32.dp)
-            )
+            Box(contentAlignment = Alignment.Center) {
+                val yShadow = if (data.type == HealthMetricType.MOVE) 2.dp else 7.dp
+                val yIcon = if (data.type == HealthMetricType.MOVE) 0.dp else 5.dp
+
+                Icon(
+                    painter = painterResource(id = data.type.iconResId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .offset(x = 2.dp, y = yShadow)
+                        .blur(radius = 4.dp)
+                        .size(48.dp),
+                    tint = Color.Black.copy(alpha = 0.3f)
+                )
+                Icon(
+                    painter = painterResource(id = data.type.iconResId),
+                    contentDescription = data.name,
+                    tint = data.primaryColor,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .offset(x = 0.dp, y = yIcon)
+                )
+            }
             Text(
                 text = "${data.currentValue.toInt()}/${data.goalValue.toInt()}",
                 color = data.primaryColor,
@@ -418,11 +468,11 @@ private fun convertCalenderStateToHealthDataMap(
         val currentSleep = calenderState.weeklySleep.getOrElse(i) { 0L }.toFloat()
 
         reports[date] = DailyHealthReport(
-            move = HealthData(HealthMetricType.MOVE, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", currentCalories, moveGoal),
-            heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", currentHeartRate, heartRateGoal),
-            sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", currentSleep, sleepGoal),
-            steps = HealthData(HealthMetricType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", currentSteps, stepsGoal),
-            walkTime = HealthData(HealthMetricType.WALK_TIME, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", currentDistance, walkTimeGoal)
+            move = HealthData(HealthMetricType.MOVE, "ムーブ", Color(0xFFE60039), "KCAL", currentCalories, moveGoal),
+            heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Color(0xFFE600A9), "BPM", currentHeartRate, heartRateGoal),
+            sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Color(0xFF00A9E6), "H", currentSleep, sleepGoal),
+            steps = HealthData(HealthMetricType.STEPS, "歩数", Color(0xFF00E6A9), "歩", currentSteps, stepsGoal),
+            walkDistance = HealthData(HealthMetricType.WALK_DISTANCE, "歩行時間", Color(0xFFE6A900), "KM", currentDistance, walkTimeGoal)
         )
     }
     return reports
@@ -435,11 +485,11 @@ private fun createEmptyDailyReport(date: LocalDate): DailyHealthReport {
     val stepsGoal = 10000f
     val walkTimeGoal = 3f
     return DailyHealthReport(
-        move = HealthData(HealthMetricType.MOVE, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", 0f, moveGoal),
-        heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", 0f, heartRateGoal),
-        sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", 0f, sleepGoal),
-        steps = HealthData(HealthMetricType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", 0f, stepsGoal),
-        walkTime = HealthData(HealthMetricType.WALK_TIME, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", 0f, walkTimeGoal)
+        move = HealthData(HealthMetricType.MOVE, "ムーブ", Color(0xFFE60039), "KCAL", 0f, moveGoal),
+        heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Color(0xFFE600A9), "BPM", 0f, heartRateGoal),
+        sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Color(0xFF00A9E6), "H", 0f, sleepGoal),
+        steps = HealthData(HealthMetricType.STEPS, "歩数", Color(0xFF00E6A9), "歩", 0f, stepsGoal),
+        walkDistance = HealthData(HealthMetricType.WALK_DISTANCE, "歩行時間", Color(0xFFE6A900), "KM", 0f, walkTimeGoal)
     )
 }
 
