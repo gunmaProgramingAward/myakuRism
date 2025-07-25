@@ -253,7 +253,7 @@ private fun ProfileCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
     ) {
         Column(
