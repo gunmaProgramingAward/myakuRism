@@ -1,33 +1,38 @@
 package com.example.myaku_rismu.feature.library
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 // TODO
-val allTracks = listOf(
-    MusicTrack(1, "Title by AI1", "2025.06.04", "Happy"),
-    MusicTrack(2, "Title by AI2", "2025.06.04", "Sad"),
-    MusicTrack(3, "Title by AI3", "2025.06.04", "Angry"),
-    MusicTrack(4, "Title by AI4", "2025.06.04", "Happy"),
-    MusicTrack(5, "Title by AI5", "2025.06.04", "Surprised"),
-    MusicTrack(6, "Title by AI6", "2025.06.04", "Sad"),
-    MusicTrack(7, "Title by AI7", "2025.06.05", "Happy"),
-    MusicTrack(8, "Title by AI8", "2025.06.05", "Angry"),
+val allTracksViewModel = listOf(
+    MusicTrack(1, "Title by AI1", "2025.06.04", MusicCategory.HAPPY),
+    MusicTrack(2, "Title by AI2", "2025.06.04", MusicCategory.SAD),
+    MusicTrack(3, "Title by AI3", "2025.06.04", MusicCategory.ANGRY),
+    MusicTrack(4, "Title by AI4", "2025.06.04", MusicCategory.HAPPY),
+    MusicTrack(5, "Title by AI5", "2025.06.04", MusicCategory.SURPRISED),
+    MusicTrack(6, "Title by AI6", "2025.06.04", MusicCategory.SAD),
+    MusicTrack(7, "Title by AI7", "2025.06.05", MusicCategory.HAPPY),
+    MusicTrack(8, "Title by AI8", "2025.06.05", MusicCategory.ANGRY),
 )
 
-class LibraryViewModel : ViewModel() {
-
-    private val _uiState = MutableStateFlow(LibraryState())
-    val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
-
-    init {
-        _uiState.update { currentState ->
-            currentState.copy(tracks = filterTracks(currentState.selectedCategory))
-        }
+@HiltViewModel
+class LibraryViewModel @Inject constructor() : ViewModel() {
+    private fun getInitialLibraryState(): LibraryState {
+        val initialSelectedCategory = MusicCategory.ALL
+        val initialTracks = filterTracks(initialSelectedCategory, allTracksViewModel)
+        return LibraryState(
+            selectedCategory = initialSelectedCategory,
+            tracks = initialTracks
+        )
     }
+
+    private val _uiState = MutableStateFlow(getInitialLibraryState())
+    val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
 
     fun onEvent(event: LibraryUiEvent) {
         when (event) {
@@ -35,18 +40,18 @@ class LibraryViewModel : ViewModel() {
                 _uiState.update { currentState ->
                     currentState.copy(
                         selectedCategory = event.category,
-                        tracks = filterTracks(event.category)
+                        tracks = filterTracks(event.category, allTracksViewModel)
                     )
                 }
             }
         }
     }
 
-    private fun filterTracks(category: String): List<MusicTrack> {
-        return if (category == "All") {
-            allTracks
+    private fun filterTracks(category: MusicCategory, tracksToFilter: List<MusicTrack>): List<MusicTrack> {
+        return if (category == MusicCategory.ALL) {
+            tracksToFilter
         } else {
-            allTracks.filter { it.category == category }
+            tracksToFilter.filter { it.category == category }
         }
     }
 }

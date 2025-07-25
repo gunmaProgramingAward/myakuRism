@@ -1,7 +1,14 @@
 package com.example.myaku_rismu.feature.library
 
 data class LibraryState(
-    val categories: List<String> = listOf("All", "Happy", "Sad", "Angry", "Surprised"),
-    val selectedCategory: String = "All",
-    val tracks: List<MusicTrack> = allTracks
+    val categories: List<MusicCategory> = MusicCategory.entries,
+    val selectedCategory: MusicCategory = MusicCategory.ALL,
+    val tracks: List<MusicTrack> = emptyList()
+)
+
+data class MusicTrack(
+    val id: Int,
+    val title: String,
+    val date: String,
+    val category: MusicCategory
 )

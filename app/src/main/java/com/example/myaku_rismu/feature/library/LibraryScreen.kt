@@ -18,25 +18,44 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.core.AppState
+import androidx.hilt.navigation.compose.hiltViewModel
 
-data class MusicTrack(
-    val id: Int,
-    val title: String,
-    val date: String,
-    val category: String
-)
+enum class MusicCategory(val displayName: String) {
+    ALL("All"),
+    HAPPY("Happy"),
+    SAD("Sad"),
+    ANGRY("Angry"),
+    SURPRISED("Surprised");
 
+    companion object {
+        fun fromDisplayName(displayName: String): MusicCategory? {
+            return entries.find { it.displayName == displayName }
+        }
+    }
+}
 @Composable
-fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
+fun LibraryScreen(
+    appState: AppState,
+    modifier: Modifier = Modifier,
+    viewModel: LibraryViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    MusicLibraryScreen(
+        uiState = uiState,
+        onCategorySelected = { category ->
+            viewModel.onEvent(LibraryUiEvent.SelectCategory(category))
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
 fun MusicLibraryScreen(
-    viewModel: LibraryViewModel = viewModel()
+    uiState: LibraryState,
+    onCategorySelected: (MusicCategory) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -46,19 +65,18 @@ fun MusicLibraryScreen(
         CategoryChips(
             categories = uiState.categories,
             selectedCategory = uiState.selectedCategory,
-            onCategorySelected = { category ->
-                viewModel.onEvent(LibraryUiEvent.SelectCategory(category))
-            }
+            onCategorySelected = onCategorySelected
         )
-        AlbumGrid(tracks = uiState.tracks)    }
+        AlbumGrid(tracks = uiState.tracks)
+    }
 }
 
 
 @Composable
 fun CategoryChips(
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit
+    categories: List<MusicCategory>,
+    selectedCategory: MusicCategory,
+    onCategorySelected: (MusicCategory) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Row(
@@ -69,15 +87,17 @@ fun CategoryChips(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         categories.forEach { category ->
+            val isSelected = (category == selectedCategory)
             FilterChip(
-                selected = (category == selectedCategory),
+                selected = isSelected,
                 onClick = { onCategorySelected(category) },
-                label = { Text(category) },
-                shape = RoundedCornerShape(16.dp),
+                label = { Text(category.displayName) },
+                shape = RoundedCornerShape(8.dp),
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                )
+                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                border = null
             )
         }
     }
@@ -128,6 +148,22 @@ fun AlbumItem(track: MusicTrack) {
 @Composable
 fun MusicLibraryScreenPreview() {
     MaterialTheme {
-        MusicLibraryScreen()
+        // Preview를 위한 가짜 LibraryState 생성
+        val previewUiState = LibraryState( // LibraryState로 변경 (이전에 LibraryUiState로 잘못 안내했을 수 있습니다)
+            categories = MusicCategory.entries,
+            selectedCategory = MusicCategory.ALL,
+            tracks = listOf(
+                MusicTrack(1, "Preview Track 1", "2023.01.01", MusicCategory.HAPPY),
+                MusicTrack(2, "Preview Track 2", "2023.01.02", MusicCategory.SAD),
+                MusicTrack(3, "Preview Track 3", "2023.01.03", MusicCategory.ANGRY),
+            )
+        )
+        MusicLibraryScreen(
+            uiState = previewUiState,
+            onCategorySelected = { selectedCategory ->
+                println("Preview: Category Selected - $selectedCategory") // 選択できているか確認用
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
