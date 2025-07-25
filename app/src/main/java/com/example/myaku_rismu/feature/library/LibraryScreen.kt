@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,7 +18,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import com.example.myaku_rismu.ui.theme.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.core.AppState
 
@@ -28,19 +28,6 @@ data class MusicTrack(
     val category: String
 )
 
-/*
-// TODO 一時的な変数です
-val allTracks = listOf(
-    MusicTrack(1, "Title by AI1", "2025.06.04", "Happy"),
-    MusicTrack(2, "Title by AI2", "2025.06.04", "Sad"),
-    MusicTrack(3, "Title by AI3", "2025.06.04", "Angry"),
-    MusicTrack(4, "Title by AI4", "2025.06.04", "Happy"),
-    MusicTrack(5, "Title by AI5", "2025.06.04", "Surprised"),
-    MusicTrack(6, "Title by AI6", "2025.06.04", "Sad"),
-    MusicTrack(7, "Title by AI7", "2025.06.05", "Happy"),
-    MusicTrack(8, "Title by AI8", "2025.06.05", "Angry"),
-)
-*/
 @Composable
 fun LibraryScreen(appState: AppState, modifier: Modifier = Modifier) {
 }
