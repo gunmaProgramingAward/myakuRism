@@ -250,8 +250,7 @@ private fun ProfileCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
