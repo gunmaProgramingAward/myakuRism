@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class HealthConnectUseCaseModule {
+abstract class HealthConnectModule {
 
     @Binds
     @Singleton
