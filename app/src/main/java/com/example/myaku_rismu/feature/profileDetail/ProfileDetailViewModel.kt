@@ -2,11 +2,9 @@ package com.example.myaku_rismu.feature.profileDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.ProfileSwitchType
-import com.example.myaku_rismu.data.useCase.ProfileDetailUseCaseImpl
-import com.example.myaku_rismu.domain.model.ProfileDetailData
-import com.example.myaku_rismu.domain.repository.ProfileDetailRepository
 import com.example.myaku_rismu.domain.useCase.ProfileDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ProfileDetailViewModel @Inject constructor(
@@ -34,7 +33,7 @@ class ProfileDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         screenState = ScreenState.Error(
-                            message = e.message ?: "エラーが発生しました"
+                            messageResId = R.string.error
                         )
                     )
                 }
@@ -80,7 +79,7 @@ class ProfileDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         screenState = ScreenState.Error(
-                            message = e.message ?: "エラーが発生しました"
+                            messageResId = R.string.error
                         )
                     )
                 }
