@@ -69,4 +69,5 @@
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="error">エラーが発生しました</string>
 </resources>

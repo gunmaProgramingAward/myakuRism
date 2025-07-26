@@ -2,6 +2,7 @@ package com.example.myaku_rismu.feature.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
@@ -28,12 +29,11 @@ class SettingViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                val settingData = settingUseCase.getSetting()
-                _uiState.update { it.copy(display = settingData)}
+                _uiState.update { it.copy(display = settingUseCase.getSetting())}
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(screenState = ScreenState.Error(
-                        message = e.message ?: "エラーが発生しました") // screenStateを変えたい
+                        messageResId = R.string.error)
                     )
                 }
             }
