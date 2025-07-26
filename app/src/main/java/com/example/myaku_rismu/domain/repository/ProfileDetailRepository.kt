@@ -1,10 +1,11 @@
 package com.example.myaku_rismu.domain.repository
 
 import com.example.myaku_rismu.data.model.ProfileSwitchType
-import com.example.myaku_rismu.domain.model.ProfileDetailData
 
 interface ProfileDetailRepository {
-    suspend fun getProfileDetail(): ProfileDetailData
-    suspend fun getSwitchState(switchType: ProfileSwitchType): Boolean
+    suspend fun getIncludeLyricsSwitchState(): Boolean
+    suspend fun getMusicGenerationNotificationSwitchState(): Boolean
+    suspend fun getCollaborationWithHealthcareSwitchState(): Boolean
+    suspend fun getSyncWithYourSmartwatchSwitchState(): Boolean
     suspend fun updateSwitchState(switchType: ProfileSwitchType, enabled: Boolean)
 }
