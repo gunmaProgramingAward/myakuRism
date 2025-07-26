@@ -3,7 +3,6 @@ package com.example.myaku_rismu.domain.repository
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
-import com.example.myaku_rismu.domain.model.SettingData
 
 interface SettingRepository {
     suspend fun getHeight(): Int?

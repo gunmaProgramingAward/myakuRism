@@ -4,7 +4,6 @@ import com.example.myaku_rismu.data.datasource.SettingDataSource
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
-import com.example.myaku_rismu.domain.model.SettingData
 import com.example.myaku_rismu.domain.repository.SettingRepository
 import javax.inject.Inject
 

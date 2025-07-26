@@ -1,14 +1,13 @@
 package com.example.myaku_rismu.data.datasource
 
 import android.content.Context
-import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import com.example.myaku_rismu.core.base.MyakuRismuApplication
 import com.example.myaku_rismu.core.base.constants.SettingPrefKeys
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
-import com.example.myaku_rismu.domain.model.SettingData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -17,8 +16,7 @@ import javax.inject.Inject
 class SettingDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : SettingDataSource {
-    private val dataStore
-        get() = (context.applicationContext as MyakuRismuApplication).dataStore
+    private val dataStore = (context.applicationContext as MyakuRismuApplication).dataStore
 
     private val heightKey = intPreferencesKey(SettingPrefKeys.HEIGHT_KEY)
     private val weightKey = intPreferencesKey(SettingPrefKeys.WEIGHT_KEY)

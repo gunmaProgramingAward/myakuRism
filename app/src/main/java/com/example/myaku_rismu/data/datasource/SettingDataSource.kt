@@ -3,7 +3,6 @@ package com.example.myaku_rismu.data.datasource
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
-import com.example.myaku_rismu.domain.model.SettingData
 
 interface SettingDataSource {
     suspend fun getHeight(): Int?
