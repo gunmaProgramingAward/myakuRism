@@ -16,5 +16,6 @@ data class CustomTheme(
     val appTextColor: Color,
     val musicDetailMiniMusicPlayerBackgroundColor: Color,
     val musicDetailMusicPlayerFavorite: Color,
-    val musicDetailMusicPlayerShuffle: Color
+    val musicDetailMusicPlayerShuffle: Color,
+    val musicDetailSettingTarget: Color,
 )

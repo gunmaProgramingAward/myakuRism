@@ -19,31 +19,68 @@ object DistanceDataSource {
         zone: ZoneId,
         arraySize: Int
     ) : List<Long> {
-        val timeRangeSlicer = getTimeRangeSlicer(granularity)
-
-        val request = AggregateGroupByDurationRequest(
-            metrics = setOf(DistanceRecord.DISTANCE_TOTAL),
-            timeRangeFilter = TimeRangeFilter.between(startTime, endTime),
-            timeRangeSlicer = timeRangeSlicer
-        )
-
-        val response = healthConnectClient.aggregateGroupByDuration(request)
         val result = LongArray(arraySize)
 
-        response.forEach { aggregationResult ->
-            val index = calculateIndex(
-                aggregationResult,
-                granularity,
-                startTime,
-                zone,
-                arraySize
+        if (granularity == HealthDataGranularity.YEARLY) {
+            val monthlyTimeRangeSlicer = getTimeRangeSlicer(HealthDataGranularity.MONTHLY)
+
+            val monthlyRequest = AggregateGroupByDurationRequest(
+                metrics = setOf(DistanceRecord.DISTANCE_TOTAL),
+                timeRangeFilter = TimeRangeFilter.between(startTime, endTime),
+                timeRangeSlicer = monthlyTimeRangeSlicer
             )
 
-            if (index in 0 until arraySize) {
-                val distanceAvg = aggregationResult.result[DistanceRecord.DISTANCE_TOTAL]
-                result[index] = distanceAvg?.inMeters ?.toLong() ?: 0L
+            val monthlyResponse = healthConnectClient.aggregateGroupByDuration(monthlyRequest)
+            val monthlyTotals = mutableMapOf<Int, MutableList<Long>>()
+
+            monthlyResponse.forEach { aggregationResult ->
+                val monthIndex = calculateIndex(
+                    aggregationResult,
+                    HealthDataGranularity.YEARLY,
+                    startTime,
+                    zone,
+                    arraySize
+                )
+
+                if (monthIndex in 0 until arraySize) {
+                    val distance = aggregationResult.result[DistanceRecord.DISTANCE_TOTAL]?.inMeters?.toLong() ?: 0L
+                    monthlyTotals.getOrPut(monthIndex) { mutableListOf() }.add(distance)
+                }
+            }
+
+            monthlyTotals.forEach { (monthIndex, dailyDistances) ->
+                val nonZeroDistances = dailyDistances.filter { it > 0L }
+                if (nonZeroDistances.isNotEmpty()) {
+                    result[monthIndex] = nonZeroDistances.average().toLong()
+                }
+            }
+        } else {
+            val timeRangeSlicer = getTimeRangeSlicer(granularity)
+
+            val request = AggregateGroupByDurationRequest(
+                metrics = setOf(DistanceRecord.DISTANCE_TOTAL),
+                timeRangeFilter = TimeRangeFilter.between(startTime, endTime),
+                timeRangeSlicer = timeRangeSlicer
+            )
+
+            val response = healthConnectClient.aggregateGroupByDuration(request)
+
+            response.forEach { aggregationResult ->
+                val index = calculateIndex(
+                    aggregationResult,
+                    granularity,
+                    startTime,
+                    zone,
+                    arraySize
+                )
+
+                if (index in 0 until arraySize) {
+                    val distanceAvg = aggregationResult.result[DistanceRecord.DISTANCE_TOTAL]
+                    result[index] = distanceAvg?.inMeters ?.toLong() ?: 0L
+                }
             }
         }
+
         return result.toList()
     }
 }
