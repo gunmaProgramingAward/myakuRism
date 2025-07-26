@@ -63,6 +63,13 @@ fun HealthDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    fun eventHandler(event: HealthDetailUiEvent) {
+        when (event) {
+            is HealthDetailUiEvent.OnClickPeriod -> {
+                viewModel.changeSelectedPeriod(event.period)
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -105,7 +112,7 @@ fun HealthDetailScreen(
         } else if (uiState.screenState is ScreenState.Success) {
             HealthDetail(
                 uiState = uiState,
-                onClickPeriod = viewModel::changeSelectedPeriod,
+                onClickPeriod = { eventHandler(HealthDetailUiEvent.OnClickPeriod(it)) },
                 context = context,
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             )
