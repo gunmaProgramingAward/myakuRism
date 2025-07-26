@@ -11,3 +11,10 @@ data class SettingState(
     val dialog: SettingType? = null,
     val isHealthConnectLinked: Boolean = false,
 )
+
+data class InfoItemData(
+    val label: String,
+    val value: String,
+    val onClick: () -> Unit,
+    val isSelected: Boolean
+)

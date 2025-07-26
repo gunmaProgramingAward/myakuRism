@@ -60,12 +60,6 @@ import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
 
 
-data class InfoItemData(
-    val label: String,
-    val value: String,
-    val onClick: () -> Unit,
-    val isSelected: Boolean
-)
 
 @Composable
 fun SettingScreen(
