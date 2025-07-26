@@ -22,7 +22,7 @@ data class HealthDetailState(
     val listDate: List<Long> = emptyList(),
     val axisConfig: AxisConfig? = null,
     val selectedPeriods: Int = 0,
-    val dailyAverage: String = "0",
+    val dailyAverage: Int = 0,
     val target: Int = 0,
 ) {
 
@@ -59,7 +59,7 @@ data class HealthDetailState(
         }
 
     @get:StringRes
-    val titleResId: Int
+    val topBarTitleResId: Int
         get() = when (recordType) {
             RecordType.CALORIES -> R.string.health_detail_title_move
             RecordType.DISTANCE -> R.string.health_detail_title_move_distance
@@ -68,6 +68,14 @@ data class HealthDetailState(
             RecordType.STEPS -> R.string.health_detail_title_walk
             null -> R.string.health_detail_title_move
         }
+
+    @get:StringRes
+    val titleResId: Int
+    get() = when {
+        granularity == HealthDataGranularity.HOURLY || recordType == RecordType.HEART_RATE ->
+            R.string.health_detail_daily_average
+        else -> R.string.health_detail_all
+    }
 
     val color: Color
         @Composable
