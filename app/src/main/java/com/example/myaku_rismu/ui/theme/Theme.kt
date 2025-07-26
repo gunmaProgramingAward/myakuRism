@@ -40,7 +40,8 @@ val LightCustomTheme = CustomTheme(
     appTextColor = Color(0xFF000000),
     musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
     musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
-    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D),
+    musicDetailSettingTarget = Color(0xFF2B80CB)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -57,7 +58,9 @@ val DarkCustomTheme = CustomTheme(
     appTextColor = Color(0xFF000000),
     musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
     musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
-    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D),
+    musicDetailSettingTarget = Color(0xFF2B80CB)
+
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

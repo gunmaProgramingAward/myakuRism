@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.data.model.RecordType
 
 @Composable
 fun HomeScreen(
@@ -25,26 +26,13 @@ fun HomeScreen(
         Column {
             Button(
                 onClick = {
-                    appState.navigateToHealthDetail()
+                    appState.navigateToHealthDetail(recordType = RecordType.HEART_RATE)
                 },
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             ) {
                 Text("Go to Health Detail")
             }
 
-            Button(
-                onClick = {
-                    viewModel.generateMusic()
-                }
-            ) { }
-
-            Button(
-                onClick = {
-                    viewModel.getMusic(taskId = viewModel.taskId)
-                }
-            ) {
-                Text("Get Music")
-            }
         }
     }
 }
