@@ -12,9 +12,13 @@ class SettingRepositoryImpl @Inject constructor(
     private val dataSource: SettingDataSource
 ) : SettingRepository {
 
-    override suspend fun getSetting(): SettingData {
-        return dataSource.getSetting()
-    }
+    override suspend fun getHeight(): Int? = dataSource.getHeight()
+    override suspend fun getWeight(): Int? = dataSource.getWeight()
+    override suspend fun getBirthYear(): Int? = dataSource.getBirthYear()
+    override suspend fun getBirthMonth(): Int? = dataSource.getBirthMonth()
+    override suspend fun getBirthDay(): Int? = dataSource.getBirthDay()
+    override suspend fun getGender(): Gender? = dataSource.getGender()
+    override suspend fun getActivityLevel(): ActivityLevel? = dataSource.getActivityLevel()
 
     override suspend fun updateHeightAndWeight(selectType: SettingType, value: Int) {
         dataSource.updateHeightAndWeight(selectType, value)

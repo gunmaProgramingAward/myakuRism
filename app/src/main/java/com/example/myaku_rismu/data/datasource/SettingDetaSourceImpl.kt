@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 class SettingDataSourceImpl @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : SettingDataSource {
     private val dataStore
         get() = (context.applicationContext as MyakuRismuApplication).dataStore
@@ -28,19 +28,14 @@ class SettingDataSourceImpl @Inject constructor(
     private val genderKey = intPreferencesKey(SettingPrefKeys.GENDER_KEY)
     private val activityLevelKey = intPreferencesKey(SettingPrefKeys.ACTIVITY_LEVEL_KEY)
 
-    override suspend fun getSetting(): SettingData {
-        val prefs = dataStore.data.first()
 
-        return SettingData(
-            heightCm = prefs[heightKey],
-            weightKg = prefs[weightKey],
-            birthYear = prefs[birthYearKey],
-            birthMonth = prefs[birthMonthKey],
-            birthDay = prefs[birthdayKey],
-            gender = Gender.fromId(prefs[genderKey]),
-            activityLevel = ActivityLevel.fromId(prefs[activityLevelKey])
-        )
-    }
+    override suspend fun getHeight(): Int? = dataStore.data.first()[heightKey]
+    override suspend fun getWeight(): Int? = dataStore.data.first()[weightKey]
+    override suspend fun getBirthYear(): Int? = dataStore.data.first()[birthYearKey]
+    override suspend fun getBirthMonth(): Int? = dataStore.data.first()[birthMonthKey]
+    override suspend fun getBirthDay(): Int? = dataStore.data.first()[birthdayKey]
+    override suspend fun getGender(): Gender? = Gender.fromId(dataStore.data.first()[genderKey])
+    override suspend fun getActivityLevel(): ActivityLevel? = ActivityLevel.fromId(dataStore.data.first()[activityLevelKey])
 
     override suspend fun updateHeightAndWeight(
         selectType: SettingType,
