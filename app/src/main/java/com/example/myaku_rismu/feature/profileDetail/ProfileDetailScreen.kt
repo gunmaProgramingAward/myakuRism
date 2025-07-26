@@ -155,7 +155,7 @@ fun ProfileSwitchCard(
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.customTheme.switchCheckedThumbColor,
                 uncheckedThumbColor = MaterialTheme.customTheme.switchUncheckedThumbColor,
-                checkedTrackColor = MaterialTheme.customTheme.switchCheckedTrackColor,
+                checkedTrackColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor,
                 uncheckedTrackColor = MaterialTheme.customTheme.switchUncheckedTrackColor
             )
         )

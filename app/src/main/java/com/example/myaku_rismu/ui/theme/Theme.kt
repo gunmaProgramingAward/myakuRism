@@ -27,6 +27,8 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val LightCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -37,7 +39,6 @@ val LightCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
     switchCheckedThumbColor = Color(0xFFE2E2E2),
     switchUncheckedThumbColor = Color(0xFF777777),
     switchCheckedTrackColor = Color(0xFF1F2937),
@@ -46,6 +47,8 @@ val LightCustomTheme = CustomTheme(
 )
 
 val DarkCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -56,7 +59,6 @@ val DarkCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
     switchCheckedThumbColor = Color(0xFFE2E2E2),
     switchUncheckedThumbColor = Color(0xFF777777),
     switchCheckedTrackColor = Color(0xFF1F2937),

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.myaku_rismu.ui.theme.customTheme
 
 @Composable
 fun BaseProfileCardLayout(
@@ -35,13 +36,12 @@ fun BaseProfileCardLayout(
         modifier = modifier
             .fillMaxWidth()
             .height(73.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.extraSmall
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.customTheme.myakuRismuCardColor)
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
