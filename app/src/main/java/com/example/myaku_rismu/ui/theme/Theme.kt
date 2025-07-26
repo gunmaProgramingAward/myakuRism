@@ -36,7 +36,11 @@ val LightCustomTheme = CustomTheme(
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
-    bottomNavigationBarUnSelectedColor = Color(0xFF474747)
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -49,7 +53,11 @@ val DarkCustomTheme = CustomTheme(
     healthDetailSelectedPeriodTabColor = Color(0xFFF5F5F5),
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
-    bottomNavigationBarUnSelectedColor = Color(0xFF474747)
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

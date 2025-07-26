@@ -13,4 +13,8 @@ data class CustomTheme(
     val bottomNavigationBarBackgroundColor: Color,
     val bottomNavigationBarSelectedColor: Color,
     val bottomNavigationBarUnSelectedColor: Color,
+    val appTextColor: Color,
+    val musicDetailMiniMusicPlayerBackgroundColor: Color,
+    val musicDetailMusicPlayerFavorite: Color,
+    val musicDetailMusicPlayerShuffle: Color
 )

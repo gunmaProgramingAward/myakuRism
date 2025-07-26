@@ -25,4 +25,52 @@ class MusicDetailViewModel : ViewModel() {
             )
         }
     }
+
+    fun changeIsShuffle(boolean: Boolean) {
+        _uiState.update {
+            it.copy(
+                isShuffle = boolean
+            )
+        }
+    }
+
+    fun changePlayerState(playerState: PlayerState) {
+        _uiState.update {
+            it.copy(
+                playerState = playerState
+            )
+        }
+    }
+
+    fun changeMusicSliderPosition(position: Float) {
+        _uiState.update {
+            it.copy(
+                musicSliderPositon = position
+            )
+        }
+    }
+
+    fun changeMusicImagePausedRotation(rotation: Float) {
+        _uiState.update {
+            it.copy(
+                musicImagePausedRotation = it.musicImagePausedRotation + rotation
+            )
+        }
+    }
+
+    fun changeDragOffset(offset: Float) {
+        _uiState.update {
+            it.copy(
+                dragOffset = offset
+            )
+        }
+    }
+
+    fun plusDragOffset(offset: Float) {
+        _uiState.update {
+            it.copy(
+                dragOffset = it.dragOffset + offset
+            )
+        }
+    }
 }
