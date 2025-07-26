@@ -3,6 +3,8 @@ package com.example.myaku_rismu.data.datasource
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.myaku_rismu.core.base.MyakuRismuApplication
+import com.example.myaku_rismu.core.base.constants.SettingPrefKeys
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
@@ -13,19 +15,18 @@ import javax.inject.Inject
 
 
 class SettingDataSourceImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    private val context: Context
 ) : SettingDataSource {
-    private val dataStore = PreferenceDataStoreFactory.create(
-        produceFile = { context.preferencesDataStoreFile("settings") },
-    )
+    private val dataStore
+        get() = (context.applicationContext as MyakuRismuApplication).dataStore
 
-    private val heightKey = intPreferencesKey("heightCm")
-    private val weightKey = intPreferencesKey("weightKg")
-    private val birthYearKey = intPreferencesKey("birthYear")
-    private val birthMonthKey = intPreferencesKey("birthMonth")
-    private val birthdayKey = intPreferencesKey("birthday")
-    private val genderKey = intPreferencesKey("gender")
-    private val activityLevelKey = intPreferencesKey("activityLevel")
+    private val heightKey = intPreferencesKey(SettingPrefKeys.HEIGHT_KEY)
+    private val weightKey = intPreferencesKey(SettingPrefKeys.WEIGHT_KEY)
+    private val birthYearKey = intPreferencesKey(SettingPrefKeys.BIRTH_YEAR_KEY)
+    private val birthMonthKey = intPreferencesKey(SettingPrefKeys.BIRTH_MONTH_KEY)
+    private val birthdayKey = intPreferencesKey(SettingPrefKeys.BIRTH_DAY_KEY)
+    private val genderKey = intPreferencesKey(SettingPrefKeys.GENDER_KEY)
+    private val activityLevelKey = intPreferencesKey(SettingPrefKeys.ACTIVITY_LEVEL_KEY)
 
     override suspend fun getSetting(): SettingData {
         val prefs = dataStore.data.first()
