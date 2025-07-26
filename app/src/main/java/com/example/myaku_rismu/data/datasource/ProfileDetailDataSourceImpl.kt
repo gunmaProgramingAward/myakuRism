@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.myaku_rismu.core.base.constants.ProfileDetailPrefKeys
 import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.domain.model.ProfileDetailData
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,16 +19,16 @@ class ProfileDetailDataSourceImpl @Inject constructor(
         produceFile = { context.preferencesDataStoreFile("profile_detail") },
     )
     private val includeLyricsSwitchKey =
-        booleanPreferencesKey("include_lyrics_switch")
+        booleanPreferencesKey(ProfileDetailPrefKeys.INCLUDE_LYRICS_SWITCH)
 
     private val musicGenerationNotificationSwitchKey =
-        booleanPreferencesKey("music_generation_notification_switch")
+        booleanPreferencesKey(ProfileDetailPrefKeys.MUSIC_GENERATION_NOTIFICATION_SWITCH)
 
     private val collaborationWithHealthcareSwitchKey =
-        booleanPreferencesKey("collaboration_with_healthcare_switch")
+        booleanPreferencesKey(ProfileDetailPrefKeys.COLLABORATION_WITH_HEALTHCARE_SWITCH)
 
     private val syncWithYourSmartwatchSwitchKey =
-        booleanPreferencesKey("sync_with_your_smartwatch_switch")
+        booleanPreferencesKey(ProfileDetailPrefKeys.SYNC_WITH_YOUR_SMARTWATCH_SWITCH)
 
 
     override suspend fun getProfileDetail(): ProfileDetailData {
