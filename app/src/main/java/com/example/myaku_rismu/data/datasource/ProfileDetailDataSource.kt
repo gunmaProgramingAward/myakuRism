@@ -1,9 +1,9 @@
-package com.example.myaku_rismu.domain.repository
+package com.example.myaku_rismu.data.datasource
 
 import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.domain.model.ProfileDetailData
 
-interface ProfileDetailRepository {
+interface ProfileDetailDataSource {
     suspend fun getProfileDetail(): ProfileDetailData
     suspend fun getSwitchState(switchType: ProfileSwitchType): Boolean
     suspend fun updateSwitchState(switchType: ProfileSwitchType, enabled: Boolean)
