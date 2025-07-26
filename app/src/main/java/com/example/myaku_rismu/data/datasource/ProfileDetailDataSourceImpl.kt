@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.myaku_rismu.core.base.MyakuRismuApplication
 import com.example.myaku_rismu.core.base.constants.ProfileDetailPrefKeys
 import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.domain.model.ProfileDetailData
@@ -15,9 +16,7 @@ import javax.inject.Inject
 class ProfileDetailDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ProfileDetailDataSource {
-    private val dataStore = PreferenceDataStoreFactory.create(
-        produceFile = { context.preferencesDataStoreFile("profile_detail") },
-    )
+    private val dataStore = (context.applicationContext as MyakuRismuApplication).dataStore
     private val includeLyricsSwitchKey =
         booleanPreferencesKey(ProfileDetailPrefKeys.INCLUDE_LYRICS_SWITCH)
 
