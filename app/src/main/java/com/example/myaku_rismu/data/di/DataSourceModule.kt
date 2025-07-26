@@ -3,6 +3,8 @@ package com.example.myaku_rismu.data.di
 import android.content.Context
 import com.example.myaku_rismu.data.datasource.HealthConnectDataSource
 import com.example.myaku_rismu.data.datasource.HealthConnectDataSourceImpl
+import com.example.myaku_rismu.data.datasource.ProfileDetailDataSource
+import com.example.myaku_rismu.data.datasource.ProfileDetailDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,5 +22,13 @@ object DataSourceModule {
         @ApplicationContext context: Context
     ): HealthConnectDataSource {
         return HealthConnectDataSourceImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileDetailDataSource(
+        @ApplicationContext context: Context
+    ): ProfileDetailDataSource {
+        return ProfileDetailDataSourceImpl(context)
     }
 }
