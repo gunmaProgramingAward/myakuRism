@@ -29,6 +29,7 @@ import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.BaseProfileCardLayout
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
+import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.ui.theme.customTheme
 
 @Composable
@@ -54,7 +55,7 @@ fun ProfileDetailScreen(
     Scaffold(modifier = modifier) { innerPadding ->
         ProfileDetail(
             uiState = uiState,
-            onClickSwitch = { switchType ->
+            onClickSwitch = { switchType: ProfileSwitchType ->
                 eventHandler(ProfileDetailUiEvent.OnClickSwitch(switchType))
             },
             onClickSetting = {
@@ -69,37 +70,30 @@ fun ProfileDetailScreen(
 @Composable
 fun ProfileDetail(
     uiState: ProfileDetailState,
-    onClickSwitch: (Int) -> Unit,
+    onClickSwitch: (ProfileSwitchType) -> Unit,
     onClickSetting: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    data class CardItem(
-        @DrawableRes val iconResId: Int,
-        @StringRes val title: Int,
-        val isSwitchEnabled: Boolean
-    )
-
     val switchableCardItems = listOf(
-            CardItem(
+            ProfileSwitchType.INCLUDE_LYRICS to CardItem(
                 iconResId = R.drawable.include_lyrics,
                 title = R.string.include_lyrics,
-                isSwitchEnabled = uiState.includeLyricsSwitchEnabled
+                isSwitchEnabled = uiState.display.includeLyricsSwitchEnabled
             ),
-            CardItem(
+            ProfileSwitchType.MUSIC_GENERATION_NOTIFICATION to CardItem(
                 iconResId = R.drawable.music_generation_notification,
                 title = R.string.music_generation_notification,
-                isSwitchEnabled = uiState.musicGenerationNotificationSwitchEnabled
+                isSwitchEnabled = uiState.display.musicGenerationNotificationSwitchEnabled
             ),
-            CardItem(
+            ProfileSwitchType.COLLABORATION_WITH_HEALTHCARE to CardItem(
                 iconResId = R.drawable.collaboration_with_healthcare,
                 title = R.string.collaboration_with_healthcare,
-                isSwitchEnabled = uiState.collaborationWithHealthcareSwitchEnabled
+                isSwitchEnabled = uiState.display.collaborationWithHealthcareSwitchEnabled
             ),
-            CardItem(
+            ProfileSwitchType.SYNC_WITH_YOUR_SMARTWATCH to CardItem(
                 iconResId = R.drawable.sync_with_your_smartwatch,
                 title = R.string.sync_with_your_smartwatch,
-                isSwitchEnabled = uiState.syncWithYourSmartwatchSwitchEnabled
+                isSwitchEnabled = uiState.display.syncWithYourSmartwatchSwitchEnabled
             )
         )
 
@@ -122,13 +116,13 @@ fun ProfileDetail(
             text = stringResource(R.string.advanced_settings),
             style = MaterialTheme.typography.titleMedium,
         )
-        switchableCardItems.forEachIndexed { index, item ->
+        switchableCardItems.forEach { (switchType, item) ->
             ProfileSwitchCard(
                 modifier = Modifier,
                 icon = item.iconResId,
                 title = item.title,
                 switchChecked = item.isSwitchEnabled,
-                onSwitchCheckedChange = { onClickSwitch(index) }
+                onSwitchCheckedChange = { onClickSwitch(switchType) }
             )
         }
     }
@@ -198,14 +192,9 @@ fun ProfileTitleSubcomponentCard(
 @Preview(showBackground = true)
 @Composable
 fun ProfileDetailPreview() {
-    val viewModel: ProfileDetailViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     ProfileDetail(
-        uiState = uiState,
-        onClickSwitch = { switchType ->
-            viewModel.toggleSwitch(switchType)
-        },
+        uiState = ProfileDetailState(),
+        onClickSwitch = {},
         onClickSetting = {},
     )
 }

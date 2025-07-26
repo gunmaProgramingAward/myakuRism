@@ -3,8 +3,11 @@ package com.example.myaku_rismu.feature.profileDetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.ProfileSwitchType
+import com.example.myaku_rismu.data.useCase.ProfileDetailUseCaseImpl
 import com.example.myaku_rismu.domain.model.ProfileDetailData
 import com.example.myaku_rismu.domain.repository.ProfileDetailRepository
+import com.example.myaku_rismu.domain.useCase.ProfileDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileDetailViewModel @Inject constructor(
-    private val repository: ProfileDetailRepository
+    private val profileDetailUseCase: ProfileDetailUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileDetailState())
     val uiState: StateFlow<ProfileDetailState> = _uiState.asStateFlow()
@@ -26,51 +29,62 @@ class ProfileDetailViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                val profileDetailData = repository.getProfileDetail()
-                _uiState.update { profileDetailData.toState() }
+                _uiState.update { it.copy(display = profileDetailUseCase.getProfileDetail()) }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(screenState = ScreenState.Error(
-                        message = e.message ?: "エラーが発生しました")
+                    it.copy(
+                        screenState = ScreenState.Error(
+                            message = e.message ?: "エラーが発生しました"
+                        )
                     )
                 }
             }
         }
     }
 
-    fun toggleSwitch(switchType: Int) {
+    fun toggleSwitch(switchType: ProfileSwitchType) {
         val enabled = when (switchType) {
-            0 -> !_uiState.value.includeLyricsSwitchEnabled
-            1 -> !_uiState.value.musicGenerationNotificationSwitchEnabled
-            2 -> !_uiState.value.collaborationWithHealthcareSwitchEnabled
-            3 -> !_uiState.value.syncWithYourSmartwatchSwitchEnabled
-            else -> false
+            ProfileSwitchType.INCLUDE_LYRICS ->
+                !_uiState.value.display.includeLyricsSwitchEnabled
+
+            ProfileSwitchType.MUSIC_GENERATION_NOTIFICATION ->
+                !_uiState.value.display.musicGenerationNotificationSwitchEnabled
+
+            ProfileSwitchType.COLLABORATION_WITH_HEALTHCARE ->
+                !_uiState.value.display.collaborationWithHealthcareSwitchEnabled
+
+            ProfileSwitchType.SYNC_WITH_YOUR_SMARTWATCH ->
+                !_uiState.value.display.syncWithYourSmartwatchSwitchEnabled
         }
         _uiState.update { currentState ->
-            when (switchType) {
-                0 -> currentState.copy(includeLyricsSwitchEnabled = enabled)
-                1 -> currentState.copy(musicGenerationNotificationSwitchEnabled = enabled)
-                2 -> currentState.copy(collaborationWithHealthcareSwitchEnabled = enabled)
-                3 -> currentState.copy(syncWithYourSmartwatchSwitchEnabled = enabled)
-                else -> currentState
-            }
+            currentState.copy(
+                display = when (switchType) {
+                    ProfileSwitchType.INCLUDE_LYRICS ->
+                        currentState.display.copy(includeLyricsSwitchEnabled = enabled)
+
+                    ProfileSwitchType.MUSIC_GENERATION_NOTIFICATION ->
+                        currentState.display.copy(musicGenerationNotificationSwitchEnabled = enabled)
+
+                    ProfileSwitchType.COLLABORATION_WITH_HEALTHCARE ->
+                        currentState.display.copy(collaborationWithHealthcareSwitchEnabled = enabled)
+
+                    ProfileSwitchType.SYNC_WITH_YOUR_SMARTWATCH ->
+                        currentState.display.copy(syncWithYourSmartwatchSwitchEnabled = enabled)
+                }
+            )
         }
         viewModelScope.launch {
             try {
-                repository.updateSwitchState(switchType, enabled)
+                profileDetailUseCase.updateSwitchState(switchType, enabled)
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(screenState = ScreenState.Error(message = e.message ?: "エラーが発生しました"))
+                    it.copy(
+                        screenState = ScreenState.Error(
+                            message = e.message ?: "エラーが発生しました"
+                        )
+                    )
                 }
             }
         }
-    }
-    private fun ProfileDetailData.toState(): ProfileDetailState {
-        return ProfileDetailState(
-            includeLyricsSwitchEnabled = this.includeLyricsSwitchEnabled,
-            musicGenerationNotificationSwitchEnabled = this.musicGenerationNotificationSwitchEnabled,
-            collaborationWithHealthcareSwitchEnabled = this.collaborationWithHealthcareSwitchEnabled,
-            syncWithYourSmartwatchSwitchEnabled = this.syncWithYourSmartwatchSwitchEnabled
-        )
     }
 }
