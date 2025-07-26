@@ -166,7 +166,10 @@ fun SettingDetail(
     val infoItems = listOf(
         InfoItemData(
             label = stringResource(R.string.date_of_birth),
-            value = if (uiState.display.birthYear != null && uiState.display.birthMonth != null && uiState.display.birthDay != null) {
+            value = if (uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
+                ) {
                 stringResource(
                     R.string.date_format_jp,
                     uiState.display.birthYear,
@@ -175,7 +178,9 @@ fun SettingDetail(
                 )
             } else commonPlaceholder,
             onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.BIRTHDATE)) },
-            isSelected = uiState.display.birthYear != null && uiState.display.birthMonth != null && uiState.display.birthDay != null
+            isSelected = uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
         ),
         InfoItemData(
             label = stringResource(R.string.height),
@@ -294,6 +299,10 @@ private fun InfoItem(
         )
         Box(
             modifier = Modifier
+                .background(
+                    if (isSelected)Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor,
+                )
                 .fillMaxWidth()
                 .height(55.dp)
                 .border(
@@ -357,8 +366,12 @@ private fun ActivityLevelLabel(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .shadow(2.dp, RoundedCornerShape(12.dp))
-                .background(MaterialTheme.customTheme.myakuRismuCardColor, RoundedCornerShape(12.dp))
+                .shadow(
+                    if (selectedActivity == level)4.dp
+                    else 0.dp, RoundedCornerShape(12.dp))
+                .background(
+                    if (selectedActivity == level) Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor, RoundedCornerShape(12.dp))
                 .fillMaxWidth()
                 .border(
                     width = if (selectedActivity == level) 1.5.dp else 1.dp,
@@ -368,7 +381,7 @@ private fun ActivityLevelLabel(
                 .selectable(
                     selected = selectedActivity == level,
                     onClick = { onActivitySelected(level) },
-                    role = Role.RadioButton
+                    role = Role.RadioButton,
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
