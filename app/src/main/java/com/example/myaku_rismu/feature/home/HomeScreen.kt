@@ -386,10 +386,10 @@ fun HealthMetricsSection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(9.dp)
     ) {
-        val firstMetric = uiState.metrics[0]
+        val firstMetric = uiState.metrics.getOrNull(0)
         val firstCardUi = cardList.getOrNull(0)
 
-        if (firstCardUi != null) {
+        if (firstMetric != null && firstCardUi != null) {
             HealthMetricCard(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -399,23 +399,26 @@ fun HealthMetricsSection(
                 onClick = { onClick(firstMetric) }
             )
         }
-        uiState.metrics.drop(1).chunked(2).forEachIndexed { rowIndex, rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(9.dp)
-            ) {
-                rowItems.forEachIndexed { colIndex, metric ->
-                    val cardUi = cardList.getOrNull(rowIndex * 2 + colIndex + 1)
 
-                    if (cardUi != null) {
-                        HealthMetricCard(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(100.dp),
-                            metric = metric,
-                            cardUi = cardUi,
-                            onClick = { onClick(metric) }
-                        )
+        if (uiState.metrics.size > 1) {
+            uiState.metrics.drop(1).chunked(2).forEachIndexed { rowIndex, rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(9.dp)
+                ) {
+                    rowItems.forEachIndexed { colIndex, metric ->
+                        val cardUi = cardList.getOrNull(rowIndex * 2 + colIndex + 1)
+
+                        if (cardUi != null) {
+                            HealthMetricCard(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(100.dp),
+                                metric = metric,
+                                cardUi = cardUi,
+                                onClick = { onClick(metric) }
+                            )
+                        }
                     }
                 }
             }
