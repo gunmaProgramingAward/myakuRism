@@ -11,6 +11,7 @@ import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import com.example.myaku_rismu.domain.useCase.SettingUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -19,7 +20,8 @@ import java.time.ZoneId
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val healthConnectUseCase: HealthConnectUseCase
+    private val healthConnectUseCase: HealthConnectUseCase,
+    private val settingUseCase: SettingUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -103,14 +105,12 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun fetchTargetValues(): Map<RecordType, Int> {
-        // 受け取れたらやるかもしれない実装
-        // return RecordType.values().associateWith { healthConnectUseCase.fetchTargetValue(it) }
         return mapOf(
-            RecordType.HEART_RATE to 180,
-            RecordType.STEPS to 10000,
-            RecordType.CALORIES to 2000,
-            RecordType.SLEEP_TIME to 8,
-            RecordType.DISTANCE to 5
+            RecordType.HEART_RATE to (settingUseCase.getHeartRateTarget() ?: 0),
+            RecordType.STEPS to (settingUseCase.getStepsTarget() ?: 0),
+            RecordType.CALORIES to (settingUseCase.getCaloriesTarget() ?: 0),
+            RecordType.SLEEP_TIME to (settingUseCase.getSleepTimeTarget() ?: 0),
+            RecordType.DISTANCE to (settingUseCase.getDistanceTarget() ?: 0)
         )
     }
 
