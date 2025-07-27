@@ -44,7 +44,7 @@ val Typography = Typography(
         fontSize = 20.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
 
 // Set of Material typography styles to start with
 //val Typography = Typography(

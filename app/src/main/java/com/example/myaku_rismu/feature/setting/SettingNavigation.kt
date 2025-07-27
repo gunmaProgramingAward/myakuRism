@@ -8,6 +8,6 @@ import com.example.myaku_rismu.core.navigation.SettingsRoute
 
 fun NavGraphBuilder.settingScreen(appState: AppState, modifier: Modifier = Modifier) {
     composable<SettingsRoute> {
-        SettingScreen(/*appState = appState*/ modifier = modifier)
+        SettingScreen(appState = appState, modifier = modifier)
     }
 }

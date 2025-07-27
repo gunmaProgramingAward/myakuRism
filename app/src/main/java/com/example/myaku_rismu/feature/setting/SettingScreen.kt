@@ -1,21 +1,19 @@
 package com.example.myaku_rismu.feature.setting
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,291 +21,223 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaku_rismu.R
-import com.example.myaku_rismu.core.ui.dialog.ModernBirthdatePickerDialog
-import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
+import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.core.ui.TopBar
+import com.example.myaku_rismu.data.model.SettingType
+import com.example.myaku_rismu.domain.model.ActivityLevel
+import com.example.myaku_rismu.feature.setting.components.BirthdateDialog
+import com.example.myaku_rismu.feature.setting.components.GenderDialog
+import com.example.myaku_rismu.feature.setting.components.HeightDialog
+import com.example.myaku_rismu.feature.setting.components.WeightDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
-import java.util.Calendar
+
 
 
 @Composable
 fun SettingScreen(
-//    appState: AppState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SettingViewModel = hiltViewModel(),
+    appState: AppState
 ) {
-    // --- 定数 ---
-    val commonPlaceholder = stringResource(R.string.not_set)
-    val unSetValue = -1 // 未設定を示す整数値
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-    val resources = LocalContext.current.resources
-    val genderDisplayOptions = remember { resources.getStringArray(R.array.gender_display_options).toList() }
+    fun eventHandler(event: SettingUiEvent) {
+        when (event) {
+            is SettingUiEvent.DismissDialog -> {
+                viewModel.dismissDialog()
+            }
 
-    val calendar = Calendar.getInstance()
+            is SettingUiEvent.ShowDialog -> {
+                viewModel.showDialog(event.dialog)
+            }
 
-    // --- State 変数　---
-    var selectedYear by remember { mutableStateOf<Int?>(null) }
-    var selectedMonth by remember { mutableStateOf<Int?>(null) }
-    var selectedDay by remember { mutableStateOf<Int?>(null) }
+            is SettingUiEvent.HeightSelected -> {
+                viewModel.selectHeight(event.height)
+            }
 
-    var currentHeightCm by remember { mutableStateOf<Int?>(null) }
-    var currentWeightKg by remember { mutableStateOf<Int?>(null) }
-    var selectedGenderIndex by remember { mutableIntStateOf(unSetValue) }
+            is SettingUiEvent.WeightSelected -> {
+                viewModel.selectWeight(event.weight)
+            }
 
-    var showBirthdateDialog by remember { mutableStateOf(false) }
-    var showHeightDialog by remember { mutableStateOf(false) }
-    var showWeightDialog by remember { mutableStateOf(false) }
-    var showGenderDialog by remember { mutableStateOf(false) }
+            is SettingUiEvent.GenderSelected -> {
+                viewModel.selectGender(event.gender)
+            }
 
-    val birthDateInteractionSource = remember { MutableInteractionSource() }
-    val heightInteractionSource = remember { MutableInteractionSource() }
-    val weightInteractionSource = remember { MutableInteractionSource() }
-    val genderInteractionSource = remember { MutableInteractionSource() }
+            is SettingUiEvent.BirthdateSelected -> {
+                viewModel.selectBirthdate(event.year, event.month, event.day)
+            }
 
-    // --- ダイアログ表示制御 ---
-    if (showBirthdateDialog) {
-        ModernBirthdatePickerDialog(
-            initialYear = selectedYear ?: (calendar.get(Calendar.YEAR) - 25),
-            initialMonth = selectedMonth ?: (calendar.get(Calendar.MONTH) + 1),
-            initialDay = selectedDay ?: calendar.get(Calendar.DAY_OF_MONTH),
-            onBirthdateSelected = { year, month, day ->
-                selectedYear = year
-                selectedMonth = month
-                selectedDay = day
-                showBirthdateDialog = false
-            },
-            onDismiss = { showBirthdateDialog = false }
-        )
+            is SettingUiEvent.ActivityLevelSelected -> {
+                viewModel.selectActivityLevel(event.level)
+            }
+        }
     }
 
-    if (showHeightDialog) {
-        VerticalWheelPickerDialog(
-            title = stringResource(R.string.select_height),
-            options = (100..220).map { it.toString() },
-            currentValue = currentHeightCm?.toString(),
-            onValueSelected = { selectedString ->
-                currentHeightCm = selectedString.toIntOrNull()
-                showHeightDialog = false
-            },
-            onDismiss = { showHeightDialog = false },
-            unitSuffix = stringResource(R.string.unit_of_height)
-        )
-    }
-
-    if (showWeightDialog) {
-        VerticalWheelPickerDialog(
-            title = stringResource(R.string.select_weight),
-            options = remember { (30..150).map { it.toString() } },
-            currentValue = currentWeightKg?.toString(),
-            onValueSelected = { selectedString ->
-                currentWeightKg = selectedString.toIntOrNull()
-                showWeightDialog = false
-            },
-            onDismiss = { showWeightDialog = false },
-            unitSuffix = stringResource(R.string.unit_of_weight)
-        )
-    }
-
-    if (showGenderDialog) {
-        VerticalWheelPickerDialog(
-            title = stringResource(R.string.select_gender),
-            options = genderDisplayOptions,
-            currentValue = if (selectedGenderIndex != unSetValue && selectedGenderIndex in genderDisplayOptions.indices) {
-                genderDisplayOptions[selectedGenderIndex]
-            } else null,
-            onValueSelected = { selectedString ->
-                selectedGenderIndex = genderDisplayOptions.indexOf(selectedString)
-                showGenderDialog = false
-            },
-            onDismiss = { showGenderDialog = false }
-        )
-    }
-    // --- ダイアログ表示制御ここまで ---
-
-    Surface(
-        modifier = modifier
-            .fillMaxSize(),
-        color = MaterialTheme.customTheme.myakuRismuBackgroundColor,
-        contentColor = Color.Black
-    ) {
-        Column(
-            modifier = modifier
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            TopTitleAndBackButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                text = stringResource(R.string.profile)
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = stringResource(R.string.profile),
+                navigationIcon = {
+                    IconButton(onClick = { appState.navigatePopUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.top_bar_back_icon)
+                        )
+                    }
+                },
+                modifier = Modifier.background(MaterialTheme.customTheme.myakuRismuBackgroundColor),
             )
-            ProfileCard(
-                icon = Icons.Default.Person,
-                text = stringResource(R.string.basic_information)
-            ) {
-                InfoItemLabel(
-                    selectedYear = selectedYear,
-                    selectedMonth = selectedMonth,
-                    selectedDay = selectedDay,
-                    currentHeightCm = currentHeightCm,
-                    currentWeightKg = currentWeightKg,
-                    selectedGenderIndex = selectedGenderIndex,
-                    onBirthdateClick = { showBirthdateDialog = true },
-                    onHeightClick = { showHeightDialog = true },
-                    onWeightClick = { showWeightDialog = true },
-                    onGenderClick = { showGenderDialog = true },
-                    commonPlaceholder = commonPlaceholder,
-                    genderDisplayOptions = genderDisplayOptions,
-                    unSetValue = unSetValue,
-                    birthDateInteractionSource = birthDateInteractionSource,
-                    heightInteractionSource = heightInteractionSource,
-                    weightInteractionSource = weightInteractionSource,
-                    genderInteractionSource = genderInteractionSource
+        },
+        modifier = modifier
+    ) { innerPadding ->
+        DialogHandler(
+            dialog = uiState.dialog,
+            uiState = uiState,
+            eventHandler = { event -> eventHandler(event) },
+            context = context
+        )
+        SettingDetail(
+            uiState = uiState,
+            eventHandler = { event -> eventHandler(event) },
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+        )
+    }
+}
+
+@Composable
+fun DialogHandler(
+    dialog: SettingType?,
+    uiState: SettingState,
+    eventHandler: (SettingUiEvent) -> Unit,
+    context: Context
+) {
+    when (dialog) {
+        SettingType.HEIGHT -> HeightDialog(uiState, eventHandler)
+        SettingType.WEIGHT -> WeightDialog(uiState, eventHandler)
+        SettingType.GENDER -> GenderDialog(uiState, eventHandler, context)
+        SettingType.BIRTHDATE -> BirthdateDialog(uiState, eventHandler)
+        null -> Unit
+    }
+}
+
+@Composable
+fun SettingDetail(
+    modifier: Modifier = Modifier,
+    uiState: SettingState,
+    eventHandler: (SettingUiEvent) -> Unit,
+) {
+    val commonPlaceholder = stringResource(R.string.not_set)
+
+    val infoItems = listOf(
+        InfoItemData(
+            label = stringResource(R.string.date_of_birth),
+            value = if (uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
+                ) {
+                stringResource(
+                    R.string.date_format_jp,
+                    uiState.display.birthYear,
+                    uiState.display.birthMonth,
+                    uiState.display.birthDay
+                )
+            } else commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.BIRTHDATE)) },
+            isSelected = uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.height),
+            value = uiState.display.heightCm?.let {
+                stringResource(
+                    R.string.height_display_format,
+                    it
                 )
             }
-            ProfileCard(
-                icon = Icons.Default.FavoriteBorder,
-                text = stringResource(R.string.activity_level),
-                contentBottomPadding = PaddingValues(bottom = 12.dp)
-            ) { ActivityLevelLabel() }
-        }
-    }
-}
-
-
-
-@Composable
-private fun InfoItemLabel(
-    modifier: Modifier = Modifier,
-    selectedYear: Int?,
-    selectedMonth: Int?,
-    selectedDay: Int?,
-    currentHeightCm: Int?,
-    currentWeightKg: Int?,
-    selectedGenderIndex: Int,
-    onBirthdateClick: () -> Unit,
-    onHeightClick: () -> Unit,
-    onWeightClick: () -> Unit,
-    onGenderClick: () -> Unit,
-    commonPlaceholder: String,
-    unSetValue: Int,
-    genderDisplayOptions: List<String>,
-    birthDateInteractionSource: MutableInteractionSource,
-    heightInteractionSource: MutableInteractionSource,
-    weightInteractionSource: MutableInteractionSource,
-    genderInteractionSource: MutableInteractionSource
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(modifier = modifier.weight(1f)) {
-            InfoItem(
-                label = stringResource(R.string.date_of_birth),
-                value = if (selectedYear != null && selectedMonth != null && selectedDay != null) {
-                    stringResource(
-                        R.string.date_format_jp,
-                        selectedYear,
-                        selectedMonth,
-                        selectedDay
-                    )
-                } else commonPlaceholder,
-                onClick = onBirthdateClick,
-                interactionSource = birthDateInteractionSource
-            )
-        }
-        Box(modifier = modifier.weight(1f)) {
-            InfoItem(
-                label = stringResource(R.string.height),
-                value = currentHeightCm?.let { stringResource(R.string.height_display_format, it) } ?: commonPlaceholder,
-                onClick = onHeightClick,
-                interactionSource = heightInteractionSource
-            )
-        }
-    }
-
-    Spacer(Modifier.height(8.dp))
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(modifier = modifier.weight(1f)) {
-            InfoItem(
-                label = stringResource(R.string.body_weight),
-                value = currentWeightKg?.let { stringResource(R.string.weight_display_format, it) } ?: commonPlaceholder,
-                onClick = onWeightClick,
-                interactionSource = weightInteractionSource
-            )
-        }
-        Box(modifier = modifier.weight(1f)) {
-            InfoItem(
-                label = stringResource(R.string.gender),
-                value = if (selectedGenderIndex != unSetValue && selectedGenderIndex in genderDisplayOptions.indices) {
-                    genderDisplayOptions[selectedGenderIndex]
-                } else commonPlaceholder,
-                onClick = onGenderClick,
-                interactionSource = genderInteractionSource
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun TopTitleAndBackButton(
-    icon: ImageVector,
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(top = (8.dp), bottom = (12.dp))
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            modifier = modifier
-                .padding(top = 1.dp)
-                .size(20.dp)
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.HEIGHT)) },
+            isSelected = uiState.display.heightCm != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.body_weight),
+            value = uiState.display.weightKg?.let {
+                stringResource(
+                    R.string.weight_display_format,
+                    it
+                )
+            }
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.WEIGHT)) },
+            isSelected = uiState.display.weightKg != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.gender),
+            value = uiState.display.gender?.let { stringResource(it.displayName) }
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.GENDER)) },
+            isSelected = uiState.display.gender != null
         )
-        Spacer(modifier.width(12.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontSize = 20.sp,
-                lineHeight = 28.sp
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(MaterialTheme.customTheme.myakuRismuBackgroundColor),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        ProfileCard(
+            icon = Icons.Default.Person,
+            text = stringResource(R.string.basic_information)
+        ) {
+            InfoItemLabel(
+                items = infoItems
             )
-        )
+        }
+        ProfileCard(
+            icon = Icons.Default.FavoriteBorder,
+            text = stringResource(R.string.activity_level),
+            contentBottomPadding = PaddingValues(bottom = 12.dp),
+        ) {
+            ActivityLevelLabel(
+                selectedActivity = uiState.display.activityLevel ?: ActivityLevel.LOW,
+                onActivitySelected = { level ->
+                    eventHandler(SettingUiEvent.ActivityLevelSelected(level))
+                }
+            )
+        }
     }
 }
-
 
 @Composable
 private fun ProfileCard(
@@ -318,26 +248,28 @@ private fun ProfileCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(5.dp),
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
     ) {
-        Column(modifier = modifier.padding(20.dp)) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.padding(contentBottomPadding)
+                modifier = Modifier.padding(contentBottomPadding)
             ) {
                 Icon(
                     icon,
                     contentDescription = null
                 )
-                Spacer(modifier.width(4.dp))
+                Spacer(Modifier.width(4.dp))
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
             content()
@@ -345,278 +277,142 @@ private fun ProfileCard(
     }
 }
 
-
-@Composable
-private fun ActivityLevelLabel(modifier: Modifier = Modifier) {
-    val resources = LocalContext.current.resources
-    val activityLevelMainTexts = remember { resources.getStringArray(R.array.activity_level_main_texts).toList() }
-    val activityLevelSubTexts = remember { resources.getStringArray(R.array.activity_level_sub_texts).toList() }
-    val activityLevels = remember(activityLevelMainTexts, activityLevelSubTexts) {
-        activityLevelMainTexts.zip(activityLevelSubTexts)
-    }
-
-    var selectedActivity by remember { mutableIntStateOf(0) }
-
-    activityLevels.forEachIndexed { index, (mainText, subText) ->
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    color = if (selectedActivity == index) MaterialTheme.customTheme.onSelectedButtonOverlay
-                    else Color.Transparent,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .border(
-                    width = 1.5.dp,
-                    color = if (selectedActivity == index) MaterialTheme.colorScheme.primary
-                    else Color.Black,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .selectable(
-                    selected = selectedActivity == index,
-                    onClick = { selectedActivity = index },
-                    role = Role.RadioButton
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                modifier = modifier.weight(1f),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = mainText,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    text = subText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.customTheme.settingScreenCommonColor
-                )
-            }
-            RadioButton(
-                selected = selectedActivity == index,
-                onClick = { selectedActivity = index },
-                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
-            )
-        }
-        if (index < activityLevels.size - 1) {
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-    }
-}
-
-
 @Composable
 private fun InfoItem(
     label: String,
     value: String,
     onClick: () -> Unit,
-    interactionSource: MutableInteractionSource
+    isSelected: Boolean,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 13.sp),
+            style = MaterialTheme.typography.titleMedium.copy(fontSize = 13.sp),
             modifier = Modifier.padding(start = 2.dp, bottom = 2.dp)
         )
-        SelectableInfoField(
-            text = value,
-            onClick = onClick,
-            interactionSource = interactionSource
-        )
+        Box(
+            modifier = Modifier
+                .background(
+                    if (isSelected)Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor,
+                )
+                .fillMaxWidth()
+                .height(55.dp)
+                .border(
+                    width = 1.dp,
+                    brush = SolidColor(Color.Black),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .clickable(
+                    onClick = onClick,
+                    role = Role.Button,
+                )
+                .padding(OutlinedTextFieldDefaults.contentPadding()),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                text = value,
+                style = if (isSelected) {
+                    MaterialTheme.typography.titleMedium
+                } else {
+                    MaterialTheme.typography.bodyMedium
+                },
+                color = if (isSelected) {
+                    Color.Black
+                } else {
+                    MaterialTheme.customTheme.settingScreenCommonColor
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoItemLabel(
+    modifier: Modifier = Modifier,
+    items: List<InfoItemData>
+) {
+    items.chunked(2).forEach { rowItems ->
+        Row(modifier = modifier.fillMaxWidth()) {
+            rowItems.forEach { item ->
+                InfoItem(
+                    label = item.label,
+                    value = item.value,
+                    onClick = item.onClick,
+                    isSelected = item.isSelected,
+                    modifier = Modifier.weight(1f)
+                )
+                if (item != rowItems.last()) Spacer(Modifier.width(16.dp))
+            }
+        }
     }
 }
 
 
 @Composable
-private fun SelectableInfoField(
-    text: String,
-    onClick: () -> Unit,
+private fun ActivityLevelLabel(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource
+    selectedActivity: ActivityLevel,
+    onActivitySelected: (ActivityLevel) -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(
-                minWidth = OutlinedTextFieldDefaults.MinWidth,
-                minHeight = OutlinedTextFieldDefaults.MinHeight
+    ActivityLevel.entries.forEach { level ->
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .shadow(
+                    if (selectedActivity == level)4.dp
+                    else 0.dp, RoundedCornerShape(12.dp))
+                .background(
+                    if (selectedActivity == level) Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor, RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .border(
+                    width = if (selectedActivity == level) 1.5.dp else 1.dp,
+                    color = Color.Black,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .selectable(
+                    selected = selectedActivity == level,
+                    onClick = { onActivitySelected(level) },
+                    role = Role.RadioButton,
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = stringResource(id = level.mainTextRes),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(id = level.subTextRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.customTheme.settingScreenCommonColor
+                )
+            }
+            RadioButton(
+                selected = selectedActivity == level,
+                onClick = { onActivitySelected(level) },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
+                )
             )
-            .border(
-                width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
-                brush = SolidColor(Color.Black),
-                shape = OutlinedTextFieldDefaults.shape
-            )
-            .clickable(
-                onClick = onClick,
-                enabled = enabled,
-                role = Role.Button,
-                interactionSource = interactionSource,
-                indication = ripple()
-            )
-            .padding(OutlinedTextFieldDefaults.contentPadding()),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (enabled) {
-                MaterialTheme.customTheme.settingScreenCommonColor
-            } else {
-                Color.Black
-            },
-            textAlign = TextAlign.Start
-        )
+        }
     }
 }
 
-// --- プレビュー関数群 ---
 
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
 fun SettingScreenPreview() {
     Myaku_rismuTheme {
-        SettingScreen()
+        SettingDetail(
+            uiState = SettingState(), // ダミーState
+            eventHandler = {},
+        )
     }
 }
 
 
-@Preview(showBackground = true, name = "身長ピッカー (100-220cm)")
-@Composable
-fun ModernNumberPickerDialogPreview_Height() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        var selectedValue by remember { mutableStateOf<String?>("170") }
 
-        if (showDialog) {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_height),
-                options = (100..220).map { it.toString() },
-                currentValue = selectedValue,
-                onValueSelected = {
-                    selectedValue = it
-                    // showDialog = false // デバッグ中はコメントアウトでダイアログ維持
-                },
-                onDismiss = { showDialog = false },
-                unitSuffix = "cm"
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("選択された身長: ${selectedValue ?: "未選択"}${if (selectedValue != null) " cm" else ""}")
-            Button(onClick = { showDialog = true }) {
-                Text(if (selectedValue == null) stringResource(R.string.select_height) else "身長を変更 (${selectedValue}cm)")
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true, name = "体重ピッカー (30-150kg)")
-@Composable
-fun ModernNumberPickerDialogPreview_Weight_Min() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        val weightOptions = remember { (30..150).map { it.toString() } }
-        var selectedValue by remember { mutableStateOf<String?>(weightOptions[(weightOptions.size / 2)]) }
-
-        if (showDialog) {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_weight),
-                options = weightOptions,
-                currentValue = selectedValue,
-                onValueSelected = { selectedValue = it },
-                onDismiss = { showDialog = false },
-                unitSuffix = "kg"
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("選択された体重: ${selectedValue ?: "未選択"}${if (selectedValue != null) " kg" else ""}")
-            Button(onClick = { showDialog = true }) {
-                Text(if (selectedValue == null) stringResource(R.string.select_weight) else "体重を変更 (${selectedValue}kg)")
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true, name = "性別ピッカー")
-@Composable
-fun ModernStringPickerDialogPreview_Gender() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        var selectedValue by remember { mutableStateOf<String?>(listOf("男性", "女性", "その他", "回答しない")[0]) }
-
-        if (showDialog) {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_gender),
-                options = listOf("男性", "女性", "その他", "回答しない"),
-                currentValue = selectedValue,
-                onValueSelected = { selectedValue = it },
-                onDismiss = { showDialog = false }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("選択された性別: ${selectedValue ?: "未選択"}")
-            Button(onClick = { showDialog = true }) { Text(stringResource(R.string.select_gender)) }
-        }
-    }
-}
-
-
-@Preview(showBackground = true, name = "生年月日ピッカー")
-@Composable
-fun ModernBirthdatePickerDialogPreview() {
-    Myaku_rismuTheme {
-        var showDialog by remember { mutableStateOf(true) }
-        val calendar = Calendar.getInstance()
-        var year by remember { mutableIntStateOf(calendar.get(Calendar.YEAR) - 30) }
-        var month by remember { mutableIntStateOf(calendar.get(Calendar.MONTH) + 1) }
-        var day by remember { mutableIntStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
-
-        if (showDialog) {
-            ModernBirthdatePickerDialog(
-                initialYear = year,
-                initialMonth = month,
-                initialDay = day,
-                onBirthdateSelected = { y, m, d ->
-                    year = y
-                    month = m
-                    day = d
-                    // showDialog = false
-                },
-                onDismiss = { showDialog = false }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("選択された生年月日: ${year}年 ${month}月 ${day}日")
-            Button(onClick = { showDialog = true }) { Text("生年月日を選択") }
-        }
-    }
-}

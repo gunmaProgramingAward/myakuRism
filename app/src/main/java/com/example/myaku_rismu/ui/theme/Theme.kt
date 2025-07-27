@@ -40,7 +40,7 @@ val LightCustomTheme = CustomTheme(
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
     settingScreenCommonColor = Color(0x991F2937),
-    onSelectedButtonOverlay = Color(0x10000000),
+    onSelectedButtonOverlay = Color(0x1A000000),
     settingScreenNormalTextColor = Color(0x801F2937),
 )
 
@@ -58,10 +58,9 @@ val DarkCustomTheme = CustomTheme(
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
     settingScreenCommonColor = Color(0x991F2937),
-    onSelectedButtonOverlay = Color(0x10000000),
+    onSelectedButtonOverlay = Color(0x1A000000),
     settingScreenNormalTextColor = Color(0x801F2937),
-
-)
+    )
 
 val LocalCustomTheme = staticCompositionLocalOf {
     LightCustomTheme
