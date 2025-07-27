@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -47,27 +46,60 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.TopBar
-import com.example.myaku_rismu.core.ui.dialog.ModernBirthdatePickerDialog
-import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
+import com.example.myaku_rismu.data.model.SettingType
+import com.example.myaku_rismu.domain.model.ActivityLevel
+import com.example.myaku_rismu.feature.setting.components.BirthdateDialog
+import com.example.myaku_rismu.feature.setting.components.GenderDialog
+import com.example.myaku_rismu.feature.setting.components.HeightDialog
+import com.example.myaku_rismu.feature.setting.components.WeightDialog
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.customTheme
-import java.util.Calendar
+
+
 
 @Composable
 fun SettingScreen(
     modifier: Modifier = Modifier,
-    viewModel: SettingViewModel = viewModel(),
+    viewModel: SettingViewModel = hiltViewModel(),
     appState: AppState
-){
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     fun eventHandler(event: SettingUiEvent) {
-        viewModel.onEvent(event)
+        when (event) {
+            is SettingUiEvent.DismissDialog -> {
+                viewModel.dismissDialog()
+            }
+
+            is SettingUiEvent.ShowDialog -> {
+                viewModel.showDialog(event.dialog)
+            }
+
+            is SettingUiEvent.HeightSelected -> {
+                viewModel.selectHeight(event.height)
+            }
+
+            is SettingUiEvent.WeightSelected -> {
+                viewModel.selectWeight(event.weight)
+            }
+
+            is SettingUiEvent.GenderSelected -> {
+                viewModel.selectGender(event.gender)
+            }
+
+            is SettingUiEvent.BirthdateSelected -> {
+                viewModel.selectBirthdate(event.year, event.month, event.day)
+            }
+
+            is SettingUiEvent.ActivityLevelSelected -> {
+                viewModel.selectActivityLevel(event.level)
+            }
+        }
     }
 
     Scaffold(
@@ -87,77 +119,95 @@ fun SettingScreen(
         },
         modifier = modifier
     ) { innerPadding ->
+        DialogHandler(
+            dialog = uiState.dialog,
+            uiState = uiState,
+            eventHandler = { event -> eventHandler(event) },
+            context = context
+        )
         SettingDetail(
             uiState = uiState,
-            onEvent = { event -> eventHandler(event) },
-            context = context,
+            eventHandler = { event -> eventHandler(event) },
             modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
         )
     }
 }
 
+@Composable
+fun DialogHandler(
+    dialog: SettingType?,
+    uiState: SettingState,
+    eventHandler: (SettingUiEvent) -> Unit,
+    context: Context
+) {
+    when (dialog) {
+        SettingType.HEIGHT -> HeightDialog(uiState, eventHandler)
+        SettingType.WEIGHT -> WeightDialog(uiState, eventHandler)
+        SettingType.GENDER -> GenderDialog(uiState, eventHandler, context)
+        SettingType.BIRTHDATE -> BirthdateDialog(uiState, eventHandler)
+        null -> Unit
+    }
+}
 
 @Composable
 fun SettingDetail(
     modifier: Modifier = Modifier,
     uiState: SettingState,
-    onEvent: (SettingUiEvent) -> Unit,
-    context: Context = LocalContext.current
+    eventHandler: (SettingUiEvent) -> Unit,
 ) {
     val commonPlaceholder = stringResource(R.string.not_set)
-    val genderDisplayOptions = remember { context.resources.getStringArray(R.array.gender_display_options).toList() }
-    val calendar = Calendar.getInstance()
 
-    when (uiState.dialog) {
-        SettingDialog.Birthdate -> {
-            ModernBirthdatePickerDialog(
-                initialYear = uiState.birthYear ?: (calendar.get(Calendar.YEAR) - 25),
-                initialMonth = uiState.birthMonth ?: (calendar.get(Calendar.MONTH) + 1),
-                initialDay = uiState.birthDay ?: calendar.get(Calendar.DAY_OF_MONTH),
-                onBirthdateSelected = { year, month, day ->
-                    onEvent(SettingUiEvent.BirthdateSelected(year, month, day))
-                },
-                onDismiss = { onEvent(SettingUiEvent.DismissDialog) }
-            )
-        }
-        SettingDialog.Height -> {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_height),
-                options = uiState.heightOptions,
-                currentValue = uiState.heightCm?.toString(),
-                onValueSelected = { selectedString ->
-                    selectedString.toIntOrNull()?.let { onEvent(SettingUiEvent.HeightSelected(it)) }
-                },
-                onDismiss = { onEvent(SettingUiEvent.DismissDialog) },
-                unitSuffix = stringResource(R.string.unit_of_height)
-            )
-        }
-        SettingDialog.Weight -> {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_weight),
-                options = uiState.weightOptions,
-                currentValue = uiState.weightKg?.toString(),
-                onValueSelected = { selectedString ->
-                    selectedString.toIntOrNull()?.let { onEvent(SettingUiEvent.WeightSelected(it)) }
-                },
-                onDismiss = { onEvent(SettingUiEvent.DismissDialog) },
-                unitSuffix = stringResource(R.string.unit_of_weight)
-            )
-        }
-        SettingDialog.Gender -> {
-            VerticalWheelPickerDialog(
-                title = stringResource(R.string.select_gender),
-                options = genderDisplayOptions,
-                currentValue = uiState.genderIndex?.let { genderDisplayOptions.getOrNull(it) },
-                onValueSelected = { selectedString ->
-                    onEvent(SettingUiEvent.GenderSelected(genderDisplayOptions.indexOf(selectedString)))
-                },
-                onDismiss = { onEvent(SettingUiEvent.DismissDialog) }
-            )
-        }
-        null -> {}
-    }
-    // --- ダイアログ表示制御ここまで ---
+    val infoItems = listOf(
+        InfoItemData(
+            label = stringResource(R.string.date_of_birth),
+            value = if (uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
+                ) {
+                stringResource(
+                    R.string.date_format_jp,
+                    uiState.display.birthYear,
+                    uiState.display.birthMonth,
+                    uiState.display.birthDay
+                )
+            } else commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.BIRTHDATE)) },
+            isSelected = uiState.display.birthYear != null
+                    && uiState.display.birthMonth != null
+                    && uiState.display.birthDay != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.height),
+            value = uiState.display.heightCm?.let {
+                stringResource(
+                    R.string.height_display_format,
+                    it
+                )
+            }
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.HEIGHT)) },
+            isSelected = uiState.display.heightCm != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.body_weight),
+            value = uiState.display.weightKg?.let {
+                stringResource(
+                    R.string.weight_display_format,
+                    it
+                )
+            }
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.WEIGHT)) },
+            isSelected = uiState.display.weightKg != null
+        ),
+        InfoItemData(
+            label = stringResource(R.string.gender),
+            value = uiState.display.gender?.let { stringResource(it.displayName) }
+                ?: commonPlaceholder,
+            onClick = { eventHandler(SettingUiEvent.ShowDialog(SettingType.GENDER)) },
+            isSelected = uiState.display.gender != null
+        )
+    )
 
     Column(
         modifier = modifier
@@ -171,13 +221,7 @@ fun SettingDetail(
             text = stringResource(R.string.basic_information)
         ) {
             InfoItemLabel(
-                onBirthdateClick = { onEvent(SettingUiEvent.ShowBirthdateDialog) },
-                onHeightClick = { onEvent(SettingUiEvent.ShowHeightDialog) },
-                onWeightClick = { onEvent(SettingUiEvent.ShowWeightDialog) },
-                onGenderClick = { onEvent(SettingUiEvent.ShowGenderDialog) },
-                commonPlaceholder = commonPlaceholder,
-                genderDisplayOptions = genderDisplayOptions,
-                uiState = uiState,
+                items = infoItems
             )
         }
         ProfileCard(
@@ -186,78 +230,14 @@ fun SettingDetail(
             contentBottomPadding = PaddingValues(bottom = 12.dp),
         ) {
             ActivityLevelLabel(
-                context = context,
-                selectedActivity = uiState.activityLevelIndex,
-                onActivitySelected = { index ->
-                    onEvent(SettingUiEvent.ActivityLevelSelected(index))
+                selectedActivity = uiState.display.activityLevel ?: ActivityLevel.LOW,
+                onActivitySelected = { level ->
+                    eventHandler(SettingUiEvent.ActivityLevelSelected(level))
                 }
             )
         }
     }
 }
-
-
-@Composable
-private fun InfoItemLabel(
-    modifier: Modifier = Modifier,
-    uiState: SettingState,
-    onBirthdateClick: () -> Unit,
-    onHeightClick: () -> Unit,
-    onWeightClick: () -> Unit,
-    onGenderClick: () -> Unit,
-    commonPlaceholder: String,
-    genderDisplayOptions: List<String>,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        InfoItem(
-            label = stringResource(R.string.date_of_birth),
-            value = if (uiState.birthYear != null && uiState.birthMonth != null && uiState.birthDay != null) {
-                stringResource(
-                    R.string.date_format_jp,
-                    uiState.birthYear,
-                    uiState.birthMonth,
-                    uiState.birthDay
-                )
-            } else commonPlaceholder,
-            onClick = onBirthdateClick,
-            isSelected = uiState.birthYear != null && uiState.birthMonth != null && uiState.birthDay != null,
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(Modifier.width(16.dp))
-        InfoItem(
-            label = stringResource(R.string.height),
-            value = uiState.heightCm?.let { stringResource(R.string.height_display_format, it) }
-                ?: commonPlaceholder,
-            onClick = onHeightClick,
-            isSelected = uiState.heightCm != null,
-            modifier = Modifier.weight(1f)
-        )
-    }
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        InfoItem(
-            label = stringResource(R.string.body_weight),
-            value = uiState.weightKg?.let { stringResource(R.string.weight_display_format, it) }
-                ?: commonPlaceholder,
-            onClick = onWeightClick,
-            isSelected = uiState.weightKg != null,
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(Modifier.width(16.dp))
-        InfoItem(
-            label = stringResource(R.string.gender),
-            value = uiState.genderIndex?.let { genderDisplayOptions.getOrNull(it) } ?: commonPlaceholder,
-            onClick = onGenderClick,
-            isSelected = uiState.genderIndex != null,
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
 
 @Composable
 private fun ProfileCard(
@@ -268,9 +248,8 @@ private fun ProfileCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(5.dp),
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.customTheme.myakuRismuCardColor
         )
@@ -298,66 +277,6 @@ private fun ProfileCard(
     }
 }
 
-
-@Composable
-private fun ActivityLevelLabel(
-    modifier: Modifier = Modifier,
-    context: Context,
-    selectedActivity: Int,
-    onActivitySelected: (Int) -> Unit
-) {
-    val activityLevels = remember {
-        context.resources.getStringArray(R.array.activity_level_main_texts)
-            .zip(context.resources.getStringArray(R.array.activity_level_sub_texts))
-    }
-
-
-    activityLevels.forEachIndexed { index, (mainText, subText) ->
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .shadow(2.dp, RoundedCornerShape(12.dp))
-                .background(
-                    Color.White,
-                    RoundedCornerShape(12.dp)
-                )
-                .fillMaxWidth()
-                .border(
-                    width = if (selectedActivity == index) 1.5.dp else 1.dp,
-                    color = Color.Black,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .selectable(
-                    selected = selectedActivity == index,
-                    onClick = { onActivitySelected(index)},
-                    role = Role.RadioButton
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Column(
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = mainText,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = subText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.customTheme.settingScreenCommonColor
-                )
-            }
-            RadioButton(
-                selected = selectedActivity == index,
-                onClick = { onActivitySelected(index) },
-                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor)
-            )
-        }
-    }
-}
-
-
 @Composable
 private fun InfoItem(
     label: String,
@@ -374,6 +293,10 @@ private fun InfoItem(
         )
         Box(
             modifier = Modifier
+                .background(
+                    if (isSelected)Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor,
+                )
                 .fillMaxWidth()
                 .height(55.dp)
                 .border(
@@ -405,19 +328,88 @@ private fun InfoItem(
     }
 }
 
+@Composable
+private fun InfoItemLabel(
+    modifier: Modifier = Modifier,
+    items: List<InfoItemData>
+) {
+    items.chunked(2).forEach { rowItems ->
+        Row(modifier = modifier.fillMaxWidth()) {
+            rowItems.forEach { item ->
+                InfoItem(
+                    label = item.label,
+                    value = item.value,
+                    onClick = item.onClick,
+                    isSelected = item.isSelected,
+                    modifier = Modifier.weight(1f)
+                )
+                if (item != rowItems.last()) Spacer(Modifier.width(16.dp))
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun ActivityLevelLabel(
+    modifier: Modifier = Modifier,
+    selectedActivity: ActivityLevel,
+    onActivitySelected: (ActivityLevel) -> Unit
+) {
+    ActivityLevel.entries.forEach { level ->
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .shadow(
+                    if (selectedActivity == level)4.dp
+                    else 0.dp, RoundedCornerShape(12.dp))
+                .background(
+                    if (selectedActivity == level) Color.White
+                    else MaterialTheme.customTheme.myakuRismuCardColor, RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .border(
+                    width = if (selectedActivity == level) 1.5.dp else 1.dp,
+                    color = Color.Black,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .selectable(
+                    selected = selectedActivity == level,
+                    onClick = { onActivitySelected(level) },
+                    role = Role.RadioButton,
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = stringResource(id = level.mainTextRes),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(id = level.subTextRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.customTheme.settingScreenCommonColor
+                )
+            }
+            RadioButton(
+                selected = selectedActivity == level,
+                onClick = { onActivitySelected(level) },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
+                )
+            )
+        }
+    }
+}
+
 
 @Preview(showBackground = true, name = "プロフィール画面全体")
 @Composable
 fun SettingScreenPreview() {
-    val viewModel: SettingViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
     Myaku_rismuTheme {
         SettingDetail(
-            uiState = uiState,
-            context = context,
-            onEvent = viewModel::onEvent,
+            uiState = SettingState(), // ダミーState
+            eventHandler = {},
         )
     }
 }
