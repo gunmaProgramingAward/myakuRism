@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.ProfileSwitchType
+import com.example.myaku_rismu.data.useCase.ProfileDetailUseCaseImpl
 import com.example.myaku_rismu.domain.useCase.ProfileDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileDetailViewModel @Inject constructor(
-    private val profileDetailUseCase: ProfileDetailUseCase
+    private val profileDetailUseCase: ProfileDetailUseCase,
+    private val profileDetailUseCaseImpl: ProfileDetailUseCaseImpl
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileDetailState())
     val uiState: StateFlow<ProfileDetailState> = _uiState.asStateFlow()
@@ -28,7 +30,7 @@ class ProfileDetailViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                _uiState.update { it.copy(display = profileDetailUseCase.getProfileDetail()) }
+                _uiState.update { it.copy(display = profileDetailUseCaseImpl.getProfileDetail()) }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(

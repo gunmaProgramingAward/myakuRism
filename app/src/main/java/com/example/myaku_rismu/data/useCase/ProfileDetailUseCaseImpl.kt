@@ -22,7 +22,7 @@ class ProfileDetailUseCaseImpl @Inject constructor(
     override suspend fun getSyncWithYourSmartwatchSwitchState(): Boolean {
         return repository.getSyncWithYourSmartwatchSwitchState()
     }
-    override suspend fun getProfileDetail(): ProfileDetailData {
+    suspend fun getProfileDetail(): ProfileDetailData {
         return ProfileDetailData(
             includeLyricsSwitchEnabled = repository.getIncludeLyricsSwitchState(),
             musicGenerationNotificationSwitchEnabled = repository.getMusicGenerationNotificationSwitchState(),

@@ -8,6 +8,5 @@ interface ProfileDetailUseCase {
     suspend fun getMusicGenerationNotificationSwitchState(): Boolean
     suspend fun getCollaborationWithHealthcareSwitchState(): Boolean
     suspend fun getSyncWithYourSmartwatchSwitchState(): Boolean
-    suspend fun getProfileDetail(): ProfileDetailData
     suspend fun updateSwitchState(switchType: ProfileSwitchType, enabled: Boolean)
 }
