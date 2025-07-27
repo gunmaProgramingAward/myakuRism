@@ -1,13 +1,13 @@
-package com.example.myaku_rismu.feature.calender // ViewModel과 같은 패키지 또는 하위 패키지에 위치
+package com.example.myaku_rismu.feature.calender
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.RecordType
 import java.time.LocalDate
 
 data class CalenderState(
-    val isLoading: Boolean = false,
-    val error: String? = null,
+    val screenState: ScreenState = ScreenState.Initializing(),
     val selectedDate: LocalDate = LocalDate.now(),
     val weeklySteps: List<Long> = List(7) { 0L },
     val weeklyCalories: List<Long> = List(7) { 0L },

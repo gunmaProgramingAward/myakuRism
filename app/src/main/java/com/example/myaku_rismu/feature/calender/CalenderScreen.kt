@@ -54,9 +54,15 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.ui.theme.RingInactiveColor
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.temporal.TemporalAdjusters
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 
 
 @Composable
@@ -69,55 +75,62 @@ fun CalenderScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val eventHandler = remember(viewModel) {
-        { event: CalenderUiEvent ->
-            viewModel.onEvent(event)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.getHealthData(LocalDate.now())
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
     var currentDisplayDate by remember(uiState.selectedDate) { mutableStateOf(uiState.selectedDate) }
 
+    LaunchedEffect(uiState.screenState) {
+        if (uiState.screenState is ScreenState.Error) {
+            val errorState = uiState.screenState as ScreenState.Error
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "エラー: ${errorState.message}",
+                    duration = SnackbarDuration.Short
+                )
+            }
+            viewModel.clearError()
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPadding ->
-        LaunchedEffect(uiState.error) {
-            uiState.error?.let { errorMsg ->
-                scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = "エラー: $errorMsg",
-                        duration = SnackbarDuration.Short
-                    )
+        when (uiState.screenState) {
+            is ScreenState.Initializing -> {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(contentPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
-                viewModel.clearError()
             }
-        }
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            val healthDataByDateFromState: Map<LocalDate, DailyHealthReport> =
-                convertCalenderStateToHealthDataMap(
-                    uiState,
-                    currentDisplayDate
-                )
+            is ScreenState.Success, is ScreenState.Error -> {
+                val healthDataByDateFromState: Map<LocalDate, DailyHealthReport> =
+                    convertCalenderStateToHealthDataMap(uiState, currentDisplayDate)
 
-            HealthDashboardScreen(
-                modifier = Modifier.padding(contentPadding),
-                isLoading = uiState.isLoading,
-                currentDate = currentDisplayDate,
-                healthReportsForWeek = healthDataByDateFromState,
-                onDateSelected = { selectedDate ->
-                    currentDisplayDate = selectedDate
-                    eventHandler(CalenderUiEvent.OnDateSelected(selectedDate))
-                }
-            )
+                HealthDashboardScreen(
+                    modifier = Modifier.padding(contentPadding),
+                    currentDate = currentDisplayDate,
+                    healthReportsForWeek = healthDataByDateFromState,
+                    onDateSelected = { selectedDate ->
+                        currentDisplayDate = selectedDate
+                        viewModel.selectDate(selectedDate)
+                    }
+                )
+            }
         }
     }
 }
@@ -126,7 +139,6 @@ fun CalenderScreen(
 @Composable
 fun HealthDashboardScreen(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
     currentDate: LocalDate,
     healthReportsForWeek: Map<LocalDate, DailyHealthReport>,
     onDateSelected: (LocalDate) -> Unit
@@ -163,21 +175,12 @@ fun HealthDashboardScreen(
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        if (isLoading && healthReportsForWeek.containsKey(currentDate)) {
-            CircularProgressIndicator(modifier = Modifier.padding(vertical = 16.dp).weight(1f))
-        } else {
-            CircularHealthDashboard(
-                report = dailyReport,
-                selectedMetricType = selectedMetricTypeState,
-                onMetricSelected = { type ->
-                    selectedMetricTypeState = type
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(vertical = 16.dp)
-            )
-        }
+        CircularHealthDashboard(
+            report = dailyReport,
+            selectedMetricType = selectedMetricTypeState,
+            onMetricSelected = { type -> selectedMetricTypeState = type },
+            modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 16.dp)
+        )
         HealthDetailText(data = selectedData)
     }
 }
@@ -224,12 +227,20 @@ fun WeeklyCalendar(
                         color = if (hasData) LocalContentColor.current else Color.Gray
                     )
                     Spacer(modifier = Modifier.height(4.dp))
+
+                    val progressColor = report?.calories?.primaryColor ?: Color.LightGray
+                    val backgroundColor = if (date == selectedDate) {
+                        progressColor.copy(alpha = 0.4f)
+                    } else {
+                        RingInactiveColor.copy(alpha = 0.3f)
+                    }
+
                     HealthRing(
-                        progress = progress,
-                        color = color,
+                        progress = report?.calories?.progress ?: 0f,
+                        progressColor = progressColor,
+                        backgroundColor = backgroundColor,
                         size = 32.dp,
-                        strokeWidth = 3.dp,
-                        isSelected = (date == selectedDate)
+                        strokeWidth = 3.dp
                     )
                 }
             }
@@ -258,6 +269,8 @@ fun CircularHealthDashboard(
         label = stringResource(id = R.string.calender_screen_animation)
     )
 
+    val inactiveRingColor = Color.LightGray.copy(alpha = 0.3f)
+
     BoxWithConstraints(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -266,7 +279,8 @@ fun CircularHealthDashboard(
 
         HealthRing(
             progress = animatedProgress,
-            color = mainData.primaryColor,
+            progressColor = mainData.primaryColor,
+            backgroundColor = inactiveRingColor,
             size = dashboardSize,
             strokeWidth = dashboardSize * 0.07f
         )
@@ -303,7 +317,8 @@ fun CircularHealthDashboard(
             ) {
                 HealthRing(
                     progress = data.progress,
-                    color = data.primaryColor,
+                    progressColor = data.primaryColor,
+                    backgroundColor = inactiveRingColor,
                     size = smallRingSize,
                     strokeWidth = smallRingSize * 0.1f,
                 )
@@ -324,21 +339,21 @@ fun CircularHealthDashboard(
 @Composable
 fun HealthRing(
     progress: Float,
-    color: Color,
+    progressColor: Color,
+    backgroundColor: Color,
     size: Dp,
     strokeWidth: Dp,
-    isSelected: Boolean = false
 ) {
     Canvas(modifier = Modifier.size(size)) {
         val ringRadius = (this.size.minDimension / 2) - strokeWidth.toPx() / 2
         drawCircle(
-            color = if (isSelected) color.copy(alpha = 0.4f) else Color.LightGray.copy(alpha = 0.3f),
+            color = backgroundColor,
             radius = ringRadius,
             style = Stroke(width = strokeWidth.toPx())
         )
         if (progress > 0f) {
             drawArc(
-                color = color,
+                color = progressColor,
                 startAngle = -90f,
                 sweepAngle = 360 * progress,
                 useCenter = false,
@@ -448,7 +463,6 @@ fun HealthDashboardScreenPreview() {
     }
     MaterialTheme {
         HealthDashboardScreen(
-            isLoading = false,
             currentDate = today,
             healthReportsForWeek = sampleReports,
             onDateSelected = {}

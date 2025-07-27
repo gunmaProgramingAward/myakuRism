@@ -3,11 +3,11 @@ package com.example.myaku_rismu.feature.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
 import com.example.myaku_rismu.feature.calender.CalenderState
-import com.example.myaku_rismu.feature.calender.CalenderUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,26 +27,20 @@ class CalenderViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { currentState ->
-            currentState.copy(error = null)
+            currentState.copy(screenState = ScreenState.Success())
         }
     }
-    fun onEvent(event: CalenderUiEvent) {
-        when (event) {
-            is CalenderUiEvent.LoadHealthData -> {
-                getHealthData(event.date)
-            }
 
-            is CalenderUiEvent.OnDateSelected -> {
-                _uiState.update { currentState ->
-                    currentState.copy(selectedDate = event.date)
-                }
-            }
+
+    fun selectDate(date: LocalDate) {
+        _uiState.update { currentState ->
+            currentState.copy(selectedDate = date)
         }
     }
 
     fun getHealthData(dateForweek: LocalDate) {
         _uiState.update { currentState ->
-            currentState.copy(isLoading = true, error = null)
+            currentState.copy(screenState = ScreenState.Initializing(true))
         }
         viewModelScope.launch {
             try {
@@ -78,7 +72,7 @@ class CalenderViewModel @Inject constructor(
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        isLoading = false,
+                        screenState = ScreenState.Success(),
                         selectedDate = dateForweek,
                         weeklySteps = stepsData,
                         weeklyCalories = caloriesData,
@@ -95,8 +89,7 @@ class CalenderViewModel @Inject constructor(
                 } catch (e: Exception) {
                     _uiState.update { currentState ->
                         currentState.copy(
-                            isLoading = false,
-                            error = "data error: ${e.localizedMessage}"
+                            screenState = ScreenState.Error(message = "data error: ${e.localizedMessage}")
                         )
                     }
                 }
