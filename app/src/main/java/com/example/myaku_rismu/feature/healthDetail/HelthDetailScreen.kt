@@ -45,6 +45,7 @@ import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
 import com.example.myaku_rismu.core.ui.TopBar
+import com.example.myaku_rismu.core.ui.dialog.VerticalWheelPickerDialog
 import com.example.myaku_rismu.feature.healthDetail.components.PeriodTabList
 import com.example.myaku_rismu.ui.theme.customTheme
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -68,6 +69,14 @@ fun HealthDetailScreen(
             is HealthDetailUiEvent.OnClickPeriod -> {
                 viewModel.changeSelectedPeriod(event.period)
             }
+
+            is HealthDetailUiEvent.ChangeIsShowSettingDialog -> {
+                viewModel.changeIsShowSettingDialog(event.isShow)
+            }
+
+            is HealthDetailUiEvent.UpdateRecordTypeTarget -> {
+                viewModel.updateRecordTarget(event.target)
+            }
         }
     }
 
@@ -85,7 +94,9 @@ fun HealthDetailScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = { },
+                        onClick = {
+                            eventHandler(HealthDetailUiEvent.ChangeIsShowSettingDialog(true))
+                        },
                         modifier = Modifier.padding(end = 4.dp)
                     ) {
                         Text(
@@ -116,6 +127,22 @@ fun HealthDetailScreen(
                 context = context,
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             )
+            if (uiState.isShowSettingDialog) {
+                VerticalWheelPickerDialog(
+                    title = stringResource(uiState.titleResId),
+                    options = uiState.targetOptions,
+                    currentValue = uiState.target.toString(),
+                    onValueSelected = { selectedValue ->
+                        selectedValue.toIntOrNull()?.let {
+                            eventHandler(HealthDetailUiEvent.UpdateRecordTypeTarget(it))
+                        }
+                    },
+                    onDismiss = {
+                        eventHandler(HealthDetailUiEvent.ChangeIsShowSettingDialog(false))
+                    },
+                    unitSuffix = stringResource(uiState.unitResId)
+                )
+            }
         }
     }
 }
@@ -244,10 +271,10 @@ private fun BarChart(
 ) {
     if (
         date.isEmpty() ||
-        date.all { it == 0L } || 
-        uiState.axisConfig == null || 
+        date.all { it == 0L } ||
+        uiState.axisConfig == null ||
         uiState.screenState !is ScreenState.Success
-        ) {
+    ) {
         EmptyChartMessage(
             textMessage = stringResource(R.string.health_detail_not_data_message),
             modifier = modifier

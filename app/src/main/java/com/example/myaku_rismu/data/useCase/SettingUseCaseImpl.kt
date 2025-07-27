@@ -1,5 +1,6 @@
 package com.example.myaku_rismu.data.useCase
 
+import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
@@ -30,6 +31,21 @@ class SettingUseCaseImpl @Inject constructor(
         )
     }
 
+    override suspend fun getHeartRateTarget(): Int? = repository.getHeartRateTarget()
+    override suspend fun getStepsTarget(): Int? = repository.getStepsTarget()
+    override suspend fun getCaloriesTarget(): Int? = repository.getCaloriesTarget()
+    override suspend fun getSleepTimeTarget(): Int? = repository.getSleepTimeTarget()
+    override suspend fun getDistanceTarget(): Int? = repository.getDistanceTarget()
+    override suspend fun getRecordTypeTarget(recordType: RecordType): Int? {
+        return when (recordType) {
+            RecordType.HEART_RATE -> repository.getHeartRateTarget()
+            RecordType.STEPS -> repository.getStepsTarget()
+            RecordType.CALORIES -> repository.getCaloriesTarget()
+            RecordType.SLEEP_TIME -> repository.getSleepTimeTarget()
+            RecordType.DISTANCE -> repository.getDistanceTarget()
+        }
+    }
+
     override suspend fun updateHeightAndWeight(selectType: SettingType, value: Int) =
         repository.updateHeightAndWeight(selectType, value)
 
@@ -41,5 +57,31 @@ class SettingUseCaseImpl @Inject constructor(
 
     override suspend fun updateActivityLevel(level: ActivityLevel) =
         repository.updateActivityLevel(level)
+
+    override suspend fun updateHeartRateTarget(target: Int) {
+        repository.updateHeartRateTarget(target)
+    }
+    override suspend fun updateStepsTarget(target: Int) {
+        repository.updateStepsTarget(target)
+    }
+    override suspend fun updateCaloriesTarget(target: Int) {
+        repository.updateCaloriesTarget(target)
+    }
+    override suspend fun updateSleepTimeTarget(target: Int)  {
+        repository.updateSleepTimeTarget(target)
+    }
+    override suspend fun updateDistanceTarget(target: Int)  {
+        repository.updateDistanceTarget(target)
+    }
+
+    override suspend fun updateRecordTypeTarget(recordType: RecordType, target: Int) {
+        when (recordType) {
+            RecordType.HEART_RATE -> repository.updateHeartRateTarget(target)
+            RecordType.STEPS -> repository.updateStepsTarget(target)
+            RecordType.CALORIES -> repository.updateCaloriesTarget(target)
+            RecordType.SLEEP_TIME -> repository.updateSleepTimeTarget(target)
+            RecordType.DISTANCE -> repository.updateDistanceTarget(target)
+        }
+    }
 
 }

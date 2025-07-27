@@ -18,6 +18,11 @@ class SettingRepositoryImpl @Inject constructor(
     override suspend fun getBirthDay(): Int? = dataSource.getBirthDay()
     override suspend fun getGender(): Gender? = dataSource.getGender()
     override suspend fun getActivityLevel(): ActivityLevel? = dataSource.getActivityLevel()
+    override suspend fun getHeartRateTarget(): Int? = dataSource.getHeartRateTarget()
+    override suspend fun getStepsTarget(): Int? = dataSource.getStepsTarget()
+    override suspend fun getCaloriesTarget(): Int? = dataSource.getCaloriesTarget()
+    override suspend fun getSleepTimeTarget(): Int? = dataSource.getSleepTimeTarget()
+    override suspend fun getDistanceTarget(): Int? = dataSource.getDistanceTarget()
 
     override suspend fun updateHeightAndWeight(selectType: SettingType, value: Int) {
         dataSource.updateHeightAndWeight(selectType, value)
@@ -33,5 +38,25 @@ class SettingRepositoryImpl @Inject constructor(
 
     override suspend fun updateActivityLevel(level: ActivityLevel) {
         dataSource.updateActivityLevel(level)
+    }
+
+    override suspend fun updateHeartRateTarget(target: Int) {
+        dataSource.updateHeartRateTarget(target)
+    }
+
+    override suspend fun updateStepsTarget(target: Int) {
+        dataSource.updateStepsTarget(target)
+    }
+
+    override suspend fun updateCaloriesTarget(target: Int) {
+        dataSource.updateCaloriesTarget(target)
+    }
+
+    override suspend fun updateSleepTimeTarget(target: Int) {
+        dataSource.updateSleepTimeTarget(target)
+    }
+
+    override suspend fun updateDistanceTarget(target: Int) {
+        dataSource.updateDistanceTarget(target)
     }
 }
