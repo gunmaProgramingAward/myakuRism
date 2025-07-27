@@ -20,7 +20,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = HomeRoute(),
+        startDestination = HomeRoute,
     ) {
         homeScreen(appState = appState, modifier = modifier)
         settingScreen(appState = appState, modifier = modifier)
