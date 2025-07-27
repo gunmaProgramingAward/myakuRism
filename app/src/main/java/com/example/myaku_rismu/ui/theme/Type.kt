@@ -8,49 +8,68 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
 
-val SfPro = FontFamily(
-    Font(R.font.sf_pro, FontWeight.Normal),
+
+val NotoSansJP = FontFamily(
+    Font(R.font.noto_sans_jp_regular, FontWeight.Normal),
+    Font(R.font.noto_sans_jp_bold, FontWeight.Bold),
+    Font(R.font.noto_sans_jp_semibold, FontWeight.SemiBold)
 )
 
 val Typography = Typography(
-    headlineSmall = TextStyle(
-        fontFamily = SfPro,
-        fontWeight = FontWeight.Normal,
-        fontSize = 32.sp,
-        letterSpacing = 0.sp
-    ),
     bodyMedium = TextStyle(
-        fontFamily = SfPro,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        letterSpacing = 0.sp
-    )
-)
-
-// Set of Material typography styles to start with
-/*
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = NotoSansJP,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
-    Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
+    titleMedium = TextStyle(
+        fontFamily = NotoSansJP,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = NotoSansJP,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = NotoSansJP,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.5.sp
+    ),
 )
-    */
+
+// Set of Material typography styles to start with
+//val Typography = Typography(
+//    bodyLarge = TextStyle(
+//        fontFamily = FontFamily.Default,
+//        fontWeight = FontWeight.Normal,
+//        fontSize = 16.sp,
+//        lineHeight = 24.sp,
+//        letterSpacing = 0.5.sp
+//    )
+//            Other default text styles to override
+//    )
+//    Other default text styles to override
+//    titleLarge = TextStyle(
+//        fontFamily = FontFamily.Default,
+//        fontWeight = FontWeight.Normal,
+//        fontSize = 22.sp,
+//        lineHeight = 28.sp,
+//        letterSpacing = 0.sp
+//    ),
+//    labelSmall = TextStyle(
+//        fontFamily = FontFamily.Default,
+//        fontWeight = FontWeight.Medium,
+//        fontSize = 11.sp,
+//        lineHeight = 16.sp,
+//        letterSpacing = 0.5.sp
+//    )
+//)

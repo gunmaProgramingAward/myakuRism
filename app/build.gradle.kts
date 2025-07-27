@@ -99,4 +99,9 @@ dependencies {
     // Coin
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+
+
 }
