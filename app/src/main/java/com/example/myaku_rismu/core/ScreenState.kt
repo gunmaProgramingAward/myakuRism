@@ -5,6 +5,7 @@ sealed class ScreenState(open val process: Boolean) {
     class Success(override val process: Boolean = false) : ScreenState(process)
     class Error(
         override val process: Boolean = false,
-        val message: String? = null
+        val message: String? = null,
+        val messageResId: Int? = null
     ) : ScreenState(process)
 }

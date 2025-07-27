@@ -41,7 +41,7 @@ object SleepTimeDataSource {
 
             if (index in 0 until arraySize) {
                 val sleepTotalAvg = aggregationResult.result[SleepSessionRecord.SLEEP_DURATION_TOTAL]
-                result[index] = sleepTotalAvg?.toMinutes() ?: 0L
+                result[index] = sleepTotalAvg?.toHours() ?: 0L
             }
         }
         return result.toList()

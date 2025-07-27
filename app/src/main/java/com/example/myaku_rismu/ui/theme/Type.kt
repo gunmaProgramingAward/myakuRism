@@ -8,14 +8,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
 
-
 val NotoSansJP = FontFamily(
     Font(R.font.noto_sans_jp_regular, FontWeight.Normal),
     Font(R.font.noto_sans_jp_bold, FontWeight.Bold),
     Font(R.font.noto_sans_jp_semibold, FontWeight.SemiBold)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     bodyMedium = TextStyle(
         fontFamily = NotoSansJP,
@@ -59,31 +57,4 @@ val Typography = Typography(
         lineHeight = 32.sp,
         letterSpacing = 0.5.sp
     ),
-
-
-// Set of Material typography styles to start with
-//val Typography = Typography(
-//    bodyLarge = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 16.sp,
-//        lineHeight = 24.sp,
-//        letterSpacing = 0.5.sp
-//    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
 )
