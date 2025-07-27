@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.data.model.RecordType
@@ -135,6 +136,7 @@ fun HomeScreen(
     Scaffold(modifier = modifier) { innerPadding ->
         HomeContent(
             uiState = uiState,
+            appState = appState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding()),
@@ -150,6 +152,7 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     uiState: HomeState,
+    appState: AppState,
     modifier: Modifier = Modifier,
     eventHandler: (HomeUiEvent) -> Unit,
     cardList: List<HealthMetricCardUi>,
@@ -190,7 +193,9 @@ fun HomeContent(
                 cardList = cardList,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp),
-                onClick = {}
+                onClick = { healthMetric ->
+                    appState.navigateToHealthDetail(healthMetric.type)
+                }
             )
         }
     }
@@ -492,8 +497,10 @@ fun HomeScreenPreview() {
     )
 
     Myaku_rismuTheme {
+        val navHostController = NavHostController(LocalContext.current)
         HomeContent(
             uiState = dummyUiState,
+            appState = AppState(navHostController),
             eventHandler = {},
             cardList = dummyCardList
         )
