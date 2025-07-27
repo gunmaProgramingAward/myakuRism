@@ -10,8 +10,6 @@ data class CustomTheme(
     val healthDetailWalkThemeColor: Color,
     val healthDetailPeriodTabColor: Color,
     val healthDetailSelectedPeriodTabColor: Color,
-    val settingScreenTextColor: Color,
-    val settingScreenCardColor: Color,
     val settingScreenBackgroundColor: Color,
     val settingScreenCommonColor: Color,
     val onSelectedButtonOverlay: Color,
@@ -19,6 +17,8 @@ data class CustomTheme(
     val bottomNavigationBarSelectedColor: Color,
     val bottomNavigationBarUnSelectedColor: Color,
     val myakuRismuCardColor: Color,
+    val disabledBackgroundColor: Color,
+    val buttonBackgroundColor: Color,
     val homeLowBpmColor: Color,
     val homeMediumBpmColor: Color,
     val homeHighBpmColor: Color,
@@ -33,5 +33,6 @@ data class CustomTheme(
     val switchCheckedThumbColor: Color,
     val switchUncheckedThumbColor: Color,
     val switchCheckedTrackColor: Color,
-    val switchUncheckedTrackColor: Color
+    val switchUncheckedTrackColor: Color,
+
 )

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.RecordType
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
@@ -30,8 +31,12 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = true) }
     }
 
-    fun hideBottomSheet() {
+    fun dismissBottomSheet() {
         _uiState.update { it.copy(showBottomSheet = false) }
+    }
+
+    fun createNewMusic() {
+        _uiState.update { it.copy(createMusic = true) }
     }
 
     fun selectMusicGenre(metric: HealthMetric) {
@@ -61,27 +66,27 @@ class HomeViewModel @Inject constructor(
         // 仮データ
         val metrics = listOf(
             HealthMetric(
-                type = HomeHealthType.HeartRate,
+                type = RecordType.HEART_RATE,
                 currentValue = 200,
                 targetValue = 180
             ),
             HealthMetric(
-                type = HomeHealthType.Walk,
+                type = RecordType.STEPS,
                 currentValue = 5000,
                 targetValue = 10000
             ),
             HealthMetric(
-                type = HomeHealthType.Move,
+                type = RecordType.CALORIES,
                 currentValue = 1200,
                 targetValue = 2000
             ),
             HealthMetric(
-                type = HomeHealthType.SleepTime,
+                type = RecordType.SLEEP_TIME,
                 currentValue = 9,
                 targetValue = 8
             ),
             HealthMetric(
-                type = HomeHealthType.MoveDistance,
+                type = RecordType.DISTANCE,
                 currentValue = 2,
                 targetValue = 5
             )
