@@ -1,5 +1,6 @@
 package com.example.myaku_rismu.feature.home
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -249,7 +251,7 @@ fun BpmPlayerCard(
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.play),
+                    text = stringResource(R.string.create),
                     color = Color.Black,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -266,6 +268,14 @@ fun HealthMetricCard(
     cardUi: HealthMetricCardUi,
     onClick: () -> Unit = {}
 ) {
+    LaunchedEffect(metric.progress) {
+        metric.animatedProgress.snapTo(0f)
+        metric.animatedProgress.animateTo(
+            targetValue = metric.progress,
+            animationSpec = tween(durationMillis = 1200)
+        )
+    }
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(5.dp),
@@ -286,7 +296,7 @@ fun HealthMetricCard(
                     contentAlignment = Alignment.Center
                 ) {
                     DonutChart(
-                        progress = metric.progress,
+                        progress = metric.animatedProgress.value,
                         progressColor = cardUi.color,
                         barColorFaded = cardUi.barColorFaded,
                         modifier = Modifier
@@ -359,7 +369,7 @@ fun HealthMetricCard(
                     modifier = Modifier.offset(y = (-8).dp)
                 )
                 BarChart(
-                    progress = metric.progress,
+                    progress = metric.animatedProgress.value,
                     progressColor = cardUi.color,
                     barColorFaded = cardUi.barColorFaded,
                 )
