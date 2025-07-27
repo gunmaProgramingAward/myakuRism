@@ -1,6 +1,7 @@
 package com.example.myaku_rismu.core.base
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import com.example.myaku_rismu.core.ui.dialog.HealthConnectUnavailableDialog
 import com.example.myaku_rismu.core.ui.dialog.HealthConnectUpdateDialog
 import com.example.myaku_rismu.core.ui.dialog.PermissionHealthConnectDialog
 import com.example.myaku_rismu.domain.model.PermissionResult
+import com.example.myaku_rismu.feature.musicDetail.MusicDetailScreen
 
 @Composable
 fun MainAppScreen(
@@ -88,12 +90,15 @@ fun MainAppScreen(
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                items = NavigationItem.entries,
-                selectedItem = appState.selectedNavigationItem,
-                onNavigate = appState::bottomBarNavigateTo,
-                modifier = Modifier
-            )
+            Column {
+                MusicDetailScreen()
+                BottomNavigationBar(
+                    items = NavigationItem.entries,
+                    selectedItem = appState.selectedNavigationItem,
+                    onNavigate = appState::bottomBarNavigateTo,
+                    modifier = Modifier
+                )
+            }
         },
         modifier = modifier
     ) { innerPadding ->

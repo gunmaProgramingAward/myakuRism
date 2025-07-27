@@ -58,6 +58,11 @@ val LightCustomTheme = CustomTheme(
     switchUncheckedThumbColor = Color(0xFF777777),
     switchCheckedTrackColor = Color(0xFF1F2937),
     switchUncheckedTrackColor = Color(0xFFE2E2E2)
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -73,6 +78,11 @@ val DarkCustomTheme = CustomTheme(
     onSelectedButtonOverlay = Color(0x1A4F378B),
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
+    bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D)
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
     myakuRismuCardColor = Color(0xFFEDEDED),
     disabledBackgroundColor = Color(0xAAF8F8F8),

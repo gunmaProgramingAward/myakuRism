@@ -35,4 +35,8 @@ data class CustomTheme(
     val switchCheckedTrackColor: Color,
     val switchUncheckedTrackColor: Color,
 
+    val appTextColor: Color,
+    val musicDetailMiniMusicPlayerBackgroundColor: Color,
+    val musicDetailMusicPlayerFavorite: Color,
+    val musicDetailMusicPlayerShuffle: Color
 )
