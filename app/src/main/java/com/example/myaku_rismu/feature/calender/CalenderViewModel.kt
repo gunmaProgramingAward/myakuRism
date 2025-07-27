@@ -25,6 +25,11 @@ class CalenderViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CalenderState())
     val uiState: StateFlow<CalenderState> = _uiState.asStateFlow()
 
+    fun clearError() {
+        _uiState.update { currentState ->
+            currentState.copy(error = null)
+        }
+    }
     fun onEvent(event: CalenderUiEvent) {
         when (event) {
             is CalenderUiEvent.LoadHealthData -> {

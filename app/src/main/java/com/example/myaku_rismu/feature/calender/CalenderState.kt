@@ -1,5 +1,8 @@
 package com.example.myaku_rismu.feature.calender // ViewModel과 같은 패키지 또는 하위 패키지에 위치
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.myaku_rismu.data.model.RecordType
 import java.time.LocalDate
 
 data class CalenderState(
@@ -12,3 +15,32 @@ data class CalenderState(
     val weeklyHeartRate: List<Long> = List(7) { 0L },
     val weeklySleep: List<Long> = List(7) { 0L }
 )
+
+data class HealthData(
+    val type: RecordType,
+    val name: String,
+    val icon: ImageVector,
+    val primaryColor: Color,
+    val unit: String,
+    val currentValue: Float,
+    val goalValue: Float
+) {
+    val progress: Float
+        get() = (currentValue / goalValue).coerceIn(0f, 1f)
+}
+
+data class DailyHealthReport(
+    val calories: HealthData,
+    val heartRate: HealthData,
+    val sleepTime: HealthData,
+    val steps: HealthData,
+    val distance: HealthData
+) {
+    fun getByType(type: RecordType): HealthData = when (type) {
+        RecordType.CALORIES -> calories
+        RecordType.HEART_RATE -> heartRate
+        RecordType.SLEEP_TIME -> sleepTime
+        RecordType.STEPS -> steps
+        RecordType.DISTANCE -> distance
+    }
+}

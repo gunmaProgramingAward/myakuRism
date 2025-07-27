@@ -27,7 +27,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -47,43 +46,18 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.padding
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaku_rismu.feature.home.CalenderViewModel
+import com.example.myaku_rismu.data.model.RecordType
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.temporal.TemporalAdjusters
 
-enum class HealthMetricType {
-    MOVE,
-    HEART_RATE,
-    SLEEP,
-    STEPS,
-    WALK_TIME
-}
-
-data class HealthData(
-    val type: HealthMetricType,
-    val name: String,
-    val icon: ImageVector,
-    val primaryColor: Color,
-    val unit: String,
-    val currentValue: Float,
-    val goalValue: Float
-) {
-    val progress: Float
-        get() = (currentValue / goalValue).coerceIn(0f, 1f)
-}
-
-data class DailyHealthReport(
-    val move: HealthData,
-    val heartRate: HealthData,
-    val sleep: HealthData,
-    val steps: HealthData,
-    val walkTime: HealthData
-) {
-    fun getByType(type: HealthMetricType): HealthData = when (type) {
-        HealthMetricType.MOVE -> move
-        HealthMetricType.HEART_RATE -> heartRate
-        HealthMetricType.SLEEP -> sleep
-        HealthMetricType.STEPS -> steps
-        HealthMetricType.WALK_TIME -> walkTime
-    }
-}
 
 @Composable
 fun CalenderScreen(
@@ -92,6 +66,8 @@ fun CalenderScreen(
     viewModel: CalenderViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val eventHandler = remember(viewModel) {
         { event: CalenderUiEvent ->
@@ -100,35 +76,52 @@ fun CalenderScreen(
     }
 
     var currentDisplayDate by remember(uiState.selectedDate) { mutableStateOf(uiState.selectedDate) }
-    if (uiState.isLoading && uiState.weeklySteps.all { it == 0L }) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
-    }
 
-    uiState.error?.let { errorMsg ->
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("오류: $errorMsg", color = MaterialTheme.colorScheme.error)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { contentPadding ->
+        LaunchedEffect(uiState.error) {
+            uiState.error?.let { errorMsg ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "エラー: $errorMsg",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                viewModel.clearError()
+            }
+        }
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            val healthDataByDateFromState: Map<LocalDate, DailyHealthReport> =
+                convertCalenderStateToHealthDataMap(
+                    uiState,
+                    currentDisplayDate
+                )
+
+            HealthDashboardScreen(
+                modifier = Modifier.padding(contentPadding),
+                isLoading = uiState.isLoading,
+                currentDate = currentDisplayDate,
+                healthReportsForWeek = healthDataByDateFromState,
+                onDateSelected = { selectedDate ->
+                    currentDisplayDate = selectedDate
+                    eventHandler(CalenderUiEvent.OnDateSelected(selectedDate))
+                }
+            )
         }
     }
-
-    val healthDataByDateFromState: Map<LocalDate, DailyHealthReport> =
-        convertCalenderStateToHealthDataMap(
-            uiState,
-            currentDisplayDate
-        )
-    HealthDashboardScreen(
-        modifier = modifier,
-        isLoading = uiState.isLoading,
-        currentDate = currentDisplayDate,
-        healthReportsForWeek = healthDataByDateFromState,
-        onDateSelected = { selectedDate ->
-            currentDisplayDate = selectedDate
-            eventHandler(CalenderUiEvent.OnDateSelected(selectedDate))
-        }
-    )
 }
+
 
 @Composable
 fun HealthDashboardScreen(
@@ -138,9 +131,9 @@ fun HealthDashboardScreen(
     healthReportsForWeek: Map<LocalDate, DailyHealthReport>,
     onDateSelected: (LocalDate) -> Unit
 ) {
-    var selectedMetricTypeState by remember { mutableStateOf(HealthMetricType.MOVE) }
+    var selectedMetricTypeState by remember { mutableStateOf(RecordType.CALORIES) }
     val dailyReport = healthReportsForWeek[currentDate]
-        ?: createEmptyDailyReport(currentDate)
+        ?: createEmptyDailyReport()
 
     val dateFormatPattern = stringResource(id = R.string.calender_screen_date)
     val dateFormatter = remember(dateFormatPattern) {
@@ -149,7 +142,7 @@ fun HealthDashboardScreen(
     val selectedData = dailyReport.getByType(selectedMetricTypeState)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .navigationBarsPadding(),
@@ -170,7 +163,7 @@ fun HealthDashboardScreen(
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        if (isLoading && dailyReport.move.currentValue == 0f && healthReportsForWeek.containsKey(currentDate)) {
+        if (isLoading && healthReportsForWeek.containsKey(currentDate)) {
             CircularProgressIndicator(modifier = Modifier.padding(vertical = 16.dp).weight(1f))
         } else {
             CircularHealthDashboard(
@@ -218,8 +211,8 @@ fun WeeklyCalendar(
                 val date = weekStart.plusDays(i.toLong())
                 val hasData = healthReports.containsKey(date)
                 val report = healthReports[date]
-                val progress = report?.move?.progress ?: 0f
-                val color = report?.move?.primaryColor ?: Color.LightGray
+                val progress = report?.calories?.progress ?: 0f
+                val color = report?.calories?.primaryColor ?: Color.LightGray
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -253,8 +246,8 @@ fun WeeklyCalendar(
 @Composable
 fun CircularHealthDashboard(
     report: DailyHealthReport,
-    selectedMetricType: HealthMetricType,
-    onMetricSelected: (HealthMetricType) -> Unit,
+    selectedMetricType: RecordType,
+    onMetricSelected: (RecordType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mainData = report.getByType(selectedMetricType)
@@ -282,16 +275,16 @@ fun CircularHealthDashboard(
         val smallRingSize = dashboardSize * 0.25f
 
         val slots = listOf(
-            Pair(-Math.PI / 2, HealthMetricType.HEART_RATE),
-            Pair(0.0, HealthMetricType.STEPS),
-            Pair(Math.PI / 2, HealthMetricType.WALK_TIME),
-            Pair(Math.PI, HealthMetricType.SLEEP)
+            Pair(-Math.PI / 2, RecordType.HEART_RATE),
+            Pair(0.0, RecordType.STEPS),
+            Pair(Math.PI / 2, RecordType.DISTANCE),
+            Pair(Math.PI, RecordType.SLEEP_TIME)
         )
 
         slots.forEach { (angle, defaultTypeInSlot) ->
             val typeToShowInSlot = when {
-                selectedMetricType != HealthMetricType.MOVE && defaultTypeInSlot == selectedMetricType -> {
-                    HealthMetricType.MOVE
+                selectedMetricType != RecordType.CALORIES && defaultTypeInSlot == selectedMetricType -> {
+                    RecordType.CALORIES
                 }
                 else -> defaultTypeInSlot
             }
@@ -401,9 +394,10 @@ private fun convertCalenderStateToHealthDataMap(
     referenceDateForWeek: LocalDate
 ): Map<LocalDate, DailyHealthReport> {
     val reports = mutableMapOf<LocalDate, DailyHealthReport>()
-    val weekStartDate = referenceDateForWeek.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+    val weekStartDate = referenceDateForWeek.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
     for (i in 0..6) {
+        // 仮の値
         val date = weekStartDate.plusDays(i.toLong())
         val moveGoal = 130f
         val heartRateGoal = 120f
@@ -418,28 +412,29 @@ private fun convertCalenderStateToHealthDataMap(
         val currentSleep = calenderState.weeklySleep.getOrElse(i) { 0L }.toFloat()
 
         reports[date] = DailyHealthReport(
-            move = HealthData(HealthMetricType.MOVE, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", currentCalories, moveGoal),
-            heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", currentHeartRate, heartRateGoal),
-            sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", currentSleep, sleepGoal),
-            steps = HealthData(HealthMetricType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", currentSteps, stepsGoal),
-            walkTime = HealthData(HealthMetricType.WALK_TIME, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", currentDistance, walkTimeGoal)
+            calories = HealthData(RecordType.CALORIES, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", currentCalories, moveGoal),
+            heartRate = HealthData(RecordType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", currentHeartRate, heartRateGoal),
+            sleepTime = HealthData(RecordType.SLEEP_TIME, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", currentSleep, sleepGoal),
+            steps = HealthData(RecordType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", currentSteps, stepsGoal),
+            distance = HealthData(RecordType.DISTANCE, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", currentDistance, walkTimeGoal)
         )
     }
     return reports
 }
 
-private fun createEmptyDailyReport(date: LocalDate): DailyHealthReport {
+private fun createEmptyDailyReport(): DailyHealthReport {
+    // 仮の値
     val moveGoal = 130f
     val heartRateGoal = 120f
     val sleepGoal = 8f
     val stepsGoal = 10000f
     val walkTimeGoal = 3f
     return DailyHealthReport(
-        move = HealthData(HealthMetricType.MOVE, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", 0f, moveGoal),
-        heartRate = HealthData(HealthMetricType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", 0f, heartRateGoal),
-        sleep = HealthData(HealthMetricType.SLEEP, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", 0f, sleepGoal),
-        steps = HealthData(HealthMetricType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", 0f, stepsGoal),
-        walkTime = HealthData(HealthMetricType.WALK_TIME, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", 0f, walkTimeGoal)
+        calories = HealthData(RecordType.CALORIES, "ムーブ", Icons.Default.DirectionsRun, Color(0xFFE60039), "KCAL", 0f, moveGoal),
+        heartRate = HealthData(RecordType.HEART_RATE, "心拍数", Icons.Default.Favorite, Color(0xFFE600A9), "BPM", 0f, heartRateGoal),
+        sleepTime = HealthData(RecordType.SLEEP_TIME, "睡眠時間", Icons.Default.Hotel, Color(0xFF00A9E6), "H", 0f, sleepGoal),
+        steps = HealthData(RecordType.STEPS, "歩数", Icons.Default.DirectionsWalk, Color(0xFF00E6A9), "歩", 0f, stepsGoal),
+        distance = HealthData(RecordType.DISTANCE, "歩行時間", Icons.Default.Event, Color(0xFFE6A900), "KM", 0f, walkTimeGoal)
     )
 }
 
@@ -449,7 +444,7 @@ fun HealthDashboardScreenPreview() {
     val today = LocalDate.now()
     val sampleReports = (0..6).associate { i ->
         val date = today.minusDays(i.toLong())
-        date to createEmptyDailyReport(date)
+        date to createEmptyDailyReport()
     }
     MaterialTheme {
         HealthDashboardScreen(
