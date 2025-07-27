@@ -1,6 +1,7 @@
 package com.example.myaku_rismu.feature.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -8,7 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.RecordType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel() {
@@ -16,11 +19,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     init {
-        updateMetrics()
-        _uiState.update {
-            it.copy(
-                screenState = ScreenState.Success()
-            )
+        viewModelScope.launch {
+            updateMetrics()
+            _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
     }
 
