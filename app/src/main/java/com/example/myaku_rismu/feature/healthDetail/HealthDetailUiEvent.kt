@@ -4,4 +4,6 @@ import com.example.myaku_rismu.core.UiEvent
 
 sealed interface HealthDetailUiEvent : UiEvent {
     data class OnClickPeriod(val period: Int) : HealthDetailUiEvent
+    data class ChangeIsShowSettingDialog(val isShow: Boolean) : HealthDetailUiEvent
+    data class UpdateRecordTypeTarget(val target: Int) : HealthDetailUiEvent
 }

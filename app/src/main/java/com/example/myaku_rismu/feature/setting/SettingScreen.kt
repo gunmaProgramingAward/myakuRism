@@ -105,7 +105,7 @@ fun SettingScreen(
     Scaffold(
         topBar = {
             TopBar(
-                title = stringResource(R.string.profile),
+                title = stringResource(R.string.setting_topbar_profile),
                 navigationIcon = {
                     IconButton(onClick = { appState.navigatePopUp() }) {
                         Icon(

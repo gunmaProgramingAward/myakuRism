@@ -1,11 +1,13 @@
 package com.example.myaku_rismu.feature.healthDetail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import com.example.myaku_rismu.domain.useCase.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HealthDetailViewModel @Inject constructor(
     private val healthConnectUseCase: HealthConnectUseCase,
+    private val settingUseCase: SettingUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HealthDetailState())
@@ -33,7 +36,7 @@ class HealthDetailViewModel @Inject constructor(
         }
         updateListData()
         updateHealthType()
-        updateTarget()
+        getRecordTypeTarget()
         _uiState.update {
             it.copy(screenState = ScreenState.Success())
         }
@@ -60,26 +63,26 @@ class HealthDetailViewModel @Inject constructor(
                     listDate = newDate
                 )
             }
-            
+
             updateDailyAverage()
             updateAxisConfig()
         }
     }
 
-private fun updateDailyAverage() {
-    val stepData = _uiState.value.listDate
-    val filteredData = stepData.filter { it != 0L }
+    private fun updateDailyAverage() {
+        val stepData = _uiState.value.listDate
+        val filteredData = stepData.filter { it != 0L }
 
-    val dailyAverage = if (filteredData.isNotEmpty()) {
-        filteredData.average().toInt()
-    } else {
-        0
-    }
+        val dailyAverage = if (filteredData.isNotEmpty()) {
+            filteredData.average().toInt()
+        } else {
+            0
+        }
 
-    _uiState.update { currentState ->
-        currentState.copy(dailyAverage = dailyAverage)
+        _uiState.update { currentState ->
+            currentState.copy(dailyAverage = dailyAverage)
+        }
     }
-}
 
 
     private fun updateHealthType() {
@@ -130,11 +133,34 @@ private fun updateDailyAverage() {
         _uiState.update { it.copy(axisConfig = newAxisConfig) }
     }
 
-    private fun updateTarget() {
-        // TODO: 後で変更
-        val target = 300
+    private fun getRecordTypeTarget() {
+        val recordType = _uiState.value.recordType ?: return
+        viewModelScope.launch {
+            val target = withContext(Dispatchers.IO) {
+                settingUseCase.getRecordTypeTarget(recordType)
+            } ?: 0
+            _uiState.update { it.copy(target = target) }
+        }
+    }
+
+    fun updateRecordTarget(target: Int) {
+        val recordType = uiState.value.recordType ?: return
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                settingUseCase.updateRecordTypeTarget(
+                    recordType = recordType,
+                    target = target
+                )
+            }
+            _uiState.update {
+                it.copy(target = target)
+            }
+        }
+    }
+
+    fun changeIsShowSettingDialog(isShow: Boolean) {
         _uiState.update { currentState ->
-            currentState.copy(target = target)
+            currentState.copy(isShowSettingDialog = isShow)
         }
     }
 }

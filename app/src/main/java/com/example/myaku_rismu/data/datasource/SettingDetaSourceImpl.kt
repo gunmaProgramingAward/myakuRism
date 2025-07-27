@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.example.myaku_rismu.core.base.MyakuRismuApplication
 import com.example.myaku_rismu.core.base.constants.SettingPrefKeys
+import com.example.myaku_rismu.core.base.constants.TargetPrefKeys
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
 import com.example.myaku_rismu.domain.model.Gender
@@ -26,6 +27,11 @@ class SettingDataSourceImpl @Inject constructor(
     private val genderKey = intPreferencesKey(SettingPrefKeys.GENDER_KEY)
     private val activityLevelKey = intPreferencesKey(SettingPrefKeys.ACTIVITY_LEVEL_KEY)
 
+    private val heartRateKey = intPreferencesKey(TargetPrefKeys.TARGET_HEART_RATE_KEY)
+    private val stepsKey = intPreferencesKey(TargetPrefKeys.TARGET_STEPS_KEY)
+    private val caloriesKey = intPreferencesKey(TargetPrefKeys.TARGET_CALORIES_KEY)
+    private val sleepTimeKey = intPreferencesKey(TargetPrefKeys.TARGET_SLEEP_TIME_KEY)
+    private val distanceKey = intPreferencesKey(TargetPrefKeys.TARGET_DISTANCE_KEY)
 
     override suspend fun getHeight(): Int? = dataStore.data.first()[heightKey]
     override suspend fun getWeight(): Int? = dataStore.data.first()[weightKey]
@@ -33,7 +39,14 @@ class SettingDataSourceImpl @Inject constructor(
     override suspend fun getBirthMonth(): Int? = dataStore.data.first()[birthMonthKey]
     override suspend fun getBirthDay(): Int? = dataStore.data.first()[birthdayKey]
     override suspend fun getGender(): Gender? = Gender.fromId(dataStore.data.first()[genderKey])
-    override suspend fun getActivityLevel(): ActivityLevel? = ActivityLevel.fromId(dataStore.data.first()[activityLevelKey])
+    override suspend fun getActivityLevel(): ActivityLevel? =
+        ActivityLevel.fromId(dataStore.data.first()[activityLevelKey])
+
+    override suspend fun getHeartRateTarget(): Int? = dataStore.data.first()[heartRateKey]
+    override suspend fun getStepsTarget(): Int? = dataStore.data.first()[stepsKey]
+    override suspend fun getCaloriesTarget(): Int? = dataStore.data.first()[caloriesKey]
+    override suspend fun getSleepTimeTarget(): Int? = dataStore.data.first()[sleepTimeKey]
+    override suspend fun getDistanceTarget(): Int? = dataStore.data.first()[distanceKey]
 
     override suspend fun updateHeightAndWeight(
         selectType: SettingType,
@@ -70,6 +83,36 @@ class SettingDataSourceImpl @Inject constructor(
     override suspend fun updateActivityLevel(level: ActivityLevel) {
         dataStore.edit { prefs ->
             prefs[activityLevelKey] = level.id
+        }
+    }
+
+    override suspend fun updateHeartRateTarget(target: Int) {
+        dataStore.edit { prefs ->
+            prefs[heartRateKey] = target
+        }
+    }
+
+    override suspend fun updateStepsTarget(target: Int) {
+        dataStore.edit { prefs ->
+            prefs[stepsKey] = target
+        }
+    }
+
+    override suspend fun updateCaloriesTarget(target: Int) {
+        dataStore.edit { prefs ->
+            prefs[caloriesKey] = target
+        }
+    }
+
+    override suspend fun updateSleepTimeTarget(target: Int) {
+        dataStore.edit { prefs ->
+            prefs[sleepTimeKey] = target
+        }
+    }
+
+    override suspend fun updateDistanceTarget(target: Int) {
+        dataStore.edit { prefs ->
+            prefs[distanceKey] = target
         }
     }
 }

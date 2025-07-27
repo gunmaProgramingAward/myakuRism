@@ -5,7 +5,7 @@
     <string name="select_height">身長を選択</string>
     <string name="select_weight">体重を選択</string>
     <string name="select_gender">性別を選択</string>
-    <string name="profile">プロフィール</string>
+    <string name="setting_profile">プロフィール</string>
     <string name="basic_information">基本情報</string>
     <string name="activity_level">活動レベル</string>
     <string name="not_set">未設定</string>
@@ -100,10 +100,18 @@
     <string name="bottom_navigation_bar_home">ホーム</string>
     <string name="bottom_navigation_bar_calendar">カレンダー</string>
     <string name="bottom_navigation_bar_library">ライブラリー</string>
-    <string name="bottom_navigation_bar_profile">プロフィール</string>
+    <string name="bottom_navigation_bar_profile">設定</string>
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="top_bar_setting">設定</string>
+    <string name="include_lyrics">歌詞を含める</string>
+    <string name="music_generation_notification">音楽生成通知</string>
+    <string name="collaboration_with_healthcare">ヘルスケアとの連携</string>
+    <string name="sync_with_your_smartwatch">スマートウォッチと同期</string>
+    <string name="setting_topbar_profile">プロフィール</string>
+    <string name="personal_information_and_health_goal_setting">個人情報と健康目標の設定</string>
+    <string name="advanced_settings">詳細設定</string>
     <string name="select_genre">ジャンルを選択してください</string>
     <string name="choose_whether_to_include_lyrics">歌詞を含めるかを選択してください</string>
     <string name="create_music">音楽を作成する</string>

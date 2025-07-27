@@ -11,9 +11,19 @@ interface SettingRepository {
     suspend fun getBirthMonth(): Int?
     suspend fun getBirthDay(): Int?
     suspend fun getGender(): Gender?
+    suspend fun getHeartRateTarget(): Int?
+    suspend fun getStepsTarget(): Int?
+    suspend fun getCaloriesTarget(): Int?
+    suspend fun getSleepTimeTarget(): Int?
+    suspend fun getDistanceTarget(): Int?
     suspend fun getActivityLevel(): ActivityLevel?
     suspend fun updateHeightAndWeight(selectType : SettingType, value : Int)
     suspend fun updateBirthdate(selectType: SettingType, year: Int, month: Int, day: Int)
     suspend fun updateGender(gender: Gender)
     suspend fun updateActivityLevel(level: ActivityLevel)
+    suspend fun updateHeartRateTarget(target: Int)
+    suspend fun updateStepsTarget(target: Int)
+    suspend fun updateCaloriesTarget(target: Int)
+    suspend fun updateSleepTimeTarget(target: Int)
+    suspend fun updateDistanceTarget(target: Int)
 }
