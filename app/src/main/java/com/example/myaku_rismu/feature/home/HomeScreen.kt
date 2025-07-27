@@ -376,6 +376,7 @@ fun HealthMetricCard(
                     modifier = Modifier.offset(y = (-8).dp)
                 )
                 BarChart(
+                    modifier = Modifier.height(6.dp),
                     progress = metric.animatedProgress.value,
                     progressColor = cardUi.color,
                     barColorFaded = cardUi.barColorFaded,

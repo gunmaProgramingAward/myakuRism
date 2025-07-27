@@ -26,9 +26,8 @@ fun BarChart(
     barColorFaded: Color
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(6.dp)
             .background(barColorFaded, RoundedCornerShape(5.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {

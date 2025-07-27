@@ -1,6 +1,7 @@
 package com.example.myaku_rismu.core.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,13 +57,16 @@ fun MiniLoadingBar(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
             AnimatedText(
                 titles = stringArrayResource(id = R.array.generation_messages).toList()
             )
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.size(10.dp))
             BarChart(
-                modifier = Modifier.size(8.dp),
+                modifier = Modifier
+                    .height(8.dp)
+                    .padding(horizontal = 2.dp),
                 progress = progress,
                 progressColor = MaterialTheme.customTheme.healthDetailHeartRateThemeColor,
                 barColorFaded = MaterialTheme.customTheme.myakuRismuCardColor,
