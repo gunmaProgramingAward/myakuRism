@@ -10,7 +10,6 @@ import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.model.HealthConnectAvailability
 import com.example.myaku_rismu.domain.model.PermissionResult
 import com.example.myaku_rismu.domain.repository.HealthConnectRepository
-import kotlinx.coroutines.handleCoroutineException
 import java.time.Instant
 import javax.inject.Inject
 

@@ -15,7 +15,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import kotlin.math.roundToInt
 
 @Composable
-fun rememberChartRenderData(uiState: HealthDetailState, data: List<Int>): ChartRenderData? {
+fun rememberChartRenderData(uiState: HealthDetailState, data: List<Long>): ChartRenderData? {
     val axisConfig = uiState.axisConfig ?: return null
 
     val modelProducer = remember { ChartEntryModelProducer() }

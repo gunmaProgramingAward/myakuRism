@@ -1,7 +1,42 @@
 <resources>
     <string name="app_name">myaku_rismu</string>
 
+    // SettingScreen
+    <string name="select_height">身長を選択</string>
+    <string name="select_weight">体重を選択</string>
+    <string name="select_gender">性別を選択</string>
+    <string name="profile">プロフィール</string>
+    <string name="basic_information">基本情報</string>
+    <string name="activity_level">活動レベル</string>
+    <string name="not_set">未設定</string>
+    <string name="date_of_birth">生年月日</string>
+    <string name="body_weight">体重</string>
+    <string name="gender">性別</string>
+    <string name="height">身長</string>
+    <string name="unit_of_height">cm</string>
+    <string name="unit_of_weight">kg</string>
+    <string name="date_format_jp">%1$s/%2$s/%3$s</string>
+    <string name="height_display_format">%1$s cm</string>
+    <string name="weight_display_format">%1$s kg</string>
+    <string name="cancel">キャンセル</string>
+    <string name="ok">OK</string>
+    <string name="select_your_date_of_birth">生年月日を選択</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="activity_level_low_main">低い</string>
+    <string name="activity_level_medium_main">普通</string>
+    <string name="activity_level_high_main">高い</string>
+    <string name="activity_level_low_sub">座りがちな生活</string>
+    <string name="activity_level_medium_sub">週2–3回の軽い運動</string>
+    <string name="activity_level_high_sub">週4回以上の運動</string>
+    <string name="gender_male">男性</string>
+    <string name="gender_female">女性</string>
+    <string name="gender_other">その他</string>
+
+
     // HealthDetailScreen
+    <string name="health_detail_target_setting">目標設定</string>
     <string name="health_detail_title_move">ムーブ</string>
     <string name="health_detail_title_move_distance">歩行距離</string>
     <string name="health_detail_title_heart_rate">心拍数</string>
@@ -15,17 +50,32 @@
     <string name="health_detail_label_time">%1$s時</string>
     <string name="health_detail_label_day">%1$s日</string>
     <string name="health_detail_move_unit">KCAL</string>
-    <string name="health_detail_move_distance_unit">km</string>
+    <string name="health_detail_move_distance_unit">m</string>
     <string name="health_detail_heart_rate_unit">bpm</string>
     <string name="health_detail_sleep_time_unit">時間</string>
     <string name="health_detail_walk_unit">歩</string>
     <string name="health_detail_move_slash">/</string>
+    <string name="health_detail_not_data_message">データがありません</string>
+    <string name="health_detail_not_reset">チャートを初期化できません</string>
     <string-array name="health_detail_periods">
         <item>日</item>
         <item>週</item>
         <item>月</item>
         <item>年</item>
     </string-array>
+
+    // musicDetailScreen
+    <string name="music_detail_previous_track">前の曲</string>
+    <string name="music_detail_next_track">次の曲</string>
+    <string name="music_detail_pause">一時停止</string>
+    <string name="music_detail_play">再生</string>
+    <string name="music_detail_favorite">お気に入り</string>
+    <string name="music_detail_share">シェア</string>
+    <string name="music_detail_suffle">シャッフル</string>
+    <string name="music_detail_track">全体</string>
+    <string name="music_detail_progress">進行</string>
+    <string name="music_detail_thumb">ボタン</string>
+
     // HomeScreen
     <string name="play">Play</string>
     <string name="bpm">BPM</string>
@@ -34,7 +84,6 @@
     <string name="move">消費カロリー</string>
     <string name="sleep">睡眠時間</string>
     <string name="distance">移動距離</string>
-
     <string name="unit_bpm">BPM</string>
     <string name="unit_steps">歩</string>
     <string name="unit_kcal">kcal</string>
@@ -42,7 +91,6 @@
     <string name="unit_km">km</string>
     <string name="unit_null"> </string>
     <string name="gif_animation">GIF Animation</string>
-
     <string name="edm">EDM</string>
     <string name="pops">POPS</string>
     <string name="classic">クラシック</string>
@@ -60,4 +108,5 @@
     <string name="choose_whether_to_include_lyrics">歌詞を含めるかを選択してください</string>
     <string name="create_music">音楽を作成する</string>
     <string name="instrumental">インストゥルメンタル</string>
+    <string name="error">エラーが発生しました</string>
 </resources>

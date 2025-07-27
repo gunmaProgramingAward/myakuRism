@@ -27,6 +27,8 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val LightCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -40,7 +42,12 @@ val LightCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuCardColor = Color(0xFFEDEDED),
+    settingScreenNormalTextColor = Color(0x801F2937),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D),
+    musicDetailSettingTarget = Color(0xFF2B80CB),
     disabledBackgroundColor = Color(0xAAF8F8F8),
     buttonBackgroundColor = Color(0xFFF7F8F9),
     homeLowBpmColor = Color(0xFFA6E5EE),
@@ -61,6 +68,8 @@ val LightCustomTheme = CustomTheme(
 )
 
 val DarkCustomTheme = CustomTheme(
+    myakuRismuBackgroundColor = Color(0xFFF9FAFB),
+    myakuRismuCardColor = Color(0xFFEDEDED),
     healthDetailMoveThemeColor = Color(0xFFFF1F61),
     healthDetailMoveDistanceThemeColor = Color(0xFFFFC100),
     healthDetailHeartRateThemeColor = Color(0xFFFF4AA3),
@@ -74,7 +83,12 @@ val DarkCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
-    myakuRismuCardColor = Color(0xFFEDEDED),
+    settingScreenNormalTextColor = Color(0x801F2937),
+    appTextColor = Color(0xFF000000),
+    musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
+    musicDetailMusicPlayerFavorite = Color(0xFFFF1F61),
+    musicDetailMusicPlayerShuffle = Color(0xFF1DD95D),
+    musicDetailSettingTarget = Color(0xFF2B80CB),
     disabledBackgroundColor = Color(0xAAF8F8F8),
     buttonBackgroundColor = Color(0xFFF7F8F9),
     homeLowBpmColor = Color(0xFFA6E5EE),
