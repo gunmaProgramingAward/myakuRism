@@ -57,6 +57,14 @@
     <string name="health_detail_move_slash">/</string>
     <string name="health_detail_not_data_message">データがありません</string>
     <string name="health_detail_not_reset">チャートを初期化できません</string>
+    <string-array name="health_detail_periods">
+        <item>日</item>
+        <item>週</item>
+        <item>月</item>
+        <item>年</item>
+    </string-array>
+
+    // musicDetailScreen
     <string name="music_detail_previous_track">前の曲</string>
     <string name="music_detail_next_track">次の曲</string>
     <string name="music_detail_pause">一時停止</string>
@@ -67,12 +75,26 @@
     <string name="music_detail_track">全体</string>
     <string name="music_detail_progress">進行</string>
     <string name="music_detail_thumb">ボタン</string>
-    <string-array name="health_detail_periods">
-        <item>日</item>
-        <item>週</item>
-        <item>月</item>
-        <item>年</item>
-    </string-array>
+
+    // HomeScreen
+    <string name="play">Play</string>
+    <string name="bpm">BPM</string>
+    <string name="current_heart_rate">現在の心拍数</string>
+    <string name="steps">歩数</string>
+    <string name="move">消費カロリー</string>
+    <string name="sleep">睡眠時間</string>
+    <string name="distance">移動距離</string>
+    <string name="unit_bpm">BPM</string>
+    <string name="unit_steps">歩</string>
+    <string name="unit_kcal">kcal</string>
+    <string name="unit_hours">h</string> <string name="unit_minutes">m</string>
+    <string name="unit_km">km</string>
+    <string name="unit_null"> </string>
+    <string name="gif_animation">GIF Animation</string>
+    <string name="edm">EDM</string>
+    <string name="pops">POPS</string>
+    <string name="classic">クラシック</string>
+    <string name="rock">ロック</string>
 
     // BottomNavigationBar
     <string name="bottom_navigation_bar_home">ホーム</string>
@@ -82,5 +104,9 @@
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="select_genre">ジャンルを選択してください</string>
+    <string name="choose_whether_to_include_lyrics">歌詞を含めるかを選択してください</string>
+    <string name="create_music">音楽を作成する</string>
+    <string name="instrumental">インストゥルメンタル</string>
     <string name="error">エラーが発生しました</string>
 </resources>

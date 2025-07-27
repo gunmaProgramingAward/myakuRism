@@ -6,8 +6,14 @@ import androidx.navigation.compose.composable
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.navigation.HomeRoute
 
-fun NavGraphBuilder.homeScreen(appState: AppState,modifier: Modifier = Modifier) {
+fun NavGraphBuilder.homeScreen(
+    appState: AppState,
+    modifier: Modifier = Modifier
+) {
     composable<HomeRoute> {
-        HomeScreen(appState = appState, modifier = modifier)
+        HomeScreen(
+            appState = appState,
+            modifier = modifier
+        )
     }
 }
