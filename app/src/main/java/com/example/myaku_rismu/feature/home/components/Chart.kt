@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun BarChart(
+    modifier: Modifier = Modifier,
     progress: Float,
     progressColor: Color,
     barColorFaded: Color

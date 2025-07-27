@@ -11,4 +11,5 @@ sealed interface MusicDetailUiEvent : UiEvent {
     data class ChangeMusicImagePausedRotation(val rotation: Float) : MusicDetailUiEvent
     data class ChangeDragOffset(val offset: Float) : MusicDetailUiEvent
     data class PlusDragOffset(val offset: Float) : MusicDetailUiEvent
+    data class ChangeIsCreating(val boolean: Boolean) : MusicDetailUiEvent
 }

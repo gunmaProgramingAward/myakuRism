@@ -72,6 +72,9 @@ fun MusicDetailScreen(
             is MusicDetailUiEvent.PlusDragOffset -> {
                 viewModel.plusDragOffset(event.offset)
             }
+            is MusicDetailUiEvent.ChangeIsCreating -> {
+                viewModel.changeIsCreating(event.boolean)
+            }
         }
     }
 
@@ -156,6 +159,8 @@ fun MusicDetailScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     image = image,
+                    isCreating = uiState.isCreating,
+                    progress = uiState.createProgress
                 )
             } else {
                 ExpandedMusicPlayer (
