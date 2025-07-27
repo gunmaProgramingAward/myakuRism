@@ -50,6 +50,13 @@ val Typography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.5.sp
     ),
+    displaySmall = TextStyle(
+        fontFamily = NotoSansJP,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.5.sp
+    ),
     displayLarge = TextStyle(
         fontFamily = NotoSansJP,
         fontWeight = FontWeight.Bold,

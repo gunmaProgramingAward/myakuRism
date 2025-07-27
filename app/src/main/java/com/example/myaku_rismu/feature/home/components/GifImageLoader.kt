@@ -13,7 +13,10 @@ import coil3.gif.GifDecoder
 import com.example.myaku_rismu.R
 
 @Composable
-fun GifImageLoader(modifier: Modifier = Modifier) {
+fun GifImageLoader(
+    modifier: Modifier = Modifier,
+    gitResId: Int
+) {
     val context = LocalContext.current
 
     val imageLoader = ImageLoader.Builder(context)
@@ -28,7 +31,7 @@ fun GifImageLoader(modifier: Modifier = Modifier) {
 
     Image(
         painter = rememberAsyncImagePainter(
-            model = R.drawable.my_gif,
+            model = gitResId,
             imageLoader = imageLoader
         ),
         contentDescription = stringResource(R.string.gif_animation),
