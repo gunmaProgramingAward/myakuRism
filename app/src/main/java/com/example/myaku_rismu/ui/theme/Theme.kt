@@ -42,6 +42,10 @@ val LightCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    switchCheckedThumbColor = Color(0xFFE2E2E2),
+    switchUncheckedThumbColor = Color(0xFF777777),
+    switchCheckedTrackColor = Color(0xFF1F2937),
+    switchUncheckedTrackColor = Color(0xFFE2E2E2),
     settingScreenNormalTextColor = Color(0x801F2937),
     appTextColor = Color(0xFF000000),
     musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
@@ -61,10 +65,6 @@ val LightCustomTheme = CustomTheme(
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
     homeHighBpmRippleColor = Color(0xFFFF5F8E),
-    switchCheckedThumbColor = Color(0xFFE2E2E2),
-    switchUncheckedThumbColor = Color(0xFF777777),
-    switchCheckedTrackColor = Color(0xFF1F2937),
-    switchUncheckedTrackColor = Color(0xFFE2E2E2)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -83,6 +83,10 @@ val DarkCustomTheme = CustomTheme(
     bottomNavigationBarBackgroundColor = Color(0xFFEEEEEE),
     bottomNavigationBarSelectedColor = Color(0xFFFF1F61),
     bottomNavigationBarUnSelectedColor = Color(0xFF474747),
+    switchCheckedThumbColor = Color(0xFFE2E2E2),
+    switchUncheckedThumbColor = Color(0xFF777777),
+    switchCheckedTrackColor = Color(0xFF1F2937),
+    switchUncheckedTrackColor = Color(0xFFE2E2E2),
     settingScreenNormalTextColor = Color(0x801F2937),
     appTextColor = Color(0xFF000000),
     musicDetailMiniMusicPlayerBackgroundColor = Color(0xFFFFFFFF),
@@ -102,10 +106,6 @@ val DarkCustomTheme = CustomTheme(
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
     homeHighBpmRippleColor = Color(0xFFFF5F8E),
-    switchCheckedThumbColor = Color(0xFFE2E2E2),
-    switchUncheckedThumbColor = Color(0xFF777777),
-    switchCheckedTrackColor = Color(0xFF1F2937),
-    switchUncheckedTrackColor = Color(0xFFE2E2E2)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

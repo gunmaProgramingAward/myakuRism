@@ -1,15 +1,15 @@
 package com.example.myaku_rismu.feature.home.components
 
+import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.ImageDecoderDecoder
-import coil.decode.GifDecoder
-import coil.request.ImageRequest
-import coil.ImageLoader
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import coil3.ImageLoader
+import coil3.compose.rememberAsyncImagePainter
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
 import com.example.myaku_rismu.R
 
 @Composable
@@ -18,8 +18,8 @@ fun GifImageLoader(modifier: Modifier = Modifier) {
 
     val imageLoader = ImageLoader.Builder(context)
         .components {
-            if (android.os.Build.VERSION.SDK_INT >= 28) {
-                add(ImageDecoderDecoder.Factory())
+            if (SDK_INT >= 28) {
+                add(AnimatedImageDecoder.Factory())
             } else {
                 add(GifDecoder.Factory())
             }
@@ -28,9 +28,7 @@ fun GifImageLoader(modifier: Modifier = Modifier) {
 
     Image(
         painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(context)
-                .data(R.drawable.my_gif)
-                .build(),
+            model = R.drawable.my_gif,
             imageLoader = imageLoader
         ),
         contentDescription = stringResource(R.string.gif_animation),

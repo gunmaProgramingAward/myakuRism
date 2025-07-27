@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
 
-
 val NotoSansJP = FontFamily(
     Font(R.font.noto_sans_jp_regular, FontWeight.Normal),
     Font(R.font.noto_sans_jp_bold, FontWeight.Bold),
