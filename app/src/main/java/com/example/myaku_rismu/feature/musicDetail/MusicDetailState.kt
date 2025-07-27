@@ -11,8 +11,6 @@ data class MusicDetailState(
     val isPlaying: Boolean = false,
     val isFavorite: Boolean = false,
     val isShuffle: Boolean = false,
-    val isCreating: Boolean = true,
-    val createProgress: Float = 0f
 )
 
 enum class PlayerState {

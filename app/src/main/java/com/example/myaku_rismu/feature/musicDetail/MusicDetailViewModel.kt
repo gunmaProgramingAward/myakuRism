@@ -73,12 +73,4 @@ class MusicDetailViewModel : ViewModel() {
             )
         }
     }
-
-    fun changeIsCreating(boolean: Boolean) {
-        _uiState.update {
-            it.copy(
-                isCreating = boolean
-            )
-        }
-    }
 }
