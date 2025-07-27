@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.myaku_rismu"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.myaku_rismu"
@@ -76,5 +76,11 @@ dependencies {
 
     // serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    // healthConnect
+    implementation("androidx.health.connect:connect-client:1.1.0-rc02")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 }

@@ -42,4 +42,5 @@
     <string name="profile">プロフィール</string>
     <string name="personal_information_and_health_goal_setting">個人情報と健康目標の設定</string>
     <string name="advanced_settings">詳細設定</string>
+    <string name="error">エラーが発生しました</string>
 </resources>
