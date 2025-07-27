@@ -2,11 +2,11 @@ package com.example.myaku_rismu.feature.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.SettingType
-import com.example.myaku_rismu.data.repository.SettingRepositoryImpl
 import com.example.myaku_rismu.domain.model.ActivityLevel
-import com.example.myaku_rismu.domain.model.SettingData
+import com.example.myaku_rismu.domain.model.Gender
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,12 +29,11 @@ class SettingViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                val settingData = settingUseCase.getSetting()
-                _uiState.update { it.copy(display = settingData)}
+                _uiState.update { it.copy(display = settingUseCase.getSetting())}
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(screenState = ScreenState.Error(
-                        message = e.message ?: "エラーが発生しました")
+                        messageResId = R.string.error)
                     )
                 }
             }
@@ -45,7 +44,7 @@ class SettingViewModel @Inject constructor(
         _uiState.update { it.copy(dialog = null) }
     }
 
-    fun showDialog(dialog: SettingDialog) {
+    fun showDialog(dialog: SettingType) {
         _uiState.update { it.copy(dialog = dialog) }
     }
 
@@ -57,7 +56,7 @@ class SettingViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            settingUseCase.updateSetting(SettingType.HEIGHT, height)
+            settingUseCase.updateHeightAndWeight(SettingType.HEIGHT, height)
         }
     }
 
@@ -69,19 +68,7 @@ class SettingViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            settingUseCase.updateSetting(SettingType.WEIGHT, weight)
-        }
-    }
-
-    fun selectGender(index: Int) {
-        _uiState.update { state ->
-            state.copy(
-                display = state.display.copy(gender = index),
-                dialog = null
-            )
-        }
-        viewModelScope.launch {
-            settingUseCase.updateSetting(SettingType.GENDER, index)
+            settingUseCase.updateHeightAndWeight(SettingType.WEIGHT, weight)
         }
     }
 
@@ -100,6 +87,19 @@ class SettingViewModel @Inject constructor(
             settingUseCase.updateBirthdate(SettingType.BIRTHDATE, year, month, day)
         }
     }
+
+    fun selectGender(gender: Gender) {
+        _uiState.update { state ->
+            state.copy(
+                display = state.display.copy(gender = gender),
+                dialog = null
+            )
+        }
+        viewModelScope.launch {
+            settingUseCase.updateGender(gender)
+        }
+    }
+
     fun selectActivityLevel(level: ActivityLevel) {
         _uiState.update { state ->
             state.copy(
