@@ -79,4 +79,8 @@ dependencies {
 
     // healthConnect
     implementation("androidx.health.connect:connect-client:1.1.0-rc02")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 }
