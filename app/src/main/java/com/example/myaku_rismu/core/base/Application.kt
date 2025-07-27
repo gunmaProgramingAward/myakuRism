@@ -9,5 +9,4 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class MyakuRismuApplication : Application() {
     val dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
-
 }
