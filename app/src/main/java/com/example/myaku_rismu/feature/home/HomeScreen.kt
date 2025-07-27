@@ -133,7 +133,7 @@ fun HomeScreen(
         )
     )
 
-    Scaffold(modifier = modifier) { innerPadding ->
+    Scaffold(modifier) { innerPadding ->
         HomeContent(
             uiState = uiState,
             appState = appState,
@@ -186,7 +186,9 @@ fun HomeContent(
             uiState = uiState
         )
         Column(
-            modifier = Modifier.background(MaterialTheme.customTheme.settingScreenBackgroundColor)
+            modifier = Modifier
+                .background(MaterialTheme.customTheme.settingScreenBackgroundColor)
+                .fillMaxSize()
         ) {
             HealthMetricsSection(
                 uiState = uiState,
