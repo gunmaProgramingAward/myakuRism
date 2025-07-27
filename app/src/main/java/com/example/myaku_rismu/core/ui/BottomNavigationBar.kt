@@ -37,7 +37,7 @@ enum class NavigationItem(
     @StringRes val label: Int
 ) {
     HOME(
-        route = HomeRoute(),
+        route = HomeRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.Favorite),
         unselectedIcon = IconResource.Vector(Icons.Outlined.FavoriteBorder),
         label = R.string.bottom_navigation_bar_home

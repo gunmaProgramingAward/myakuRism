@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.core.app.FrameMetricsAggregator.MetricType
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -16,6 +17,7 @@ import com.example.myaku_rismu.core.navigation.LibraryRoute
 import com.example.myaku_rismu.core.navigation.ProfileDetailRoute
 import com.example.myaku_rismu.core.navigation.SettingsRoute
 import com.example.myaku_rismu.core.ui.NavigationItem
+import com.example.myaku_rismu.data.model.RecordType
 
 @Composable
 fun rememberAppState(
@@ -57,8 +59,8 @@ class AppState(
             } ?: NavigationItem.HOME
         }
 
-    fun navigateToHome(userId: String?) {
-        navController.navigate(HomeRoute(userId = userId))
+    fun navigateToHome() {
+        navController.navigate(HomeRoute)
     }
 
     fun navigateToSetting() {
@@ -77,8 +79,8 @@ class AppState(
         navController.navigate(LibraryRoute)
     }
 
-    fun navigateToHealthDetail() {
-        navController.navigate(HealthDetailRoute)
+    fun navigateToHealthDetail(recordType: RecordType) {
+        navController.navigate(HealthDetailRoute(recordType = recordType))
     }
 
     fun navigatePopUp() {

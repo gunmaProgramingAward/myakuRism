@@ -109,7 +109,7 @@ fun ProfileDetail(
                 .height(103.dp)
                 .clickable { onClickSetting() },
             icon = R.drawable.profile,
-            title = R.string.profile,
+            title = R.string.setting_profile,
             subComponentText = R.string.personal_information_and_health_goal_setting
         )
         Text(

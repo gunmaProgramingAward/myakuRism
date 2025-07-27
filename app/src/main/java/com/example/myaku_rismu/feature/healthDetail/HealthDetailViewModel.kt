@@ -1,24 +1,41 @@
 package com.example.myaku_rismu.feature.healthDetail
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.RecordType
+import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.time.LocalDate
-import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.Instant
+import javax.inject.Inject
 
-class HealthDetailViewModel : ViewModel() {
+@HiltViewModel
+class HealthDetailViewModel @Inject constructor(
+    private val healthConnectUseCase: HealthConnectUseCase,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HealthDetailState())
     val uiState: StateFlow<HealthDetailState> = _uiState.asStateFlow()
+    private val recordType = savedStateHandle.get<RecordType>("recordType")
+        ?: RecordType.HEART_RATE
 
     init {
-        updateStepData()
         _uiState.update {
-            it.copy(
-                screenState = ScreenState.Success()
-            )
+            it.copy(recordType = recordType)
+        }
+        updateListData()
+        updateHealthType()
+        updateTarget()
+        _uiState.update {
+            it.copy(screenState = ScreenState.Success())
         }
     }
 
@@ -26,44 +43,37 @@ class HealthDetailViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(selectedPeriods = period)
         }
-        updateStepData()
+        updateListData()
     }
 
-    private fun updateStepData() {
-        val selectedPeriod = _uiState.value.selectedPeriods
-        val newStepData = when (selectedPeriod) {
-            // TODO :　仮のデータなので後で置き換え
-            0 -> List((1..24).random()) { (10..50).random() }
-            1 -> List((1..7).random()) { (200..800).random() }
-            2 -> List((1..31).random()) { (200..800).random() }
-            3 -> List((1..12).random()) { (6000..25000).random() }
-            else -> emptyList()
+    private fun updateListData() {
+        viewModelScope.launch {
+            val newDate = withContext(Dispatchers.IO) {
+                healthConnectUseCase.fetchRecordsByGranularity(
+                    recordType = recordType,
+                    start = Instant.now(),
+                    granularity = _uiState.value.granularity
+                )
+            }
+            _uiState.update {
+                it.copy(
+                    listDate = newDate
+                )
+            }
+            
+            updateDailyAverage()
+            updateAxisConfig()
         }
-
-        _uiState.update {
-            it.copy(
-                stepData = newStepData
-            )
-        }
-
-        updateDailyAverage()
-        updateHealthType()
-        updateAxisConfig()
     }
 
 private fun updateDailyAverage() {
-    val stepData = _uiState.value.stepData
-    val selectedPeriod = _uiState.value.selectedPeriods
+    val stepData = _uiState.value.listDate
+    val filteredData = stepData.filter { it != 0L }
 
-    val dailyAverage =  when (selectedPeriod) {
-        0 -> stepData.sum().toString()
-        1, 2 -> stepData.average().roundToInt().toString()
-        3 -> {
-            val totalSteps = stepData.sum().toDouble()
-            val daysInYear = LocalDate.now().lengthOfYear().toDouble()
-            (totalSteps / daysInYear).roundToInt().toString()
-        }
-        else -> "0"
+    val dailyAverage = if (filteredData.isNotEmpty()) {
+        filteredData.average().toInt()
+    } else {
+        0
     }
 
     _uiState.update { currentState ->
@@ -73,19 +83,14 @@ private fun updateDailyAverage() {
 
 
     private fun updateHealthType() {
-        // TODO :　仮のデータなので後で置き換え
-        val moveTarget = 300
-        // TODO :　仮のデータなので後で置き換え
-        val healthType = HealthType.Move(moveTarget)
-
         _uiState.update { currentState ->
-            currentState.copy(healthType = healthType)
+            currentState.copy(recordType = recordType)
         }
     }
 
     private fun updateAxisConfig() {
         val selectedPeriod = _uiState.value.selectedPeriods
-        val stepData = _uiState.value.stepData
+        val stepData = _uiState.value.listDate
 
         val newAxisConfig = when (selectedPeriod) {
             0 -> AxisConfig(
@@ -123,5 +128,13 @@ private fun updateDailyAverage() {
             )
         }
         _uiState.update { it.copy(axisConfig = newAxisConfig) }
+    }
+
+    private fun updateTarget() {
+        // TODO: 後で変更
+        val target = 300
+        _uiState.update { currentState ->
+            currentState.copy(target = target)
+        }
     }
 }

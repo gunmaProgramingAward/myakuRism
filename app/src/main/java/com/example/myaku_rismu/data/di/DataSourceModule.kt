@@ -5,6 +5,11 @@ import com.example.myaku_rismu.data.datasource.HealthConnectDataSource
 import com.example.myaku_rismu.data.datasource.HealthConnectDataSourceImpl
 import com.example.myaku_rismu.data.datasource.ProfileDetailDataSource
 import com.example.myaku_rismu.data.datasource.ProfileDetailDataSourceImpl
+import com.example.myaku_rismu.data.datasource.SettingDataSource
+import com.example.myaku_rismu.data.datasource.SettingDataSourceImpl
+import com.example.myaku_rismu.data.datasource.NetworkDataSource
+import com.example.myaku_rismu.data.datasource.NetworkDataSourceImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,14 +19,23 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataSourceModule {
+abstract class DataSourceBindModule {
+    @Binds
+    @Singleton
+    abstract fun bindNetworkDataSource(
+        networkDataSourceImpl: NetworkDataSourceImpl
+    ): NetworkDataSource
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+object DataSourceProvideModule {
     @Provides
     @Singleton
-    fun provideHealthConnectDataSource(
+    fun provideSettingDataSource(
         @ApplicationContext context: Context
-    ): HealthConnectDataSource {
-        return HealthConnectDataSourceImpl(context)
+    ): SettingDataSource {
+        return SettingDataSourceImpl(context)
     }
 
     @Provides

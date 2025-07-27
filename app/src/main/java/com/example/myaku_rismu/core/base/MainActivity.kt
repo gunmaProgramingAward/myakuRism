@@ -31,7 +31,9 @@ class MainActivity : ComponentActivity() {
 
                 CompositionLocalProvider(LocalCustomTheme provides customTheme) {
                     MaterialTheme {
-                        MainAppScreen(appState = appState)
+                        MainAppScreen(
+                            appState = appState,
+                        )
                     }
                 }
             }
