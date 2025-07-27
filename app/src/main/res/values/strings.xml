@@ -100,10 +100,11 @@
     <string name="bottom_navigation_bar_home">ホーム</string>
     <string name="bottom_navigation_bar_calendar">カレンダー</string>
     <string name="bottom_navigation_bar_library">ライブラリー</string>
-    <string name="bottom_navigation_bar_profile">プロフィール</string>
+    <string name="bottom_navigation_bar_profile">設定</string>
 
     // TopBar
     <string name="top_bar_back_icon">戻る</string>
+    <string name="top_bar_setting">設定</string>
     <string name="include_lyrics">歌詞を含める</string>
     <string name="music_generation_notification">音楽生成通知</string>
     <string name="collaboration_with_healthcare">ヘルスケアとの連携</string>

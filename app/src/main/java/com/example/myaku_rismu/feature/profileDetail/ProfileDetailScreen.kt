@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -19,16 +20,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.core.ui.BaseProfileCardLayout
 import com.example.myaku_rismu.core.ui.TitleAndSubComponent
+import com.example.myaku_rismu.core.ui.TopBar
 import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.ui.theme.customTheme
 
@@ -52,7 +58,20 @@ fun ProfileDetailScreen(
         }
     }
 
-    Scaffold(modifier = modifier) { innerPadding ->
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = stringResource(R.string.top_bar_setting),
+                titleTextStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.background(MaterialTheme.customTheme.myakuRismuBackgroundColor)
+            )
+        },
+        modifier = modifier
+    ) { innerPadding ->
         ProfileDetail(
             uiState = uiState,
             onClickSwitch = { switchType: ProfileSwitchType ->
