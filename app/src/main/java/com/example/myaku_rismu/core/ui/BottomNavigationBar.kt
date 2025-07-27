@@ -26,6 +26,7 @@ import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.navigation.CalenderRoute
 import com.example.myaku_rismu.core.navigation.HomeRoute
 import com.example.myaku_rismu.core.navigation.LibraryRoute
+import com.example.myaku_rismu.core.navigation.ProfileDetailRoute
 import com.example.myaku_rismu.core.navigation.SettingsRoute
 import com.example.myaku_rismu.core.utill.IconResource
 import com.example.myaku_rismu.ui.theme.customTheme
@@ -37,7 +38,7 @@ enum class NavigationItem(
     @StringRes val label: Int
 ) {
     HOME(
-        route = HomeRoute(),
+        route = HomeRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.Favorite),
         unselectedIcon = IconResource.Vector(Icons.Outlined.FavoriteBorder),
         label = R.string.bottom_navigation_bar_home
@@ -55,7 +56,7 @@ enum class NavigationItem(
         label = R.string.bottom_navigation_bar_library
     ),
     SETTING(
-        route = SettingsRoute,
+        route = ProfileDetailRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.Settings),
         unselectedIcon = IconResource.Vector(Icons.Outlined.Settings),
         label = R.string.bottom_navigation_bar_profile
