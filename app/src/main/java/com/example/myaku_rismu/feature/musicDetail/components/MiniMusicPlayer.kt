@@ -23,12 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.core.ui.AnimatedText
 import com.example.myaku_rismu.feature.home.components.BarChart
 import com.example.myaku_rismu.ui.theme.Typography
 import com.example.myaku_rismu.ui.theme.customTheme
@@ -70,7 +72,7 @@ fun MiniMusicPlayer(
         ) {
             if (isCreating) {
                 // ----- テスト用 ---
-                var progress by remember { mutableStateOf(0f) }
+                var progress by remember { mutableFloatStateOf(0f) }
                 
                 LaunchedEffect(Unit) {
                     while (progress < 1f) {
@@ -82,7 +84,10 @@ fun MiniMusicPlayer(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Spacer(modifier = Modifier.height(32.dp))
+                    AnimatedText(
+                        titles = stringArrayResource(id = R.array.generation_messages).toList()
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
                     BarChart(
                         modifier = Modifier.size(8.dp),
                         progress = progress,
