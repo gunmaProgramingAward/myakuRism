@@ -1,22 +1,22 @@
-package com.example.myaku_rismu.feature.setting.components
+package com.example.myaku_rismu.core.ui.dialog
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,14 +29,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myaku_rismu.R
+import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
+import com.example.myaku_rismu.ui.theme.customTheme
 import java.util.Calendar
 import kotlin.math.abs
 import kotlin.math.max
@@ -47,9 +53,9 @@ private const val defaultPickerVisibleItemsCount = 5
 private val defaultPickerTextStyleNormal = 20.sp
 private val defaultPickerTextStyleSelected = 28.sp
 
-// --- 文字列または数値選択用のモダンなピッカーダイアログ ---
+
 @Composable
-fun ModernStringOrNumberPickerDialog(
+fun VerticalWheelPickerDialog(
     title: String,
     options: List<String>,
     currentValue: String?,
@@ -60,7 +66,6 @@ fun ModernStringOrNumberPickerDialog(
     visibleItemsCount: Int = defaultPickerVisibleItemsCount,
     textStyleNormal: TextUnit = defaultPickerTextStyleNormal,
     textStyleSelected: TextUnit = defaultPickerTextStyleSelected,
-    unitSuffixTextStyle: TextUnit = defaultPickerTextStyleSelected.times(0.85f)
 ) {
     if (options.isEmpty()) {
         LaunchedEffect(Unit) { onDismiss() }
@@ -73,8 +78,8 @@ fun ModernStringOrNumberPickerDialog(
 
     val actualInitialIndex = remember(options, currentValue) {
         val idx = options.indexOf(currentValue)
-        if (idx != -1) idx else (options.size / 2).coerceAtLeast(0)
-    }.coerceIn(0, max(0, options.size - 1))
+        if (idx != -1) idx else (options.size / 2)
+    }
 
     val scrollToInitialIndex = actualInitialIndex + halfVisibleItems
     val totalLayoutHeight = itemHeight * visibleItemsCount
@@ -117,158 +122,127 @@ fun ModernStringOrNumberPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(8.dp),
+        containerColor = MaterialTheme.customTheme.myakuRismuBackgroundColor,
         title = {
             Text(
                 title,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.headlineLarge,
             )
         },
         text = {
-            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val pickerWidth = maxWidth * 0.8f
+            Box(
+                modifier = Modifier
+                    .height(totalLayoutHeight)
+            ) {
+                LazyColumn(
+                    state = listState,
+                    flingBehavior = snappingBehavior,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(halfVisibleItems) {
+                        Spacer(modifier = Modifier.height(itemHeight))
+                    }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        modifier = Modifier
-                            .height(totalLayoutHeight)
-                            .width(pickerWidth),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LazyColumn(
-                            state = listState,
-                            flingBehavior = snappingBehavior,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(halfVisibleItems) {
-                                Spacer(modifier = Modifier.height(itemHeight))
-                            }
+                    items(
+                        options.size,
+                        key = { index -> options[index].hashCode() }) { optionIndex ->
+                        val optionValue = options[optionIndex]
+                        val isSelected = optionIndex == centralVisibleOptionIndex
 
-                            items(
-                                options.size,
-                                key = { index -> options[index] + "_picker_item" }) { optionIndex ->
-                                val optionValue = options[optionIndex]
-                                val isSelected = optionIndex == centralVisibleOptionIndex
+                        val distanceToCenterNormalizedAbs =
+                            abs(optionIndex - centralVisibleOptionIndex)
+                        val scaleFactor =
+                            ((halfVisibleItems - distanceToCenterNormalizedAbs).toFloat() / halfVisibleItems * 0.25f + 0.75f)
+                                .coerceIn(0.75f, 1f)
+                        val alphaFactor =
+                            ((halfVisibleItems - distanceToCenterNormalizedAbs).toFloat() / halfVisibleItems * 0.6f + 0.4f)
+                                .coerceIn(0.25f, 1f)
 
-                                val distanceToCenterNormalizedAbs =
-                                    abs(optionIndex - centralVisibleOptionIndex)
-                                val scaleFactor =
-                                    ((halfVisibleItems - distanceToCenterNormalizedAbs).toFloat() / halfVisibleItems * 0.25f + 0.75f)
-                                        .coerceIn(0.75f, 1f)
-                                val alphaFactor =
-                                    ((halfVisibleItems - distanceToCenterNormalizedAbs).toFloat() / halfVisibleItems * 0.6f + 0.4f)
-                                        .coerceIn(0.25f, 1f)
-
-                                Box(
-                                    modifier = Modifier
-                                        .height(itemHeight)
-                                        .fillMaxWidth()
-                                        .padding(vertical = 2.dp)
-                                        .graphicsLayer {
-                                            if (visibleItemsCount > 1) {
-                                                scaleX = if (isSelected) 1f else scaleFactor
-                                                scaleY = if (isSelected) 1f else scaleFactor
-                                                alpha =
-                                                    if (isSelected) 1f else alphaFactor.pow(1.2f)
-                                            }
-                                            transformOrigin = TransformOrigin.Center
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (isSelected && unitSuffix.isNotBlank()) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = optionValue,
-                                                style = MaterialTheme.typography.displaySmall.copy(
-                                                    fontSize = textStyleSelected,
-                                                    color = MaterialTheme.colorScheme.primary
-                                                ),
-                                                textAlign = TextAlign.End
-                                            )
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(
-                                                text = unitSuffix,
-                                                style = MaterialTheme.typography.displaySmall.copy(
-                                                    fontSize = unitSuffixTextStyle,
-                                                    color = MaterialTheme.colorScheme.primary.copy(
-                                                        alpha = 0.85f
-                                                    )
-                                                ),
-                                                textAlign = TextAlign.Start
-                                            )
-                                        }
-                                    } else {
-                                        Text(
-                                            text = optionValue,
-                                            style = MaterialTheme.typography.displaySmall.copy(
-                                                fontSize = if (isSelected) textStyleSelected else textStyleNormal,
-                                                color = if (isSelected) MaterialTheme.colorScheme.primary
-                                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                            ),
-                                            textAlign = TextAlign.Center
-                                        )
+                        Box(
+                            modifier = Modifier
+                                .height(itemHeight)
+                                .padding(vertical = 2.dp)
+                                .graphicsLayer {
+                                    if (visibleItemsCount > 1) {
+                                        scaleX = if (isSelected) 1f else scaleFactor
+                                        scaleY = if (isSelected) 1f else scaleFactor
+                                        alpha =
+                                            if (isSelected) 1f else alphaFactor.pow(1.2f)
                                     }
+                                    transformOrigin = TransformOrigin.Center
                                 }
-                            }
-
-                            items(halfVisibleItems) {
-                                Spacer(modifier = Modifier.height(itemHeight))
-                            }
-                        }
-
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val indicatorColor =
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                            val indicatorLineWidth = pickerWidth * 0.85f
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .width(indicatorLineWidth)
-                                    .offset(y = -itemHeight / 2),
-                                thickness = 1.5.dp,
-                                color = indicatorColor
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .width(indicatorLineWidth)
-                                    .offset(y = itemHeight / 2),
-                                thickness = 1.5.dp,
-                                color = indicatorColor
+                            Text(
+                                text = optionValue,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontSize = if (isSelected) textStyleSelected else textStyleNormal,
+                                    color = if (isSelected) Color.Black
+                                    else MaterialTheme.customTheme.settingScreenNormalTextColor
+                                )
                             )
                         }
                     }
+                    items(halfVisibleItems) {
+                        Spacer(modifier = Modifier.height(itemHeight))
+                    }
                 }
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxWidth(0.5f)
+                        .height(48.dp)
+                        .background(
+                            color = MaterialTheme.customTheme.onSelectedButtonOverlay,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                )
+                Text(
+                    text = unitSuffix,
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 24.sp),
+                    color = Color.Black,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 14.dp)
+                )
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                if (centralVisibleOptionIndex < options.size && options.isNotEmpty()) {
-                    onValueSelected(options[centralVisibleOptionIndex])
-                }
-                onDismiss()
-            }) { Text("OK", color = MaterialTheme.colorScheme.primary) }
+            Button(
+                onClick = {
+                    if (centralVisibleOptionIndex < options.size && options.isNotEmpty()) {
+                        onValueSelected(options[centralVisibleOptionIndex])
+                    }
+                    onDismiss()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.ok),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(
-                    "キャンセル",
-                    color = MaterialTheme.colorScheme.primary
+                    text = stringResource(R.string.cancel),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
+                    )
                 )
             }
         }
     )
 }
 
-// --- 生年月日選択用のモダンなピッカーダイアログ ---
+
 @Composable
 fun ModernBirthdatePickerDialog(
     initialYear: Int,
@@ -306,13 +280,14 @@ fun ModernBirthdatePickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(8.dp),
+        containerColor = Color.White,
         title = {
             Text(
-                "生年月日を選択",
+                stringResource(R.string.select_your_date_of_birth),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.headlineLarge,
             )
         },
         text = {
@@ -321,15 +296,13 @@ fun ModernBirthdatePickerDialog(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 ModernPickerColumnInternal(
                     options = yearOptions,
                     currentValue = tempYear.toString(),
                     onValueSelected = { tempYear = it.toInt() },
                     modifier = Modifier.weight(1.3f),
-                    unitSuffix = "年",
-                    unitSuffixTextStyle = MaterialTheme.typography.bodyMedium.fontSize,
+                    unitSuffix = stringResource(R.string.year),
                     itemHeight = defaultPickerItemHeight,
                     visibleItemsCount = defaultPickerVisibleItemsCount
                 )
@@ -338,8 +311,7 @@ fun ModernBirthdatePickerDialog(
                     currentValue = tempMonth.toString(),
                     onValueSelected = { tempMonth = it.toInt() },
                     modifier = Modifier.weight(1f),
-                    unitSuffix = "月",
-                    unitSuffixTextStyle = MaterialTheme.typography.bodyMedium.fontSize,
+                    unitSuffix = stringResource(R.string.month),
                     itemHeight = defaultPickerItemHeight,
                     visibleItemsCount = defaultPickerVisibleItemsCount
                 )
@@ -348,33 +320,44 @@ fun ModernBirthdatePickerDialog(
                     currentValue = tempDay.toString(),
                     onValueSelected = { tempDay = it.toInt() },
                     modifier = Modifier.weight(1f),
-                    unitSuffix = "日",
-                    unitSuffixTextStyle = MaterialTheme.typography.bodyMedium.fontSize,
+                    unitSuffix = stringResource(R.string.day),
                     itemHeight = defaultPickerItemHeight,
                     visibleItemsCount = defaultPickerVisibleItemsCount
                 )
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     onBirthdateSelected(tempYear, tempMonth, tempDay)
                     onDismiss()
-                }
-            ) { Text("OK", color = MaterialTheme.colorScheme.primary) }
+
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.customTheme.bottomNavigationBarSelectedColor,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.ok),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(
-                    "キャンセル",
-                    color = MaterialTheme.colorScheme.primary
+                    text = stringResource(R.string.cancel),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.customTheme.bottomNavigationBarSelectedColor
+                    )
                 )
             }
         }
     )
 }
 
-// --- 単一カラムのピッカー内部実装 (ModernBirthdatePickerDialog で使用) ---
+
 @Composable
 private fun ModernPickerColumnInternal(
     options: List<String>,
@@ -386,7 +369,6 @@ private fun ModernPickerColumnInternal(
     textStyleNormal: TextUnit = defaultPickerTextStyleNormal * 0.8f,
     textStyleSelected: TextUnit = defaultPickerTextStyleSelected * 0.9f,
     unitSuffix: String = "",
-    unitSuffixTextStyle: TextUnit = textStyleSelected * 0.8f
 ) {
     if (options.isEmpty()) return
 
@@ -492,44 +474,61 @@ private fun ModernPickerColumnInternal(
                     ) {
                         Text(
                             text = optionValue,
-                            style = MaterialTheme.typography.bodyLarge.copy(
+                            style = MaterialTheme.typography.titleMedium.copy(
                                 fontSize = if (isSelected) textStyleSelected else textStyleNormal,
-                                color = if (isSelected) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                            ),
-                            textAlign = TextAlign.Center
+                                color = if (isSelected) Color.Black
+                                else MaterialTheme.customTheme.settingScreenNormalTextColor
+                            )
                         )
                     }
                 }
                 items(halfVisibleItems) { Spacer(modifier = Modifier.height(itemHeight)) }
             }
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                val indicatorLineModifier = Modifier.fillMaxWidth(0.7f)
-
-                HorizontalDivider(
-                    modifier = indicatorLineModifier.offset(y = -itemHeight / 2),
-                    thickness = 1.dp,
-                    color = indicatorColor
-                )
-                HorizontalDivider(
-                    modifier = indicatorLineModifier.offset(y = itemHeight / 2),
-                    thickness = 1.dp,
-                    color = indicatorColor
-                )
-            }
-        }
-        if (unitSuffix.isNotBlank()) {
-            Text(
-                text = unitSuffix,
-                style = MaterialTheme.typography.labelSmall.copy(fontSize = unitSuffixTextStyle),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 2.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .align(Alignment.Center)
+                    .height(48.dp)
+                    .background(
+                        color = MaterialTheme.customTheme.onSelectedButtonOverlay,
+                        shape = RoundedCornerShape(16.dp)
+                    )
             )
         }
+        Text(
+            text = unitSuffix,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            modifier = Modifier.padding(top = 2.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun VerticalWheelPickerDialogPreview() {
+    Myaku_rismuTheme {
+        VerticalWheelPickerDialog(
+            title = "タイトル",
+            options = (100..300).map { it.toString() },
+            currentValue = "150",
+            onValueSelected = {},
+            onDismiss = { },
+            unitSuffix = "単位"
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BirthdateVerticalWheelPickerDialogPreview() {
+    Myaku_rismuTheme {
+        ModernBirthdatePickerDialog(
+            initialYear = 1925,
+            initialMonth = 1,
+            initialDay = 1,
+            onBirthdateSelected = { _, _, _ -> },
+            onDismiss = {}
+        )
     }
 }

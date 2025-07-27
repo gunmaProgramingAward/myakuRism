@@ -24,20 +24,27 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-    bodyLarge = TextStyle(
+    titleMedium = TextStyle(
         fontFamily = NotoSansJP,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-    titleMedium = TextStyle(
+    headlineMedium = TextStyle(
         fontFamily = NotoSansJP,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = NotoSansJP,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.5.sp
+    ),
 
 // Set of Material typography styles to start with
 //val Typography = Typography(
