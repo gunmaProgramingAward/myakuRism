@@ -52,7 +52,8 @@ data class HomeState(
 data class HealthMetric(
     val type: RecordType,
     val currentValue: Int,
-    val targetValue: Int
+    val targetValue: Int,
+    val animatedProgress: Animatable<Float, AnimationVector1D> = Animatable(0f),
 ) {
     val progress: Float
         get() = if (targetValue > 0) (currentValue.toFloat() / targetValue).coerceIn(0f, 1f) else 0f

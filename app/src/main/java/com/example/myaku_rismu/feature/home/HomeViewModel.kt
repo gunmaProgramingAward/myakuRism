@@ -27,11 +27,9 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     init {
-        updateMetrics()
-        _uiState.update {
-            it.copy(
-                screenState = ScreenState.Success()
-            )
+        viewModelScope.launch {
+            updateMetrics()
+            _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
     }
 

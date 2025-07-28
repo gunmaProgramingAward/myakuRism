@@ -75,9 +75,18 @@
     <string name="music_detail_track">全体</string>
     <string name="music_detail_progress">進行</string>
     <string name="music_detail_thumb">ボタン</string>
+    <string-array name="generation_messages">
+        <item>素晴らしい音楽がもう直ぐ完成します...</item>
+        <item>あなたのための音楽を準備中...</item>
+        <item>歩数データがビートを刻んでいます...</item>
+        <item>あと少しで完了します...</item>
+        <item>ハーモニーが形になってきました...</item>
+        <item>生命のリズムを音楽に込めて...</item>
+        <item>健康指標を音楽理論で表現中...</item>
+    </string-array>
 
     // HomeScreen
-    <string name="play">Play</string>
+    <string name="create">Create</string>
     <string name="bpm">BPM</string>
     <string name="current_heart_rate">現在の心拍数</string>
     <string name="steps">歩数</string>

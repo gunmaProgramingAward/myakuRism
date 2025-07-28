@@ -20,14 +20,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun BarChart(
+    modifier: Modifier = Modifier,
     progress: Float,
     progressColor: Color,
     barColorFaded: Color
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(6.dp)
             .background(barColorFaded, RoundedCornerShape(5.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
