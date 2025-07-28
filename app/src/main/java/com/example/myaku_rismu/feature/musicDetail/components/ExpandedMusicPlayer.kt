@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ui.TopBar
+import com.example.myaku_rismu.domain.model.MusicPlayerState
 import com.example.myaku_rismu.feature.musicDetail.MusicDetailState
 import com.example.myaku_rismu.feature.musicDetail.MusicDetailUiEvent
 import com.example.myaku_rismu.feature.musicDetail.PlayerState
@@ -65,11 +66,12 @@ import com.example.myaku_rismu.ui.theme.customTheme
 fun ExpandedMusicPlayer(
     modifier: Modifier = Modifier,
     uiState: MusicDetailState,
+    playerState: MusicPlayerState,
     eventHandler: (MusicDetailUiEvent) -> Unit,
     sliderPosition: Float,
-    title: String,
-    subTitle: String,
-    image: String,
+    title: String?,
+    subTitle: String?,
+    image: String?,
     rotation: Float,
 ) {
     Scaffold(
@@ -125,22 +127,23 @@ fun ExpandedMusicPlayer(
             CustomSlider(
                 value = sliderPosition,
                 onValueChange = { newPosition ->
-                    eventHandler(MusicDetailUiEvent.ChangeMusicSliderPosition(newPosition))
+                    // SeekBar操作時は再生位置を変更
+                    eventHandler(MusicDetailUiEvent.SeekToPosition(newPosition))
                                 },
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             PlayerControls(
-                isPlaying = uiState.isPlaying,
+                isPlaying = playerState.isPlaying,
                 isFavorite = uiState.isFavorite,
-                isShuffle = uiState.isShuffle,
+                isShuffle = playerState.isRepeatMode,
                 onPlayPauseClick = {
-                    eventHandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying))
+                    eventHandler(MusicDetailUiEvent.TogglePlayPause)
                 },
                 onFavoriteClick = {
-                    eventHandler(MusicDetailUiEvent.ChangeIsFavorite(!uiState.isFavorite))
+                    eventHandler(MusicDetailUiEvent.ChangeFavoriteState(!uiState.isFavorite))
                 },
                 onShuffleClick = {
-                    eventHandler(MusicDetailUiEvent.ChangeIsShuffle(!uiState.isShuffle))
+                    eventHandler(MusicDetailUiEvent.ToggleRepeatMode)
                 },
                 leftArrowClick = {},
                 rightArrowClick = {},
@@ -154,24 +157,28 @@ fun ExpandedMusicPlayer(
 @Composable
 fun TrackInfo(
     modifier: Modifier = Modifier,
-    title: String,
-    subTitle: String
+    title: String?,
+    subTitle: String?
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text(
-            text = title,
-            style = Typography.headlineSmall,
-            color = Color.Black,
-        )
+        title?.let {
+            Text(
+                text = title,
+                style = Typography.headlineSmall,
+                color = Color.Black,
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = subTitle,
-            style = Typography.bodyMedium,
-            color = Color.Gray
-        )
+        subTitle?.let {
+            Text(
+                text = subTitle,
+                style = Typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
     }
 }
 
@@ -257,6 +264,8 @@ fun CustomSlider(
     trackColor: Color = Color.LightGray,
     progressColor: Color = Color.Black,
     thumbColor: Color = Color.Black,
+    currentTime: String? = null,
+    remainTime: String? = null,
     trackHeight: Dp = 6.dp,
     thumbRadius: Dp = 10.dp
 ) {
@@ -340,11 +349,10 @@ fun MusicPlayerScreenPreview() {
     Myaku_rismuTheme {
         ExpandedMusicPlayer(
             uiState = MusicDetailState(
-                isPlaying = true,
                 isFavorite = false,
-                isShuffle = false,
                 playerState = PlayerState.EXPANDED
             ),
+            playerState = MusicPlayerState(),
             eventHandler = {},
             sliderPosition = 0.5f,
             title = "Sample Song",
