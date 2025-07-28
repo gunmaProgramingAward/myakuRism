@@ -282,7 +282,7 @@ fun BottomSheetContentPreview() {
         ),
         HealthMetricCardUi(
             title = R.string.move,
-            genre = R.string.pops,
+            genre = R.string.hiphop,
             unit = R.string.steps,
             icon = R.drawable.move,
             color = MaterialTheme.customTheme.healthDetailHeartRateThemeColor,
@@ -298,7 +298,7 @@ fun BottomSheetContentPreview() {
         ),
         HealthMetricCardUi(
             title = R.string.distance,
-            genre = R.string.rock,
+            genre = R.string.pops,
             unit = R.string.unit_km,
             icon = R.drawable.distance,
             color = MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor,

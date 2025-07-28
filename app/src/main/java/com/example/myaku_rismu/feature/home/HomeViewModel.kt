@@ -74,7 +74,7 @@ class HomeViewModel @Inject constructor(
                 recordType = RecordType.HEART_RATE,
                 start = startOfDay,
                 granularity = HealthDataGranularity.HOURLY
-            ).average().toInt(),
+            ).filter { it != 0L }.average().toInt(),
 
             RecordType.STEPS to healthConnectUseCase.fetchRecordsByGranularity(
                 recordType = RecordType.STEPS,

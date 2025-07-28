@@ -103,7 +103,7 @@ fun HomeScreen(
         ),
         HealthMetricCardUi(
             title = R.string.steps,
-            genre = R.string.edm,
+            genre = R.string.hiphop,
             unit = R.string.unit_steps,
             icon = R.drawable.steps,
             color = MaterialTheme.customTheme.healthDetailWalkThemeColor,
@@ -127,7 +127,7 @@ fun HomeScreen(
         ),
         HealthMetricCardUi(
             title = R.string.distance,
-            genre = R.string.rock,
+            genre = R.string.edm,
             unit = R.string.unit_km,
             icon = R.drawable.distance,
             color = MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor,
@@ -504,7 +504,7 @@ fun HomeScreenPreview() {
         ),
         HealthMetricCardUi(
             title = R.string.distance,
-            genre = R.string.rock,
+            genre = R.string.hiphop,
             unit = R.string.unit_km,
             icon = R.drawable.distance,
             color = MaterialTheme.customTheme.healthDetailMoveDistanceThemeColor,
