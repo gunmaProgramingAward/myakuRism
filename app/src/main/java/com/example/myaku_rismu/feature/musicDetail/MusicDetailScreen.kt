@@ -187,9 +187,7 @@ fun MusicDetailScreen(
                     uiState = uiState,
                     playerState = playerState,
                     eventHandler = { eventHandler(it) },
-                    sliderPosition = if (playerState.duration > 0) {
-                        playerState.currentPosition.toFloat() / playerState.duration.toFloat()
-                    } else 0f,
+                    sliderPosition = playerState.progressPercentage,
                     title = playerState.currentTrack?.title,
                     subTitle = subTitle,
                     image = playerState.currentTrack?.imageUrl,

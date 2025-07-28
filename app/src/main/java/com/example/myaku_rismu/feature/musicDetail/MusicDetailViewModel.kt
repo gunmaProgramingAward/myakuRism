@@ -38,13 +38,21 @@ class MusicDetailViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.Eagerly,
                 initialValue = MusicPlayerState()
             )
 
     init {
         viewModelScope.launch {
-            loadAndPlayMusic()
+            val isReadyToPlay = musicPlayerUseCase.isReadyToPlay()
+            val shouldLoadMusic = playerState.value.currentTrack == null && !isReadyToPlay
+
+            if (shouldLoadMusic) {
+                loadAndPlayMusic()
+            } else {
+                return@launch
+            }
+            
             _uiState.update {
                 it.copy(
                     screenState = ScreenState.Success(true)

@@ -11,7 +11,12 @@ data class MusicPlayerState(
     val isShuffleMode: Boolean = false,
     val isFavorite: Boolean = false,
     val error: MusicPlayerError? = null
-)
+) {
+    val progressPercentage: Float
+        get() = if (duration > 0) {
+            currentPosition.toFloat() / duration.toFloat()
+        } else 0f
+}
 
 enum class PlaybackState {
     IDLE,
