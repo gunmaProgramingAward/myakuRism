@@ -96,7 +96,11 @@ dependencies {
     // healthConnect
     implementation("androidx.health.connect:connect-client:1.1.0-rc02")
 
-    // Coin
+    // Coil
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
+    implementation("io.coil-kt.coil3:coil-gif:3.2.0")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

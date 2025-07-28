@@ -24,6 +24,7 @@ data class HealthDetailState(
     val selectedPeriods: Int = 0,
     val dailyAverage: Int = 0,
     val target: Int = 0,
+    val isShowSettingDialog: Boolean = false,
 ) {
 
     private val monthlyGraphTitle: String
@@ -41,7 +42,7 @@ data class HealthDetailState(
 
     val graphTitleText: String
         @Composable
-        get() = when(selectedPeriods) {
+        get() = when (selectedPeriods) {
             0 -> stringResource(R.string.health_detail_all)
             1 -> stringResource(R.string.health_detail_this_week)
             2 -> monthlyGraphTitle
@@ -71,11 +72,12 @@ data class HealthDetailState(
 
     @get:StringRes
     val titleResId: Int
-    get() = when {
-        granularity == HealthDataGranularity.HOURLY || recordType == RecordType.HEART_RATE ->
-            R.string.health_detail_daily_average
-        else -> R.string.health_detail_all
-    }
+        get() = when {
+            granularity == HealthDataGranularity.HOURLY || recordType == RecordType.HEART_RATE ->
+                R.string.health_detail_daily_average
+
+            else -> R.string.health_detail_all
+        }
 
     val color: Color
         @Composable
@@ -97,6 +99,16 @@ data class HealthDetailState(
             RecordType.SLEEP_TIME -> R.string.health_detail_sleep_time_unit
             RecordType.STEPS -> R.string.health_detail_walk_unit
             null -> R.string.health_detail_move_unit
+        }
+
+    val targetOptions: List<String>
+        get() = when (recordType) {
+            RecordType.CALORIES -> (0..3000 step 10).map { it.toString() }
+            RecordType.DISTANCE -> (0..10000 step 100).map { it.toString() }
+            RecordType.HEART_RATE -> (0..200).map { it.toString() }
+            RecordType.SLEEP_TIME -> (0..24).map { it.toString() }
+            RecordType.STEPS -> (0..10000 step 50).map { it.toString() }
+            null -> (0..30000 step 100).map { it.toString() }
         }
 }
 
