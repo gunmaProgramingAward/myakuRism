@@ -60,7 +60,8 @@ fun MiniLoadingBar(
             verticalArrangement = Arrangement.Bottom
         ) {
             AnimatedText(
-                titles = stringArrayResource(id = R.array.generation_messages).toList()
+                titles = stringArrayResource(id = R.array.generation_messages).toList(),
+                style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.size(10.dp))
             BarChart(

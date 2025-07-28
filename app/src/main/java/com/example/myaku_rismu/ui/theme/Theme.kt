@@ -65,6 +65,7 @@ val LightCustomTheme = CustomTheme(
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
     homeHighBpmRippleColor = Color(0xFFFF5F8E),
+    loadingTextColor = Color(0xFFD80B70)
 )
 
 val DarkCustomTheme = CustomTheme(
@@ -106,6 +107,7 @@ val DarkCustomTheme = CustomTheme(
     homeLowBpmRippleColor = Color(0xFF3CC9DF),
     homeMediumBpmRippleColor = Color(0xFFF686C1),
     homeHighBpmRippleColor = Color(0xFFFF5F8E),
+    loadingTextColor = Color(0xFFD80B70)
 )
 
 val LocalCustomTheme = staticCompositionLocalOf {

@@ -12,11 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun AnimatedText(
     titles: List<String>,
     intervalMillis: Long = 10000L,
+    style: TextStyle
 ) {
     var index by remember { mutableIntStateOf(0) }
 
@@ -35,7 +37,7 @@ fun AnimatedText(
     ) { targetIndex ->
         Text(
             text = titles[targetIndex],
-            style = MaterialTheme.typography.titleSmall,
+            style = style
         )
     }
 }

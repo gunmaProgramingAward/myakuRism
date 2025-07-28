@@ -33,6 +33,7 @@ data class CustomTheme(
     val homeLowBpmRippleColor: Color,
     val homeMediumBpmRippleColor: Color,
     val homeHighBpmRippleColor: Color,
+    val loadingTextColor: Color,
     val switchCheckedThumbColor: Color,
     val switchUncheckedThumbColor: Color,
     val switchCheckedTrackColor: Color,

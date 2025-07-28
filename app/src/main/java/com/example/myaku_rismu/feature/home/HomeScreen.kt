@@ -219,7 +219,9 @@ fun BpmPlayerCard(
             .background(uiState.bpmPlayerColor)
     ) {
         LoopingRipple(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .size(250.dp)
+                .align(Alignment.Center),
             beatIntervalMs = uiState.beatIntervalMs,
             newRippleStartIntervalMs = uiState.newRippleStartIntervalMs,
             bpmPlayerRippleColor = uiState.bpmPlayerRippleColor
@@ -227,7 +229,8 @@ fun BpmPlayerCard(
         GifImageLoader(
             modifier = Modifier
                 .size(250.dp)
-                .align(Alignment.BottomCenter)
+                .align(Alignment.BottomCenter),
+            gitResId = R.drawable.my_gif
         )
         Column(
             modifier = Modifier
