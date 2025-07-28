@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.data.model.RecordType
@@ -62,11 +63,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit){
-        viewModel.updateMetrics()
-    }
 
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
@@ -138,6 +134,10 @@ fun HomeScreen(
             barColorFaded = MaterialTheme.customTheme.homeMoveDistanceBarColorFaded,
         )
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.refreshTargetValues()
+    }
 
     Scaffold(modifier) { innerPadding ->
         HomeContent(
@@ -283,11 +283,18 @@ fun HealthMetricCard(
     onClick: () -> Unit = {}
 ) {
     LaunchedEffect(metric.progress) {
-        metric.animatedProgress.snapTo(0f)
-        metric.animatedProgress.animateTo(
-            targetValue = metric.progress,
-            animationSpec = tween(durationMillis = 1200)
-        )
+        if (metric.animatedProgress.value == 0f) {
+            metric.animatedProgress.snapTo(0f)
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        } else {
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        }
     }
 
     Card(

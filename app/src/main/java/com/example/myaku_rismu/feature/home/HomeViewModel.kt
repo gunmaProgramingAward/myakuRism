@@ -129,4 +129,16 @@ class HomeViewModel @Inject constructor(
             _uiState.update { it.copy(metrics = metrics) }
         }
     }
+
+    fun refreshTargetValues() {
+        viewModelScope.launch {
+            val targets = fetchTargetValues()
+            val currentMetrics = _uiState.value.metrics
+            
+            val updatedMetrics = currentMetrics.map { metric ->
+                metric.copy(targetValue = targets[metric.type] ?: 0)
+            }
+            _uiState.update { it.copy(metrics = updatedMetrics) }
+        }
+    }
 }
