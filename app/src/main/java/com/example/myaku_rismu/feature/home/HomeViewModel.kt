@@ -26,6 +26,7 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
+
     init {
         viewModelScope.launch {
             updateMetrics()
@@ -112,7 +113,7 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun updateMetrics() {
+    fun updateMetrics() {
         viewModelScope.launch {
             val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
             val values = fetchMetricValues(startOfDay)

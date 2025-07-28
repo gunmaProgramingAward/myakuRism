@@ -64,6 +64,10 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    LaunchedEffect(Unit){
+        viewModel.updateMetrics()
+    }
+
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.ChangeBpmPlayerValue -> {
