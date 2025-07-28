@@ -64,7 +64,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 
-
 @Composable
 fun CalenderScreen(
     appState: AppState,
@@ -72,6 +71,18 @@ fun CalenderScreen(
     viewModel: CalenderViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    fun eventHandler(event: CalenderUiEvent) {
+        when (event) {
+            is CalenderUiEvent.OnDateSelected -> {
+                viewModel.selectDate(event.date)
+            }
+            is CalenderUiEvent.LoadHealthData -> {
+                viewModel.getHealthData(event.date)
+            }
+        }
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -127,7 +138,10 @@ fun CalenderScreen(
                     healthReportsForWeek = healthDataByDateFromState,
                     onDateSelected = { selectedDate ->
                         currentDisplayDate = selectedDate
-                        viewModel.selectDate(selectedDate)
+                        eventHandler(CalenderUiEvent.OnDateSelected(selectedDate))
+                    },
+                    onWeekChanged = { newDate ->
+                        eventHandler(CalenderUiEvent.LoadHealthData(newDate))
                     }
                 )
             }
@@ -141,7 +155,8 @@ fun HealthDashboardScreen(
     modifier: Modifier = Modifier,
     currentDate: LocalDate,
     healthReportsForWeek: Map<LocalDate, DailyHealthReport>,
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (LocalDate) -> Unit,
+    onWeekChanged: (LocalDate) -> Unit
 ) {
     var selectedMetricTypeState by remember { mutableStateOf(RecordType.CALORIES) }
     val dailyReport = healthReportsForWeek[currentDate]
@@ -165,7 +180,8 @@ fun HealthDashboardScreen(
         WeeklyCalendar(
             selectedDate = currentDate,
             onDateSelected = onDateSelected,
-            healthReports = healthReportsForWeek
+            healthReports = healthReportsForWeek,
+            onWeekChanged = onWeekChanged
         )
 
         Spacer(modifier = Modifier.height(36.dp))
@@ -189,10 +205,11 @@ fun HealthDashboardScreen(
 fun WeeklyCalendar(
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
-    healthReports: Map<LocalDate, DailyHealthReport>
+    healthReports: Map<LocalDate, DailyHealthReport>,
+    onWeekChanged: (LocalDate) -> Unit,
 ) {
     var displayDate by remember(selectedDate) { mutableStateOf(selectedDate) }
-    val weekStart = displayDate.minusDays(3)
+    val weekStart = displayDate.minusDays(6)
 
     Row(
         modifier = Modifier
@@ -201,7 +218,11 @@ fun WeeklyCalendar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconButton(onClick = { displayDate = displayDate.minusDays(1) }) {
+        IconButton(onClick = {
+                val newDate = displayDate.minusWeeks(1)
+                displayDate = newDate
+                onWeekChanged(newDate)
+            }) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(id = R.string.calender_screen_previous))
         }
@@ -214,8 +235,6 @@ fun WeeklyCalendar(
                 val date = weekStart.plusDays(i.toLong())
                 val hasData = healthReports.containsKey(date)
                 val report = healthReports[date]
-                val progress = report?.calories?.progress ?: 0f
-                val color = report?.calories?.primaryColor ?: Color.LightGray
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -246,7 +265,11 @@ fun WeeklyCalendar(
             }
         }
 
-        IconButton(onClick = { displayDate = displayDate.plusDays(1) }) {
+        IconButton(onClick = {
+            val newDate = displayDate.plusWeeks(1)
+            displayDate = newDate
+            onWeekChanged(newDate)
+        }) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(id = R.string.calender_screen_next))
         }
@@ -465,7 +488,8 @@ fun HealthDashboardScreenPreview() {
         HealthDashboardScreen(
             currentDate = today,
             healthReportsForWeek = sampleReports,
-            onDateSelected = {}
+            onDateSelected = {},
+            onWeekChanged = {}
         )
     }
 }

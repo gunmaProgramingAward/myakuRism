@@ -18,6 +18,7 @@ import java.time.Instant
 import java.time.LocalDate
 import javax.inject.Inject
 
+
 @HiltViewModel
 class CalenderViewModel @Inject constructor(
     private val useCase: HealthConnectUseCase
@@ -25,12 +26,15 @@ class CalenderViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CalenderState())
     val uiState: StateFlow<CalenderState> = _uiState.asStateFlow()
 
+    init {
+        getHealthData(LocalDate.now())
+    }
+
     fun clearError() {
         _uiState.update { currentState ->
             currentState.copy(screenState = ScreenState.Success())
         }
     }
-
 
     fun selectDate(date: LocalDate) {
         _uiState.update { currentState ->
@@ -95,12 +99,4 @@ class CalenderViewModel @Inject constructor(
                 }
             }
         }
-
-        init {
-            getHealthData(LocalDate.now())
-        }
-
-    private fun calculateStartOfWeek(date: LocalDate): Instant {
-        return Instant.now()
-    }
 }
