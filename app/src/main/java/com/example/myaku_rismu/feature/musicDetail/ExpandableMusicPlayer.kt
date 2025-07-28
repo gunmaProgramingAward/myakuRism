@@ -21,9 +21,7 @@ import com.example.myaku_rismu.ui.theme.customTheme
 import kotlinx.coroutines.delay
 
 // TODO: 仮に値
-const val title = "仮の曲名"
 const val subTitle = "HIPHOP"
-const val image = "https://placehold.jp/3d4070/ffffff/150x150.png"
 
 @Composable
 fun MusicDetailScreen(
@@ -31,6 +29,7 @@ fun MusicDetailScreen(
     viewModel: MusicDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val playerState by viewModel.playerState.collectAsState()
 
     val rotationAnimatable = remember { Animatable(uiState.musicImagePausedRotation) }
     val configuration = LocalConfiguration.current
@@ -48,41 +47,49 @@ fun MusicDetailScreen(
 
     fun eventHandler(event: MusicDetailUiEvent) {
         when (event) {
-            is MusicDetailUiEvent.ChangeIsPlaying -> {
-                viewModel.changeIsPlaying(event.boolean)
+            is MusicDetailUiEvent.TogglePlayPause -> {
+                viewModel.togglePlayPause()
             }
-            is MusicDetailUiEvent.ChangeIsFavorite -> {
-                viewModel.changeIsFavorite(event.boolean)
+
+            is MusicDetailUiEvent.SeekToPosition -> {
+                viewModel.seekToPosition(event.position)
             }
-            is MusicDetailUiEvent.ChangeIsShuffle -> {
-                viewModel.changeIsShuffle(event.boolean)
+
+            is MusicDetailUiEvent.ToggleRepeatMode -> {
+                viewModel.toggleRepeatMode()
             }
+
             is MusicDetailUiEvent.ChangePlayerState -> {
                 viewModel.changePlayerState(event.playerState)
             }
-            is MusicDetailUiEvent.ChangeMusicSliderPosition -> {
-                viewModel.changeMusicSliderPosition(event.position)
+            is MusicDetailUiEvent.ChangeFavoriteState -> {
+                viewModel.changeIsFavorite(event.isFavorite)
             }
+
             is MusicDetailUiEvent.ChangeMusicImagePausedRotation -> {
                 viewModel.changeMusicImagePausedRotation(event.rotation)
             }
+
             is MusicDetailUiEvent.ChangeDragOffset -> {
-               viewModel.changeDragOffset(event.offset)
+                viewModel.changeDragOffset(event.offset)
             }
+
             is MusicDetailUiEvent.PlusDragOffset -> {
                 viewModel.plusDragOffset(event.offset)
             }
         }
     }
 
-    LaunchedEffect(uiState.isPlaying) {
-        if (uiState.isPlaying) {
-            val currentValue = rotationAnimatable.value
-            val nextTarget = currentValue + 360f
-            rotationAnimatable.animateTo(
-                targetValue = nextTarget,
-                animationSpec = tween(durationMillis = 15000, easing = LinearEasing)
-            )
+    LaunchedEffect(playerState.isPlaying) {
+        if (playerState.isPlaying) {
+            while (true) {
+                val currentValue = rotationAnimatable.value
+                val nextTarget = currentValue + 360f
+                rotationAnimatable.animateTo(
+                    targetValue = nextTarget,
+                    animationSpec = tween(durationMillis = 15000, easing = LinearEasing)
+                )
+            }
         } else {
             rotationAnimatable.stop()
             val normalizedRotation = rotationAnimatable.value % 360f
@@ -109,7 +116,7 @@ fun MusicDetailScreen(
                                 eventHandler(MusicDetailUiEvent.ChangePlayerState(PlayerState.COLLAPSED))
                             } else {
                                 eventHandler(MusicDetailUiEvent.ChangeDragOffset(0f))
-                                }
+                            }
                         }
                     ) { _, dragAmount ->
                         eventHandler(MusicDetailUiEvent.PlusDragOffset(dragAmount.y))
@@ -148,23 +155,30 @@ fun MusicDetailScreen(
         ) {
             if (animationProgress < 0.2f) {
                 MiniMusicPlayer(
-                    title = title,
+                    title = playerState.currentTrack?.title,
                     type = subTitle,
-                    isPlaying = uiState.isPlaying,
-                    onPlayPauseClick = { eventHandler(MusicDetailUiEvent.ChangeIsPlaying(!uiState.isPlaying)) },
-                    onExpand = { eventHandler(MusicDetailUiEvent.ChangePlayerState(PlayerState.EXPANDED)) },
+                    isPlaying = playerState.isPlaying,
+                    togglePlayPause = {
+                        eventHandler(MusicDetailUiEvent.TogglePlayPause)
+                    },
+                    onExpand = {
+                        eventHandler(MusicDetailUiEvent.ChangePlayerState(PlayerState.EXPANDED))
+                    },
                     modifier = Modifier
                         .fillMaxSize(),
-                    image = image,
+                    image = playerState.currentTrack?.imageUrl,
                 )
             } else {
-                ExpandedMusicPlayer (
+                ExpandedMusicPlayer(
                     uiState = uiState,
+                    playerState = playerState,
                     eventHandler = { eventHandler(it) },
-                    sliderPosition = uiState.musicSliderPositon,
-                    title = title,
+                    sliderPosition = if (playerState.duration > 0) {
+                        playerState.currentPosition.toFloat() / playerState.duration.toFloat()
+                    } else 0f,
+                    title = playerState.currentTrack?.title,
                     subTitle = subTitle,
-                    image = image,
+                    image = playerState.currentTrack?.imageUrl,
                     rotation = rotationAnimatable.value,
                 )
             }

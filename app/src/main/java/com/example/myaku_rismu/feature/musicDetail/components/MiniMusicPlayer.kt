@@ -37,12 +37,12 @@ import com.example.myaku_rismu.ui.theme.customTheme
 @Composable
 fun MiniMusicPlayer(
     isPlaying: Boolean,
-    onPlayPauseClick: () -> Unit,
+    togglePlayPause: () -> Unit,
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String,
-    type: String,
-    image: String,
+    title: String?,
+    type: String?,
+    image: String?,
 ) {
     Card(
         modifier = modifier
@@ -71,25 +71,28 @@ fun MiniMusicPlayer(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = title,
-                    style = Typography.bodyMedium.copy(fontSize = 14.sp),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                title?.let {
+                    Text(
+                        text = title,
+                        style = Typography.bodyMedium.copy(fontSize = 14.sp),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = type,
-                    style = Typography.bodySmall.copy(fontSize = 11.sp),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                type?.let {
+                    Text(
+                        text = type,
+                        style = Typography.bodySmall.copy(fontSize = 11.sp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
-
             IconButton(
-                onClick = onPlayPauseClick,
+                onClick = togglePlayPause,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(
@@ -109,7 +112,7 @@ fun MiniMusicPlayer(
 fun MiniMusicPlayerPreview() {
     MiniMusicPlayer(
         isPlaying = true,
-        onPlayPauseClick = {},
+        togglePlayPause = {},
         onExpand = {},
         modifier = Modifier.fillMaxWidth(),
         title = "Sample Song",
