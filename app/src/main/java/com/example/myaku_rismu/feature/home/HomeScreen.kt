@@ -136,7 +136,7 @@ fun HomeScreen(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.refreshTargetValues()
+        viewModel.updateMetrics()
     }
 
     Scaffold(modifier) { innerPadding ->
@@ -459,7 +459,7 @@ fun HomeScreenPreview() {
             HealthMetric(
                 type = RecordType.HEART_RATE,
                 currentValue = 200,
-                targetValue = 180
+                targetValue = 180,
             ),
             HealthMetric(
                 type = RecordType.STEPS,

@@ -1,5 +1,6 @@
 package com.example.myaku_rismu.feature.home
 
+import androidx.compose.animation.core.Animatable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,25 +121,15 @@ class HomeViewModel @Inject constructor(
             val targets = fetchTargetValues()
 
             val metrics = RecordType.entries.map { type ->
+                val oldMetric = _uiState.value.metrics.find { it.type == type }
                 HealthMetric(
                     type = type,
                     currentValue = values[type] ?: 0,
-                    targetValue = targets[type] ?: 0
+                    targetValue = targets[type] ?: 0,
+                    animatedProgress = oldMetric?.animatedProgress ?: Animatable(0f)
                 )
             }
             _uiState.update { it.copy(metrics = metrics) }
-        }
-    }
-
-    fun refreshTargetValues() {
-        viewModelScope.launch {
-            val targets = fetchTargetValues()
-            val currentMetrics = _uiState.value.metrics
-            
-            val updatedMetrics = currentMetrics.map { metric ->
-                metric.copy(targetValue = targets[metric.type] ?: 0)
-            }
-            _uiState.update { it.copy(metrics = updatedMetrics) }
         }
     }
 }
