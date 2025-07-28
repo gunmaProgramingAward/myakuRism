@@ -1,6 +1,9 @@
 package com.example.myaku_rismu.feature.calender
 
-import com.example.myaku_rismu.core.UiEvent
+import java.time.LocalDate
 
-sealed interface CalenderUiEvent : UiEvent {
+sealed interface CalenderUiEvent {
+    data class LoadHealthData(val date: LocalDate) : CalenderUiEvent
+
+    data class OnDateSelected(val date: LocalDate) : CalenderUiEvent
 }
