@@ -13,7 +13,6 @@ interface MusicPlayerUseCase {
     suspend fun toggleRepeatMode(): Result<Unit>
     fun getCurrentPosition(): Long
     suspend fun getProgressPercentage(): Float
-
     suspend fun getCurrentTimeFormatted(): String
     suspend fun getDurationFormatted(): String
     suspend fun getRemainingTimeFormatted(): String

@@ -7,7 +7,7 @@ data class MusicDetailState(
     val playerState: PlayerState = PlayerState.COLLAPSED,
     val musicImagePausedRotation: Float = 0f,
     val dragOffset: Float = 0f,
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean = false
 )
 
 enum class PlayerState {
