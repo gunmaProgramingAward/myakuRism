@@ -73,10 +73,11 @@ data class HealthDetailState(
     @get:StringRes
     val titleResId: Int
         get() = when {
-            granularity == HealthDataGranularity.HOURLY || recordType == RecordType.HEART_RATE ->
+            recordType == RecordType.HEART_RATE ->
                 R.string.health_detail_daily_average
-
-            else -> R.string.health_detail_all
+            granularity == HealthDataGranularity.HOURLY ->
+                R.string.health_detail_all
+            else -> R.string.health_detail_daily_average
         }
 
     val color: Color
