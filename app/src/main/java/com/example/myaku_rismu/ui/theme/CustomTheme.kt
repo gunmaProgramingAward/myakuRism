@@ -19,14 +19,6 @@ data class CustomTheme(
     val bottomNavigationBarBackgroundColor: Color,
     val bottomNavigationBarSelectedColor: Color,
     val bottomNavigationBarUnSelectedColor: Color,
-    val switchCheckedThumbColor: Color,
-    val switchUncheckedThumbColor: Color,
-    val switchCheckedTrackColor: Color,
-    val switchUncheckedTrackColor: Color,
-    val appTextColor: Color,
-    val musicDetailMiniMusicPlayerBackgroundColor: Color,
-    val musicDetailMusicPlayerFavorite: Color,
-    val musicDetailMusicPlayerShuffle: Color,
     val musicDetailSettingTarget: Color,
     val disabledBackgroundColor: Color,
     val buttonBackgroundColor: Color,
@@ -41,6 +33,14 @@ data class CustomTheme(
     val homeLowBpmRippleColor: Color,
     val homeMediumBpmRippleColor: Color,
     val homeHighBpmRippleColor: Color,
-    val loadingTextColor: Color
+    val loadingTextColor: Color,
+    val switchCheckedThumbColor: Color,
+    val switchUncheckedThumbColor: Color,
+    val switchCheckedTrackColor: Color,
+    val switchUncheckedTrackColor: Color,
+    val appTextColor: Color,
+    val musicDetailMiniMusicPlayerBackgroundColor: Color,
+    val musicDetailMusicPlayerFavorite: Color,
+    val musicDetailMusicPlayerShuffle: Color
 
 )

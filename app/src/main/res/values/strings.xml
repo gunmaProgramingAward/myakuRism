@@ -87,7 +87,7 @@
     </string-array>
 
     // HomeScreen
-    <string name="play">Play</string>
+    <string name="create">Create</string>
     <string name="bpm">BPM</string>
     <string name="current_heart_rate">現在の心拍数</string>
     <string name="steps">歩数</string>
