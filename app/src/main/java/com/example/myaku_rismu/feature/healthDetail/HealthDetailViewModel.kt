@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
@@ -70,18 +71,17 @@ class HealthDetailViewModel @Inject constructor(
     }
 
     private fun updateDailyAverage() {
-        val stepData = _uiState.value.listDate
-        val filteredData = stepData.filter { it != 0L }
+        val filteredData = _uiState.value.listDate.filter { it != 0L }
+        val recordType = _uiState.value.recordType
+        val granularity = _uiState.value.granularity
 
-        val dailyAverage = if (filteredData.isNotEmpty()) {
-            filteredData.average().toInt()
-        } else {
-            0
+        val dailyAverage = when {
+            recordType == RecordType.CALORIES && granularity == HealthDataGranularity.HOURLY
+                 -> filteredData.sum().toInt()
+            else -> filteredData.average().toInt()
         }
 
-        _uiState.update { currentState ->
-            currentState.copy(dailyAverage = dailyAverage)
-        }
+        _uiState.update { it.copy(dailyAverage = dailyAverage) }
     }
 
 
@@ -102,6 +102,7 @@ class HealthDetailViewModel @Inject constructor(
                 spacing = 4,
                 totalLabels = 6
             )
+
             1 -> {
                 val weekDays = listOf("日", "月", "火", "水", "木", "金", "土")
                 AxisConfig(
@@ -111,18 +112,21 @@ class HealthDetailViewModel @Inject constructor(
                     totalLabels = 7
                 )
             }
+
             2 -> AxisConfig(
                 maxValue = 31,
                 labelFormatter = { "${it + 1}日" },
                 spacing = 5,
                 totalLabels = 7
             )
+
             3 -> AxisConfig(
                 maxValue = 12,
                 labelFormatter = { "${it + 1}" },
                 spacing = 1,
                 totalLabels = 12
             )
+
             else -> AxisConfig(
                 maxValue = stepData.size.coerceAtLeast(1),
                 labelFormatter = { it.toString() },
