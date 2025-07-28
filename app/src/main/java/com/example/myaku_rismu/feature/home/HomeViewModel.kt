@@ -8,13 +8,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import com.example.myaku_rismu.core.ScreenState
+import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
-import kotlinx.coroutines.delay
+import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import com.example.myaku_rismu.domain.useCase.SettingUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val healthConnectUseCase: HealthConnectUseCase,
+    private val settingUseCase: SettingUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
@@ -60,35 +68,64 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    private fun updateMetrics() {
-        // 仮データ
-        val metrics = listOf(
-            HealthMetric(
-                type = RecordType.HEART_RATE,
-                currentValue = 200,
-                targetValue = 180
-            ),
-            HealthMetric(
-                type = RecordType.STEPS,
-                currentValue = 5000,
-                targetValue = 10000
-            ),
-            HealthMetric(
-                type = RecordType.CALORIES,
-                currentValue = 1200,
-                targetValue = 2000
-            ),
-            HealthMetric(
-                type = RecordType.SLEEP_TIME,
-                currentValue = 9,
-                targetValue = 8
-            ),
-            HealthMetric(
-                type = RecordType.DISTANCE,
-                currentValue = 2,
-                targetValue = 5
-            )
+    private suspend fun fetchMetricValues(startOfDay: Instant): Map<RecordType, Int> {
+        return mapOf(
+            RecordType.HEART_RATE to healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.HEART_RATE,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).filter { it != 0L }.average().toInt(),
+
+            RecordType.STEPS to healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.STEPS,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).sum().toInt(),
+
+            RecordType.CALORIES to healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.CALORIES,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).sum().toInt(),
+
+            RecordType.SLEEP_TIME to healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.SLEEP_TIME,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).sum().toInt(),
+
+            RecordType.DISTANCE to healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.DISTANCE,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).sum().toInt()
         )
-        _uiState.update { it.copy(metrics = metrics) }
+    }
+
+    private suspend fun fetchTargetValues(): Map<RecordType, Int> {
+        return mapOf(
+            RecordType.HEART_RATE to (settingUseCase.getHeartRateTarget() ?: 0),
+            RecordType.STEPS to (settingUseCase.getStepsTarget() ?: 0),
+            RecordType.CALORIES to (settingUseCase.getCaloriesTarget() ?: 0),
+            RecordType.SLEEP_TIME to (settingUseCase.getSleepTimeTarget() ?: 0),
+            RecordType.DISTANCE to (settingUseCase.getDistanceTarget() ?: 0)
+        )
+    }
+
+    private fun updateMetrics() {
+        viewModelScope.launch {
+            val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+            val values = fetchMetricValues(startOfDay)
+            val targets = fetchTargetValues()
+
+            val metrics = RecordType.entries.map { type ->
+                HealthMetric(
+                    type = type,
+                    currentValue = values[type] ?: 0,
+                    targetValue = targets[type] ?: 0
+                )
+            }
+            _uiState.update { it.copy(metrics = metrics) }
+        }
     }
 }
