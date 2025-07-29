@@ -64,10 +64,6 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit){
-        viewModel.updateMetrics()
-    }
-
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.ChangeBpmPlayerValue -> {
@@ -92,6 +88,10 @@ fun HomeScreen(
 
             is HomeUiEvent.CreateNewMusic -> {
                 viewModel.createNewMusic()
+            }
+
+            is HomeUiEvent.ChangeSelectedBpmValue -> {
+                viewModel.changeSelectedBpmValue(event.value)
             }
         }
     }
@@ -139,6 +139,12 @@ fun HomeScreen(
         )
     )
 
+    LaunchedEffect(Unit){
+        viewModel.updateMetrics()
+        viewModel.fetchAndUpdateHeartRateStats()
+        viewModel.fetchAndUpdateHeartRateStats()
+    }
+
     Scaffold(modifier) { innerPadding ->
         HomeContent(
             uiState = uiState,
@@ -178,6 +184,9 @@ fun HomeContent(
                     isChecked
                 )
             )
+        },
+        changeSelectedBpmValue = { value ->
+            eventHandler(HomeUiEvent.ChangeSelectedBpmValue(value))
         },
         uiState = uiState,
         cardList = cardList
@@ -452,7 +461,8 @@ fun HomeScreenPreview() {
             HealthMetric(
                 type = RecordType.HEART_RATE,
                 currentValue = 200,
-                targetValue = 180
+                targetValue = 180,
+
             ),
             HealthMetric(
                 type = RecordType.STEPS,

@@ -52,6 +52,33 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun changeSelectedBpmValue(value: Int) {
+        _uiState.update { it.copy(selectedBpmValue = value) }
+    }
+
+    fun fetchAndUpdateHeartRateStats() {
+        viewModelScope.launch {
+            val startOfDay = LocalDate.now()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+            val heartRates = healthConnectUseCase.fetchRecordsByGranularity(
+                recordType = RecordType.HEART_RATE,
+                start = startOfDay,
+                granularity = HealthDataGranularity.HOURLY
+            ).filter { it != 0L }
+            val bpmValues = if (heartRates.isEmpty()) {
+                listOf(0, 0, 0)
+            } else {
+                listOf(
+                    heartRates.minOrNull()?.toInt() ?: 0,
+                    heartRates.average().toInt(),
+                    heartRates.maxOrNull()?.toInt() ?: 0
+                )
+            }
+            _uiState.update { it.copy(bpmValues = bpmValues) }
+        }
+    }
+
     fun onSwitchCheckedChange(isChecked: Boolean) {
         _uiState.update {
             it.copy(
