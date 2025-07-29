@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.HealthDataGranularity
+import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import com.example.myaku_rismu.domain.useCase.ProfileDetailUseCase
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,7 +24,8 @@ import java.time.ZoneId
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val healthConnectUseCase: HealthConnectUseCase,
-    private val settingUseCase: SettingUseCase
+    private val settingUseCase: SettingUseCase,
+    private val profileDetailUseCase: ProfileDetailUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -57,6 +60,12 @@ class HomeViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isSwitchChecked = isChecked,
+            )
+        }
+        viewModelScope.launch {
+            profileDetailUseCase.updateSwitchState(
+                ProfileSwitchType.INCLUDE_LYRICS,
+                isChecked
             )
         }
     }
@@ -130,6 +139,13 @@ class HomeViewModel @Inject constructor(
                 )
             }
             _uiState.update { it.copy(metrics = metrics) }
+        }
+    }
+    fun syncSwitchStateWithProfile() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isSwitchChecked = profileDetailUseCase.getIncludeLyricsSwitchState())
+            }
         }
     }
 }

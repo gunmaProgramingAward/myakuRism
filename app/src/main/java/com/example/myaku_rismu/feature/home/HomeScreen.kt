@@ -137,6 +137,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.updateMetrics()
+        viewModel.syncSwitchStateWithProfile()
     }
 
     Scaffold(modifier) { innerPadding ->
