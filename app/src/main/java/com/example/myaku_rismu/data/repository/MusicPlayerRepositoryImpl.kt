@@ -101,8 +101,6 @@ class MusicPlayerRepositoryImpl @Inject constructor(
     override suspend fun loadTrack(track: SunoTrackDataAppModel): Result<Unit> = 
         withContext(Dispatchers.Main) {
             try {
-                if (isTrackAlreadyLoaded(track)) return@withContext Result.success(Unit)
-                
                 currentTrack = track
                 val mediaItem = createMediaItem(track)
                 
@@ -205,11 +203,6 @@ class MusicPlayerRepositoryImpl @Inject constructor(
                     .build()
             )
             .build()
-    }
-    
-    private fun isTrackAlreadyLoaded(track: SunoTrackDataAppModel): Boolean {
-        return mediaController?.currentMediaItem?.localConfiguration?.uri?.toString() ==
-                track.audioUrl
     }
     
     private fun mapPlayerState(playbackState: Int): PlaybackState {

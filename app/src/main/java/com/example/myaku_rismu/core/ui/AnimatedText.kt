@@ -17,7 +17,7 @@ import androidx.compose.ui.text.TextStyle
 @Composable
 fun AnimatedText(
     titles: List<String>,
-    intervalMillis: Long = 10000L,
+    intervalMillis: Long = 5000L,
     style: TextStyle
 ) {
     var index by remember { mutableIntStateOf(0) }

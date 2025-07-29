@@ -45,8 +45,8 @@ import androidx.navigation.NavHostController
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.data.model.RecordType
-import com.example.myaku_rismu.feature.home.components.BarChart
-import com.example.myaku_rismu.feature.home.components.DonutChart
+import com.example.myaku_rismu.core.ui.BarChart
+import com.example.myaku_rismu.core.ui.DonutChart
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.HomeBottomSheet
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
