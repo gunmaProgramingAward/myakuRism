@@ -14,12 +14,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ui.AnimatedText
-import com.example.myaku_rismu.core.ui.BarChart
 import com.example.myaku_rismu.core.ui.SkeletonBarChart
 import com.example.myaku_rismu.ui.theme.customTheme
 
@@ -27,7 +24,8 @@ import com.example.myaku_rismu.ui.theme.customTheme
 fun MiniLoadingBar(
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
-    progress: Float = 0.0f
+    progress: Float = 0.0f,
+    animatedText: String,
 ) {
     Card(
         modifier = modifier
@@ -46,7 +44,7 @@ fun MiniLoadingBar(
             verticalArrangement = Arrangement.Bottom
         ) {
             AnimatedText(
-                titles = stringArrayResource(id = R.array.generation_messages).toList(),
+                text = animatedText,
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.size(10.dp))
@@ -66,6 +64,7 @@ fun MiniLoadingBar(
 @Composable
 fun MiniLoadingBarPreview() {
     MiniLoadingBar(
+        animatedText = "Loading...",
         onExpand = {},
         modifier = Modifier.fillMaxWidth(),
     )

@@ -23,15 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ui.AnimatedText
-import com.example.myaku_rismu.core.ui.TopBar
-import com.example.myaku_rismu.core.ui.BarChart
 import com.example.myaku_rismu.core.ui.SkeletonBarChart
+import com.example.myaku_rismu.core.ui.TopBar
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
@@ -43,6 +41,7 @@ fun ExpandableLoadingSheet(
     modifier: Modifier = Modifier,
     onExpand: () -> Unit,
     progress: Float = 0f,
+    animatedText: String,
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +107,7 @@ fun ExpandableLoadingSheet(
             )
             Spacer(modifier = Modifier.height(7.dp))
             AnimatedText(
-                titles = stringArrayResource(id = R.array.generation_messages).toList(),
+                text = animatedText,
                 style = Typography.bodyMedium
             )
             Spacer(modifier = Modifier.size(52.dp))
@@ -132,6 +131,7 @@ fun ExpandableLoadingSheet(
 fun ExpandableLoadingSheetPreview() {
     Myaku_rismuTheme {
         ExpandableLoadingSheet(
+            animatedText = "Loading...",
             onExpand = {}
         )
     }
