@@ -31,4 +31,5 @@ interface SettingUseCase {
     suspend fun updateSleepTimeTarget(target: Int)
     suspend fun updateDistanceTarget(target: Int)
     suspend fun updateRecordTypeTarget(recordType: RecordType, target: Int)
+    suspend fun calculateCaloriesTarget(): Int
 }
