@@ -230,7 +230,7 @@ fun SettingDetail(
             contentBottomPadding = PaddingValues(bottom = 12.dp),
         ) {
             ActivityLevelLabel(
-                selectedActivity = uiState.display.activityLevel ?: ActivityLevel.LOW,
+                selectedActivity = uiState.display.activityLevel,
                 onActivitySelected = { level ->
                     eventHandler(SettingUiEvent.ActivityLevelSelected(level))
                 }
@@ -353,7 +353,7 @@ private fun InfoItemLabel(
 @Composable
 private fun ActivityLevelLabel(
     modifier: Modifier = Modifier,
-    selectedActivity: ActivityLevel,
+    selectedActivity: ActivityLevel?,
     onActivitySelected: (ActivityLevel) -> Unit
 ) {
     ActivityLevel.entries.forEach { level ->
