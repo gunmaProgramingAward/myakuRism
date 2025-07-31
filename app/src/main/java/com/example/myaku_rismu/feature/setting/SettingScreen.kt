@@ -212,8 +212,8 @@ fun SettingDetail(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(MaterialTheme.customTheme.myakuRismuBackgroundColor),
+            .background(MaterialTheme.customTheme.myakuRismuBackgroundColor)
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         ProfileCard(
