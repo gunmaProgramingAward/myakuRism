@@ -64,7 +64,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.updateMetrics()
     }
 
@@ -91,7 +91,7 @@ fun HomeScreen(
             }
 
             is HomeUiEvent.CreateNewMusic -> {
-                viewModel.createNewMusic()
+                viewModel.createNewMusic(appState)
             }
         }
     }
@@ -256,18 +256,22 @@ fun BpmPlayerCard(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { showBottomSheet() },
+                enabled = !uiState.isCreatedMusic,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
-                    .height(30.dp)
+                    .height(36.dp)
                     .fillMaxWidth(0.3f),
                 contentPadding = PaddingValues(vertical = 0.dp),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.buttonBackgroundColor),
-                elevation = ButtonDefaults.elevatedButtonElevation(4.dp)
+                elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.customTheme.buttonBackgroundColor,
+                    disabledContainerColor = MaterialTheme.customTheme.buttonDisabledBackgroundColor
+                ),
             ) {
                 Text(
                     text = stringResource(R.string.create),
                     color = Color.Black,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
         }

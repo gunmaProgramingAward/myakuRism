@@ -2,6 +2,7 @@ package com.example.myaku_rismu.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.core.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
+import com.example.myaku_rismu.domain.useCase.MusicGenerationUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -21,14 +23,15 @@ import java.time.ZoneId
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val healthConnectUseCase: HealthConnectUseCase,
-    private val settingUseCase: SettingUseCase
+    private val settingUseCase: SettingUseCase,
+    private val musicGenerationUseCase: MusicGenerationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-
     init {
         viewModelScope.launch {
+            checkTodayMusicGeneration()
             updateMetrics()
             _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
@@ -42,8 +45,23 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = false) }
     }
 
-    fun createNewMusic() {
-        _uiState.update { it.copy(createMusic = true) }
+    fun createNewMusic(appState: AppState) {
+        viewModelScope.launch {
+            if (!_uiState.value.isCreatedMusic) {
+                _uiState.value.selectedGenre?.let { genre ->
+                    appState.musicGeneration(
+                        recordType = genre.type,
+                        bpm = _uiState.value.bpmPlayerValue,
+                        instrumental = _uiState.value.isInstrumental
+                    )
+                }
+                _uiState.update {
+                    it.copy(
+                        isCreatedMusic = true
+                    )
+                }
+            }
+        }
     }
 
     fun selectMusicGenre(metric: HealthMetric) {
@@ -127,6 +145,18 @@ class HomeViewModel @Inject constructor(
                 )
             }
             _uiState.update { it.copy(metrics = metrics) }
+        }
+    }
+
+    private fun checkTodayMusicGeneration() {
+        viewModelScope.launch {
+            musicGenerationUseCase.getTodayGenerationFlow().collect { entity ->
+                _uiState.update {
+                    it.copy(
+                        isCreatedMusic = entity != null
+                    )
+                }
+            }
         }
     }
 }

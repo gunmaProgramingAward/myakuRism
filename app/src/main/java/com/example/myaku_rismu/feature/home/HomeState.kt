@@ -17,7 +17,8 @@ data class HomeState(
     val selectedGenre: HealthMetric? = null,
     val isSwitchChecked: Boolean = false,
     val showBottomSheet: Boolean = false,
-    val createMusic: Boolean = false
+    val isCreatedMusic: Boolean = false,
+    val isInstrumental: Boolean = false,
 ) {
     val beatIntervalMs: Float
         get() {
