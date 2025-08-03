@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import com.example.myaku_rismu.feature.home.WaveState
@@ -22,7 +23,9 @@ fun LoopingRipple(
     modifier: Modifier = Modifier,
     beatIntervalMs: Float,
     newRippleStartIntervalMs: Int,
-    bpmPlayerRippleColor: Color
+    bpmPlayerRippleColor: Color,
+    initialDelayMs: Long = 534L,
+    initialScale: Float = 0f,
 ) {
     val rippleCount = 4  // 同時に表示する波紋の数
 
@@ -36,14 +39,14 @@ fun LoopingRipple(
     }
 
     LaunchedEffect(Unit) {
-        delay(534L) // 初期遅延を設定（534msはビートの1拍目に合わせるための調整）
+        delay(initialDelayMs) // 初期遅延を設定（波紋の初期位置を制御）
         var waveIndex = 0
 
         while (true) {
             val currentWave = waves[waveIndex % rippleCount]
 
             launch {
-                currentWave.scale.snapTo(0f)
+                currentWave.scale.snapTo(initialScale)
                 currentWave.alpha.snapTo(1f)
 
                 launch {

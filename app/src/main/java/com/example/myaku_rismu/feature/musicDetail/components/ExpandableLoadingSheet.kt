@@ -83,6 +83,8 @@ fun ExpandableLoadingSheet(
                     beatIntervalMs = 855f,
                     newRippleStartIntervalMs = 3430,
                     bpmPlayerRippleColor = rippleColor,
+                    initialDelayMs = 0L,
+                    initialScale = 0.4f
                 )
                 Canvas(
                     modifier = Modifier.size(150.dp)

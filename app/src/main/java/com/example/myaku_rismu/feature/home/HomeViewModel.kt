@@ -31,8 +31,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            checkTodayMusicGeneration()
-            updateMetrics()
             _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
     }
@@ -47,7 +45,7 @@ class HomeViewModel @Inject constructor(
 
     fun createNewMusic(appState: AppState) {
         viewModelScope.launch {
-            if (!_uiState.value.isCreatedMusic) {
+            if (_uiState.value.isEnabledCreateMusic) {
                 _uiState.value.selectedGenre?.let { genre ->
                     appState.musicGeneration(
                         recordType = genre.type,
@@ -57,7 +55,7 @@ class HomeViewModel @Inject constructor(
                 }
                 _uiState.update {
                     it.copy(
-                        isCreatedMusic = true
+                        isEnabledCreateMusic = false
                     )
                 }
             }
@@ -131,32 +129,25 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun updateMetrics() {
-        viewModelScope.launch {
-            val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-            val values = fetchMetricValues(startOfDay)
-            val targets = fetchTargetValues()
+    suspend fun updateMetrics() {
+        val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+        val values = fetchMetricValues(startOfDay)
+        val targets = fetchTargetValues()
 
-            val metrics = RecordType.entries.map { type ->
-                HealthMetric(
-                    type = type,
-                    currentValue = values[type] ?: 0,
-                    targetValue = targets[type] ?: 0
-                )
-            }
-            _uiState.update { it.copy(metrics = metrics) }
+        val metrics = RecordType.entries.map { type ->
+            HealthMetric(
+                type = type,
+                currentValue = values[type] ?: 0,
+                targetValue = targets[type] ?: 0
+            )
         }
+        _uiState.update { it.copy(metrics = metrics) }
     }
 
-    private fun checkTodayMusicGeneration() {
-        viewModelScope.launch {
-            musicGenerationUseCase.getTodayGenerationFlow().collect { entity ->
-                _uiState.update {
-                    it.copy(
-                        isCreatedMusic = entity != null
-                    )
-                }
-            }
-        }
+    suspend fun checkIsEnableCreateMusic() {
+        val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
+        val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
+
+        _uiState.update { it.copy(isEnabledCreateMusic = anyExceeded && !isTodayAlreadyGenerated) }
     }
 }

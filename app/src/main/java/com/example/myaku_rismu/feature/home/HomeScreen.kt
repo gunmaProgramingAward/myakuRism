@@ -66,6 +66,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.updateMetrics()
+        viewModel.checkIsEnableCreateMusic()
     }
 
     fun eventHandler(event: HomeUiEvent) {
@@ -256,7 +257,7 @@ fun BpmPlayerCard(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { showBottomSheet() },
-                enabled = !uiState.isCreatedMusic,
+                enabled = uiState.isEnabledCreateMusic,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
                     .height(36.dp)
