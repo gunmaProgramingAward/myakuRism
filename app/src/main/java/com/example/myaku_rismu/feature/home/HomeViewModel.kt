@@ -157,7 +157,6 @@ class HomeViewModel @Inject constructor(
             _uiState.update { it.copy(metrics = metrics) }
         }
     }
-
     suspend fun checkIsEnableCreateMusic() {
         val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
         val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()

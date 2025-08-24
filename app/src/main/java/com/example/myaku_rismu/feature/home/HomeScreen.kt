@@ -66,6 +66,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.updateMetrics()
+        viewModel.syncSwitchStateWithProfile()
         viewModel.checkIsEnableCreateMusic()
     }
 
@@ -139,11 +140,6 @@ fun HomeScreen(
             barColorFaded = MaterialTheme.customTheme.homeMoveDistanceBarColorFaded,
         )
     )
-
-    LaunchedEffect(Unit) {
-        viewModel.updateMetrics()
-        viewModel.syncSwitchStateWithProfile()
-    }
 
     Scaffold(modifier) { innerPadding ->
         HomeContent(
