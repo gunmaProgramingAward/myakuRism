@@ -9,6 +9,7 @@ data class MusicDetailState(
     val dragOffset: Float = 0f,
     val isFavorite: Boolean = false,
     val isLoading: LoadingState = LoadingState.NOTTING,
+    val isCreatedMusic: Boolean = false,
 ) {
     val loadingProgress: Float
         get() = when (isLoading) {
