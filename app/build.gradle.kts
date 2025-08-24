@@ -92,6 +92,11 @@ dependencies {
 
     // Security
     implementation(libs.androidx.security.crypto)
+    
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // healthConnect
     implementation("androidx.health.connect:connect-client:1.1.0-rc02")

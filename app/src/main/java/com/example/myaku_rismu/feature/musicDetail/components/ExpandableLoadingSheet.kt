@@ -1,4 +1,4 @@
-package com.example.myaku_rismu.core.ui
+package com.example.myaku_rismu.feature.musicDetail.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -20,24 +20,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myaku_rismu.R
-import com.example.myaku_rismu.feature.home.components.BarChart
+import com.example.myaku_rismu.core.ui.AnimatedText
+import com.example.myaku_rismu.core.ui.SkeletonBarChart
+import com.example.myaku_rismu.core.ui.TopBar
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
-import com.example.myaku_rismu.feature.musicDetail.MusicDetailUiEvent
-import com.example.myaku_rismu.feature.musicDetail.PlayerState
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.Typography
 import com.example.myaku_rismu.ui.theme.customTheme
@@ -45,8 +39,9 @@ import com.example.myaku_rismu.ui.theme.customTheme
 @Composable
 fun ExpandableLoadingSheet(
     modifier: Modifier = Modifier,
-    eventHandler: (MusicDetailUiEvent) -> Unit,
+    onExpand: () -> Unit,
     progress: Float = 0f,
+    animatedText: String,
 ) {
     Scaffold(
         topBar = {
@@ -54,9 +49,7 @@ fun ExpandableLoadingSheet(
                 title = "",
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            eventHandler(MusicDetailUiEvent.ChangePlayerState(PlayerState.COLLAPSED))
-                        },
+                        onClick = { onExpand() },
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
                         Icon(
@@ -90,6 +83,8 @@ fun ExpandableLoadingSheet(
                     beatIntervalMs = 855f,
                     newRippleStartIntervalMs = 3430,
                     bpmPlayerRippleColor = rippleColor,
+                    initialDelayMs = 0L,
+                    initialScale = 0.4f
                 )
                 Canvas(
                     modifier = Modifier.size(150.dp)
@@ -114,21 +109,11 @@ fun ExpandableLoadingSheet(
             )
             Spacer(modifier = Modifier.height(7.dp))
             AnimatedText(
-                titles = stringArrayResource(id = R.array.generation_messages).toList(),
+                text = animatedText,
                 style = Typography.bodyMedium
             )
             Spacer(modifier = Modifier.size(52.dp))
-            // ----- テスト用 ---
-            var progress by remember { mutableFloatStateOf(0f) }
-
-            LaunchedEffect(Unit) {
-                while (progress < 1f) {
-                    progress += 0.0001f
-                    kotlinx.coroutines.delay(30)
-                }
-            }
-            // ----------------
-            BarChart(
+            SkeletonBarChart(
                 modifier = Modifier
                     .height(12.dp)
                     .padding(horizontal = 27.dp),
@@ -148,7 +133,8 @@ fun ExpandableLoadingSheet(
 fun ExpandableLoadingSheetPreview() {
     Myaku_rismuTheme {
         ExpandableLoadingSheet(
-            eventHandler = {},
+            animatedText = "Loading...",
+            onExpand = {}
         )
     }
 }

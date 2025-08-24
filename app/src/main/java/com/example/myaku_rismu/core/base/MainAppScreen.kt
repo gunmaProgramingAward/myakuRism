@@ -91,7 +91,7 @@ fun MainAppScreen(
     Scaffold(
         bottomBar = {
             Column {
-                MusicDetailScreen()
+                MusicDetailScreen(appState = appState)
                 BottomNavigationBar(
                     items = NavigationItem.entries,
                     selectedItem = appState.selectedNavigationItem,

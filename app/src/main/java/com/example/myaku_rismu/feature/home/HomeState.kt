@@ -17,7 +17,8 @@ data class HomeState(
     val selectedGenre: HealthMetric? = null,
     val isSwitchChecked: Boolean = false,
     val showBottomSheet: Boolean = false,
-    val createMusic: Boolean = false
+    val isInstrumental: Boolean = false,
+    val isEnabledCreateMusic: Boolean = false,
 ) {
     val beatIntervalMs: Float
         get() {
@@ -41,12 +42,12 @@ data class HomeState(
         }
 
     val bpmPlayerColor: Color
-    @Composable
-    get() = when (bpmPlayerValue) {
-        in 81..140 -> MaterialTheme.customTheme.homeMediumBpmColor
-        in 140..300 -> MaterialTheme.customTheme.homeHighBpmColor
-        else -> MaterialTheme.customTheme.homeLowBpmColor
-    }
+        @Composable
+        get() = when (bpmPlayerValue) {
+            in 81..140 -> MaterialTheme.customTheme.homeMediumBpmColor
+            in 140..300 -> MaterialTheme.customTheme.homeHighBpmColor
+            else -> MaterialTheme.customTheme.homeLowBpmColor
+        }
 }
 
 data class HealthMetric(

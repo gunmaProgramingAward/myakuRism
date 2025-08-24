@@ -42,12 +42,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.core.ui.BarChart
+import com.example.myaku_rismu.core.ui.DonutChart
 import com.example.myaku_rismu.data.model.RecordType
-import com.example.myaku_rismu.feature.home.components.BarChart
-import com.example.myaku_rismu.feature.home.components.DonutChart
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.HomeBottomSheet
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
@@ -63,6 +62,12 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.updateMetrics()
+        viewModel.checkIsEnableCreateMusic()
+    }
 
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
@@ -87,7 +92,7 @@ fun HomeScreen(
             }
 
             is HomeUiEvent.CreateNewMusic -> {
-                viewModel.createNewMusic()
+                viewModel.createNewMusic(appState)
             }
         }
     }
@@ -257,18 +262,22 @@ fun BpmPlayerCard(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { showBottomSheet() },
+                enabled = uiState.isEnabledCreateMusic,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
-                    .height(30.dp)
+                    .height(36.dp)
                     .fillMaxWidth(0.3f),
                 contentPadding = PaddingValues(vertical = 0.dp),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.buttonBackgroundColor),
-                elevation = ButtonDefaults.elevatedButtonElevation(4.dp)
+                elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.customTheme.buttonBackgroundColor,
+                    disabledContainerColor = MaterialTheme.customTheme.buttonDisabledBackgroundColor
+                ),
             ) {
                 Text(
                     text = stringResource(R.string.create),
                     color = Color.Black,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
         }

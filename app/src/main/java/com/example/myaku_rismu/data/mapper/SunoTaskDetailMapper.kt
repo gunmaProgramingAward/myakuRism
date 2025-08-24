@@ -24,7 +24,9 @@ class SunoTaskDetailsMapper @Inject constructor() {
             taskId = detail?.taskId ?: "",
             parentMusicId = detail?.parentMusicId ?: "",
             param = detail?.param ?: "",
-            response = detail?.response?.sunoData?.map { sunoTrackData(it,detail.response) }?.firstOrNull(),
+            response = detail?.response?.sunoData
+                ?.maxByOrNull { it.duration ?: 0.0 }
+                ?.let { sunoTrackData(it, detail.response) },
             status = detail?.status ?: "",
             type = detail?.type ?: "",
             operationType = detail?.operationType ?: "",

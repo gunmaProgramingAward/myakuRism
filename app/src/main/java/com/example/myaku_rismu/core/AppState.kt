@@ -5,7 +5,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.core.app.FrameMetricsAggregator.MetricType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -18,6 +20,7 @@ import com.example.myaku_rismu.core.navigation.ProfileDetailRoute
 import com.example.myaku_rismu.core.navigation.SettingsRoute
 import com.example.myaku_rismu.core.ui.NavigationItem
 import com.example.myaku_rismu.data.model.RecordType
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun rememberAppState(
@@ -35,8 +38,11 @@ fun rememberAppState(
 @Stable
 class AppState(
     val navController: NavHostController,
-    ) {
+) {
     private val previousDestination = mutableStateOf<NavDestination?>(null)
+    
+    private val _appStateModel = MutableStateFlow(AppStateModel())
+    val appStateModel: StateFlow<AppStateModel> = _appStateModel.asStateFlow()
 
     val currentDestination: NavDestination?
         @Composable get() {
@@ -95,5 +101,30 @@ class AppState(
             launchSingleTop = true
             restoreState = true
          }
+    }
+    
+    fun musicGeneration(
+        recordType: RecordType,
+        bpm: Int,
+        instrumental: Boolean,
+    ) {
+        _appStateModel.update {
+            it.copy(
+                musicGenerationTrigger = MusicGenerationTrigger(
+                    recordType = recordType,
+                    instrumental = instrumental,
+                    bpm = bpm,
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+        }
+    }
+    
+    fun clearMusicGeneration() {
+        _appStateModel.update {
+            it.copy(
+                musicGenerationTrigger = null
+            )
+        }
     }
 }

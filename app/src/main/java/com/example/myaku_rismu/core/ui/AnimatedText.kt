@@ -16,27 +16,17 @@ import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun AnimatedText(
-    titles: List<String>,
-    intervalMillis: Long = 10000L,
+    text: String,
     style: TextStyle
 ) {
-    var index by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(titles) {
-        while (true) {
-            kotlinx.coroutines.delay(intervalMillis)
-            index = (index + 1) % titles.size
-        }
-    }
-
     AnimatedContent(
-        targetState = index,
+        targetState = text,
         transitionSpec = {
             fadeIn() togetherWith fadeOut()
         }
-    ) { targetIndex ->
+    ) { animatedText ->
         Text(
-            text = titles[targetIndex],
+            text = animatedText,
             style = style
         )
     }
