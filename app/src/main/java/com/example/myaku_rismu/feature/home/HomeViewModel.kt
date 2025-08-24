@@ -2,6 +2,7 @@ package com.example.myaku_rismu.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.core.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ import com.example.myaku_rismu.data.model.HealthDataGranularity
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
+import com.example.myaku_rismu.domain.useCase.MusicGenerationUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -21,15 +23,14 @@ import java.time.ZoneId
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val healthConnectUseCase: HealthConnectUseCase,
-    private val settingUseCase: SettingUseCase
+    private val settingUseCase: SettingUseCase,
+    private val musicGenerationUseCase: MusicGenerationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-
     init {
         viewModelScope.launch {
-            updateMetrics()
             _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
     }
@@ -42,8 +43,23 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = false) }
     }
 
-    fun createNewMusic() {
-        _uiState.update { it.copy(createMusic = true) }
+    fun createNewMusic(appState: AppState) {
+        viewModelScope.launch {
+            if (_uiState.value.isEnabledCreateMusic) {
+                _uiState.value.selectedGenre?.let { genre ->
+                    appState.musicGeneration(
+                        recordType = genre.type,
+                        bpm = _uiState.value.bpmPlayerValue,
+                        instrumental = _uiState.value.isInstrumental
+                    )
+                }
+                _uiState.update {
+                    it.copy(
+                        isEnabledCreateMusic = false
+                    )
+                }
+            }
+        }
     }
 
     fun selectMusicGenre(metric: HealthMetric) {
@@ -113,20 +129,25 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun updateMetrics() {
-        viewModelScope.launch {
-            val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-            val values = fetchMetricValues(startOfDay)
-            val targets = fetchTargetValues()
+    suspend fun updateMetrics() {
+        val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+        val values = fetchMetricValues(startOfDay)
+        val targets = fetchTargetValues()
 
-            val metrics = RecordType.entries.map { type ->
-                HealthMetric(
-                    type = type,
-                    currentValue = values[type] ?: 0,
-                    targetValue = targets[type] ?: 0
-                )
-            }
-            _uiState.update { it.copy(metrics = metrics) }
+        val metrics = RecordType.entries.map { type ->
+            HealthMetric(
+                type = type,
+                currentValue = values[type] ?: 0,
+                targetValue = targets[type] ?: 0
+            )
         }
+        _uiState.update { it.copy(metrics = metrics) }
+    }
+
+    suspend fun checkIsEnableCreateMusic() {
+        val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
+        val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
+
+        _uiState.update { it.copy(isEnabledCreateMusic = anyExceeded && !isTodayAlreadyGenerated) }
     }
 }

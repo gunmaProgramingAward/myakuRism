@@ -51,8 +51,7 @@ fun MiniMusicPlayer(
             .clickable { onExpand() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.customTheme.musicDetailMiniMusicPlayerBackgroundColor
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        )
     ) {
         Row(
             modifier = Modifier
