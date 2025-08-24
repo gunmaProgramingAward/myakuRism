@@ -44,9 +44,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
-import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.core.ui.BarChart
 import com.example.myaku_rismu.core.ui.DonutChart
+import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.HomeBottomSheet
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
@@ -66,6 +66,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.updateMetrics()
+        viewModel.syncSwitchStateWithProfile()
         viewModel.checkIsEnableCreateMusic()
     }
 
@@ -288,11 +289,18 @@ fun HealthMetricCard(
     onClick: () -> Unit = {}
 ) {
     LaunchedEffect(metric.progress) {
-        metric.animatedProgress.snapTo(0f)
-        metric.animatedProgress.animateTo(
-            targetValue = metric.progress,
-            animationSpec = tween(durationMillis = 1200)
-        )
+        if (metric.animatedProgress.value == 0f) {
+            metric.animatedProgress.snapTo(0f)
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        } else {
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        }
     }
 
     Card(
@@ -457,7 +465,7 @@ fun HomeScreenPreview() {
             HealthMetric(
                 type = RecordType.HEART_RATE,
                 currentValue = 200,
-                targetValue = 180
+                targetValue = 180,
             ),
             HealthMetric(
                 type = RecordType.STEPS,

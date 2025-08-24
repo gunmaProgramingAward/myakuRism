@@ -26,19 +26,7 @@ class ProfileDetailViewModel @Inject constructor(
         _uiState.update {
             it.copy(screenState = ScreenState.Initializing())
         }
-        viewModelScope.launch {
-            try {
-                _uiState.update { it.copy(display = profileDetailUseCase.getProfileDetail()) }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        screenState = ScreenState.Error(
-                            messageResId = R.string.error
-                        )
-                    )
-                }
-            }
-        }
+        refreshProfileDetail()
     }
 
     fun toggleSwitch(switchType: ProfileSwitchType) {
@@ -75,6 +63,22 @@ class ProfileDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 profileDetailUseCase.updateSwitchState(switchType, enabled)
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Error(
+                            messageResId = R.string.error
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun refreshProfileDetail() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(display = profileDetailUseCase.getProfileDetail()) }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
