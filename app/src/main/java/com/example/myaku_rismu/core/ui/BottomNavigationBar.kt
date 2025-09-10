@@ -43,18 +43,6 @@ enum class NavigationItem(
         unselectedIcon = IconResource.Vector(Icons.Outlined.FavoriteBorder),
         label = R.string.bottom_navigation_bar_home
     ),
-    CALENDAR(
-        route = CalenderRoute,
-        selectedIcon = IconResource.Vector(Icons.Filled.DateRange),
-        unselectedIcon = IconResource.Vector(Icons.Outlined.DateRange),
-        label = R.string.bottom_navigation_bar_calendar
-    ),
-    LIBRARY(
-        route = LibraryRoute,
-        selectedIcon = IconResource.Drawable(R.drawable.outline_music_note_24),
-        unselectedIcon = IconResource.Drawable(R.drawable.outline_music_note_24),
-        label = R.string.bottom_navigation_bar_library
-    ),
     SETTING(
         route = ProfileDetailRoute,
         selectedIcon = IconResource.Vector(Icons.Filled.Settings),
