@@ -52,6 +52,7 @@ fun HomeBottomSheet(
     onCreate: () -> Unit,
     onClick: (HealthMetric) -> Unit,
     onSwitchCheckedChange: (Boolean) -> Unit,
+    changeSelectedBpmValue: (Int) -> Unit,
     uiState: HomeState,
     cardList: List<HealthMetricCardUi>
 ) {
@@ -97,6 +98,23 @@ fun HomeBottomSheet(
                         }
                     }
                 Spacer(modifier = Modifier.size(41.dp))
+                Text(
+                    text = stringResource(R.string.please_select_bpm),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(start = 16.dp)
+                )
+                Spacer(modifier = Modifier.size(12.dp))
+                BpmSelector(
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    selectedBPM = uiState.selectedBpmValue ?:uiState.bpmValues[1],
+                    onBPMSelected = { value ->
+                        changeSelectedBpmValue(value)
+                    },
+                    bpmValues = uiState.bpmValues
+                )
+                Spacer(modifier = Modifier.size(49.dp))
                 Text(
                     text = stringResource(R.string.choose_whether_to_include_lyrics),
                     style = MaterialTheme.typography.headlineMedium,
@@ -239,7 +257,7 @@ fun BottomSheetContentPreview() {
             HealthMetric(
                 type = RecordType.HEART_RATE,
                 currentValue = 200,
-                targetValue = 180
+                targetValue = 180,
             ),
             HealthMetric(
                 type = RecordType.STEPS,

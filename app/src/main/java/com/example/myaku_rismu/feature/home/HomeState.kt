@@ -16,6 +16,8 @@ data class HomeState(
     val metrics: List<HealthMetric> = emptyList(),
     val selectedGenre: HealthMetric? = null,
     val isSwitchChecked: Boolean = false,
+    val selectedBpmValue: Int? = null,
+    val bpmValues: List<Int> = emptyList(),
     val showBottomSheet: Boolean = false,
     val isInstrumental: Boolean = false,
     val isEnabledCreateMusic: Boolean = false,

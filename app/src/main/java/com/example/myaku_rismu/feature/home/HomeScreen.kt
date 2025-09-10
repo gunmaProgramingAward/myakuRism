@@ -68,6 +68,7 @@ fun HomeScreen(
         viewModel.updateMetrics()
         viewModel.syncSwitchStateWithProfile()
         viewModel.checkIsEnableCreateMusic()
+        viewModel.fetchAndUpdateHeartRateStats()
     }
 
     fun eventHandler(event: HomeUiEvent) {
@@ -94,6 +95,10 @@ fun HomeScreen(
 
             is HomeUiEvent.CreateNewMusic -> {
                 viewModel.createNewMusic(appState)
+            }
+
+            is HomeUiEvent.ChangeSelectedBpmValue -> {
+                viewModel.changeSelectedBpmValue(event.value)
             }
         }
     }
@@ -180,6 +185,9 @@ fun HomeContent(
                     isChecked
                 )
             )
+        },
+        changeSelectedBpmValue = { value ->
+            eventHandler(HomeUiEvent.ChangeSelectedBpmValue(value))
         },
         uiState = uiState,
         cardList = cardList
@@ -466,6 +474,7 @@ fun HomeScreenPreview() {
                 type = RecordType.HEART_RATE,
                 currentValue = 200,
                 targetValue = 180,
+
             ),
             HealthMetric(
                 type = RecordType.STEPS,
