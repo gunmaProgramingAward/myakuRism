@@ -108,6 +108,30 @@ class SettingViewModel @Inject constructor(
         }
         viewModelScope.launch {
             settingUseCase.updateActivityLevel(level)
+            val caloriesTarget = settingUseCase.calculateCaloriesTarget()
+            when (level) {
+                ActivityLevel.LOW -> {
+                    settingUseCase.updateHeartRateTarget(100)
+                    settingUseCase.updateStepsTarget(4000)
+                    settingUseCase.updateCaloriesTarget(caloriesTarget)
+                    settingUseCase.updateSleepTimeTarget(6)
+                    settingUseCase.updateDistanceTarget(2000)
+                }
+                ActivityLevel.MEDIUM -> {
+                    settingUseCase.updateHeartRateTarget(120)
+                    settingUseCase.updateStepsTarget(6000)
+                    settingUseCase.updateCaloriesTarget(caloriesTarget)
+                    settingUseCase.updateSleepTimeTarget(7)
+                    settingUseCase.updateDistanceTarget(4000)
+                }
+                ActivityLevel.HIGH -> {
+                    settingUseCase.updateHeartRateTarget(140)
+                    settingUseCase.updateStepsTarget(8000)
+                    settingUseCase.updateCaloriesTarget(caloriesTarget)
+                    settingUseCase.updateSleepTimeTarget(8)
+                    settingUseCase.updateDistanceTarget(6000)
+                }
+            }
         }
     }
 }

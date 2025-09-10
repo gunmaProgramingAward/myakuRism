@@ -7,6 +7,7 @@ import com.example.myaku_rismu.domain.model.Gender
 import com.example.myaku_rismu.domain.model.SettingData
 import com.example.myaku_rismu.domain.repository.SettingRepository
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
+import java.util.Calendar
 import javax.inject.Inject
 
 class SettingUseCaseImpl @Inject constructor(
@@ -84,4 +85,34 @@ class SettingUseCaseImpl @Inject constructor(
         }
     }
 
+    override suspend fun calculateCaloriesTarget(): Int {
+        val heightCm = repository.getHeight()
+        val weightKg = repository.getWeight()
+        val birthYear = repository.getBirthYear()
+        val gender = repository.getGender()
+        val activityLevel = repository.getActivityLevel()
+
+        if (heightCm == null || weightKg == null || birthYear == null || gender == null || activityLevel == null) {
+            return 0
+        }
+
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val age = currentYear - birthYear
+
+        val bmr = when (gender) {
+            Gender.MALE -> 13.397 * weightKg + 4.799 * heightCm - 5.677 * age + 88.362
+            Gender.FEMALE -> 9.247 * weightKg + 3.098 * heightCm - 4.330 * age + 447.593
+            Gender.OTHER -> 11.322* weightKg + 3.9485 * heightCm - 5.0035 * age + 267.977
+        }
+
+        val activityFactor = when (activityLevel) {
+            ActivityLevel.LOW -> 1.2
+            ActivityLevel.MEDIUM -> 1.55
+            ActivityLevel.HIGH -> 1.725
+        }
+
+        val calories = bmr * activityFactor
+
+        return calories.toInt()
+    }
 }
