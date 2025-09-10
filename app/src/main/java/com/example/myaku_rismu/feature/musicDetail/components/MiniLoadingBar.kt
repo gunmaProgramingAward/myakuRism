@@ -35,7 +35,6 @@ fun MiniLoadingBar(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.customTheme.musicDetailMiniMusicPlayerBackgroundColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier

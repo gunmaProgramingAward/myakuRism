@@ -22,6 +22,7 @@ data class CustomTheme(
     val musicDetailSettingTarget: Color,
     val disabledBackgroundColor: Color,
     val buttonBackgroundColor: Color,
+    val buttonDisabledBackgroundColor: Color,
     val homeLowBpmColor: Color,
     val homeMediumBpmColor: Color,
     val homeHighBpmColor: Color,
@@ -42,5 +43,4 @@ data class CustomTheme(
     val musicDetailMiniMusicPlayerBackgroundColor: Color,
     val musicDetailMusicPlayerFavorite: Color,
     val musicDetailMusicPlayerShuffle: Color
-
 )

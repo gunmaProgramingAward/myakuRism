@@ -44,9 +44,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
-import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.core.ui.BarChart
 import com.example.myaku_rismu.core.ui.DonutChart
+import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.feature.home.components.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.HomeBottomSheet
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
@@ -63,6 +63,13 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.updateMetrics()
+        viewModel.syncSwitchStateWithProfile()
+        viewModel.checkIsEnableCreateMusic()
+        viewModel.fetchAndUpdateHeartRateStats()
+    }
 
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
@@ -87,7 +94,7 @@ fun HomeScreen(
             }
 
             is HomeUiEvent.CreateNewMusic -> {
-                viewModel.createNewMusic()
+                viewModel.createNewMusic(appState)
             }
 
             is HomeUiEvent.ChangeSelectedBpmValue -> {
@@ -138,12 +145,6 @@ fun HomeScreen(
             barColorFaded = MaterialTheme.customTheme.homeMoveDistanceBarColorFaded,
         )
     )
-
-    LaunchedEffect(Unit){
-        viewModel.updateMetrics()
-        viewModel.fetchAndUpdateHeartRateStats()
-        viewModel.fetchAndUpdateHeartRateStats()
-    }
 
     Scaffold(modifier) { innerPadding ->
         HomeContent(
@@ -265,18 +266,22 @@ fun BpmPlayerCard(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { showBottomSheet() },
+                enabled = uiState.isEnabledCreateMusic,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
-                    .height(30.dp)
+                    .height(36.dp)
                     .fillMaxWidth(0.3f),
                 contentPadding = PaddingValues(vertical = 0.dp),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.customTheme.buttonBackgroundColor),
-                elevation = ButtonDefaults.elevatedButtonElevation(4.dp)
+                elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.customTheme.buttonBackgroundColor,
+                    disabledContainerColor = MaterialTheme.customTheme.buttonDisabledBackgroundColor
+                ),
             ) {
                 Text(
                     text = stringResource(R.string.create),
                     color = Color.Black,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
         }
@@ -292,11 +297,18 @@ fun HealthMetricCard(
     onClick: () -> Unit = {}
 ) {
     LaunchedEffect(metric.progress) {
-        metric.animatedProgress.snapTo(0f)
-        metric.animatedProgress.animateTo(
-            targetValue = metric.progress,
-            animationSpec = tween(durationMillis = 1200)
-        )
+        if (metric.animatedProgress.value == 0f) {
+            metric.animatedProgress.snapTo(0f)
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        } else {
+            metric.animatedProgress.animateTo(
+                targetValue = metric.progress,
+                animationSpec = tween(durationMillis = 1200)
+            )
+        }
     }
 
     Card(

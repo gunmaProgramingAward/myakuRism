@@ -1,4 +1,4 @@
-package com.example.myaku_rismu.core.ui
+package com.example.myaku_rismu.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

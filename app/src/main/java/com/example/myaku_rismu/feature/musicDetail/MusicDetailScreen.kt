@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.example.myaku_rismu.core.AppState
 import com.example.myaku_rismu.feature.musicDetail.components.ExpandableLoadingSheet
 import com.example.myaku_rismu.feature.musicDetail.components.ExpandedMusicPlayer
 import com.example.myaku_rismu.feature.musicDetail.components.MiniLoadingBar
@@ -42,9 +44,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun MusicDetailScreen(
     modifier: Modifier = Modifier,
+    appState: AppState,
     viewModel: MusicDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val appStateModel by appState.appStateModel.collectAsState()
     val playerState by viewModel.playerState.collectAsState()
 
     val context = LocalContext.current
@@ -143,6 +147,21 @@ fun MusicDetailScreen(
         }
     }
 
+    LaunchedEffect(appStateModel.musicGenerationTrigger) {
+        appStateModel.musicGenerationTrigger?.let {
+            viewModel.startMusicGeneration(
+                recordType = it.recordType,
+                bpm = it.bpm,
+                instrumental = it.instrumental
+            )
+            appState.clearMusicGeneration()
+        }
+    }
+
+    if (!uiState.isCreatedMusic) {
+        return
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -191,8 +210,11 @@ fun MusicDetailScreen(
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
+            val shouldShowMusic =
+                (uiState.isLoading == LoadingState.SUCCESS && animatedLoadingProgress >= 1f) ||
+                        playerState.currentTrack != null
             if (animationProgress < 0.2f) {
-                if (uiState.isLoading == LoadingState.SUCCESS && animatedLoadingProgress >= 1f) {
+                if (shouldShowMusic) {
                     MiniMusicPlayer(
                         title = playerState.currentTrack?.title,
                         type = "", // TODO: いずれ実装する
@@ -217,7 +239,7 @@ fun MusicDetailScreen(
                     )
                 }
             } else {
-                if (uiState.isLoading == LoadingState.SUCCESS && animatedLoadingProgress >= 1f) {
+                if (shouldShowMusic) {
                     ExpandedMusicPlayer(
                         uiState = uiState,
                         playerState = playerState,
@@ -247,6 +269,7 @@ fun MusicDetailScreen(
 fun MusicDetailScreenPreview() {
     MusicDetailScreen(
         modifier = Modifier.fillMaxSize(),
-        viewModel = hiltViewModel()
+        viewModel = hiltViewModel(),
+        appState = AppState(NavHostController(context = LocalContext.current))
     )
 }

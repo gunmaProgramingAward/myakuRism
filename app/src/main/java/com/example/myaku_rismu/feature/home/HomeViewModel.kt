@@ -1,7 +1,9 @@
 package com.example.myaku_rismu.feature.home
 
+import androidx.compose.animation.core.Animatable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myaku_rismu.core.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,9 +11,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.HealthDataGranularity
+import com.example.myaku_rismu.data.model.ProfileSwitchType
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.domain.useCase.HealthConnectUseCase
+import com.example.myaku_rismu.domain.useCase.ProfileDetailUseCase
 import com.example.myaku_rismu.domain.useCase.SettingUseCase
+import com.example.myaku_rismu.domain.useCase.MusicGenerationUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -21,15 +26,15 @@ import java.time.ZoneId
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val healthConnectUseCase: HealthConnectUseCase,
-    private val settingUseCase: SettingUseCase
+    private val settingUseCase: SettingUseCase,
+    private val musicGenerationUseCase: MusicGenerationUseCase,
+    private val profileDetailUseCase: ProfileDetailUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-
     init {
         viewModelScope.launch {
-            updateMetrics()
             _uiState.update { it.copy(screenState = ScreenState.Success()) }
         }
     }
@@ -42,8 +47,23 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = false) }
     }
 
-    fun createNewMusic() {
-        _uiState.update { it.copy(createMusic = true) }
+    fun createNewMusic(appState: AppState) {
+        viewModelScope.launch {
+            if (_uiState.value.isEnabledCreateMusic) {
+                _uiState.value.selectedGenre?.let { genre ->
+                    appState.musicGeneration(
+                        recordType = genre.type,
+                        bpm = _uiState.value.bpmPlayerValue,
+                        instrumental = _uiState.value.isInstrumental
+                    )
+                }
+                _uiState.update {
+                    it.copy(
+                        isEnabledCreateMusic = false
+                    )
+                }
+            }
+        }
     }
 
     fun selectMusicGenre(metric: HealthMetric) {
@@ -58,23 +78,15 @@ class HomeViewModel @Inject constructor(
 
     fun fetchAndUpdateHeartRateStats() {
         viewModelScope.launch {
-            val startOfDay = LocalDate.now()
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant()
+            val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
             val heartRates = healthConnectUseCase.fetchRecordsByGranularity(
-                recordType = RecordType.HEART_RATE,
-                start = startOfDay,
-                granularity = HealthDataGranularity.HOURLY
+                RecordType.HEART_RATE, startOfDay, HealthDataGranularity.HOURLY
             ).filter { it != 0L }
-            val bpmValues = if (heartRates.isEmpty()) {
-                listOf(0, 0, 0)
-            } else {
-                listOf(
-                    heartRates.minOrNull()?.toInt() ?: 0,
-                    heartRates.average().toInt(),
-                    heartRates.maxOrNull()?.toInt() ?: 0
-                )
-            }
+            val bpmValues = listOfNotNull(
+                heartRates.minOrNull()?.toInt(),
+                heartRates.average().takeIf { heartRates.isNotEmpty() }?.toInt(),
+                heartRates.maxOrNull()?.toInt()
+            ).ifEmpty { listOf(0, 0, 0) }
             _uiState.update { it.copy(bpmValues = bpmValues) }
         }
     }
@@ -83,6 +95,12 @@ class HomeViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isSwitchChecked = isChecked,
+            )
+        }
+        viewModelScope.launch {
+            profileDetailUseCase.updateSwitchState(
+                ProfileSwitchType.INCLUDE_LYRICS,
+                isChecked
             )
         }
     }
@@ -147,13 +165,28 @@ class HomeViewModel @Inject constructor(
             val targets = fetchTargetValues()
 
             val metrics = RecordType.entries.map { type ->
+                val oldMetric = _uiState.value.metrics.find { it.type == type }
                 HealthMetric(
                     type = type,
                     currentValue = values[type] ?: 0,
-                    targetValue = targets[type] ?: 0
+                    targetValue = targets[type] ?: 0,
+                    animatedProgress = oldMetric?.animatedProgress ?: Animatable(0f)
                 )
             }
             _uiState.update { it.copy(metrics = metrics) }
+        }
+    }
+    suspend fun checkIsEnableCreateMusic() {
+        val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
+        val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
+
+        _uiState.update { it.copy(isEnabledCreateMusic = anyExceeded && !isTodayAlreadyGenerated) }
+    }
+    fun syncSwitchStateWithProfile() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isSwitchChecked = profileDetailUseCase.getIncludeLyricsSwitchState())
+            }
         }
     }
 }
