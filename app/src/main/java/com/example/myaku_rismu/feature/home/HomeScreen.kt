@@ -251,18 +251,6 @@ fun BpmPlayerCard(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = uiState.bpmPlayerValue.toString(),
-                style = MaterialTheme.typography.displayLarge,
-                color = Color.White,
-                modifier = Modifier.padding(top = 14.dp)
-            )
-            Text(
-                text = stringResource(R.string.bpm),
-                style = MaterialTheme.typography.headlineLarge,
-                color = Color.White,
-                modifier = Modifier.offset(y = (-8).dp)
-            )
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { showBottomSheet() },
