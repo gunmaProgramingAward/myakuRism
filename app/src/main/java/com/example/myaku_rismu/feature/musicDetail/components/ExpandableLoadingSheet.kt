@@ -30,7 +30,7 @@ import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ui.AnimatedText
 import com.example.myaku_rismu.core.ui.SkeletonBarChart
 import com.example.myaku_rismu.core.ui.TopBar
-import com.example.myaku_rismu.feature.home.components.GifImageLoader
+import com.example.myaku_rismu.core.ui.GifImageLoader
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
 import com.example.myaku_rismu.ui.theme.Typography
