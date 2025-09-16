@@ -17,7 +17,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class HealthDetailState(
-    val screenState: ScreenState = ScreenState.Initializing(),
+    val screenState: ScreenState = ScreenState.Initializing,
     val recordType: RecordType? = null,
     val listDate: List<Long> = emptyList(),
     val axisConfig: AxisConfig? = null,

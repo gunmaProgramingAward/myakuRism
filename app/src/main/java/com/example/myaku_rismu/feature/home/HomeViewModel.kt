@@ -33,10 +33,8 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            _uiState.update { it.copy(screenState = ScreenState.Success()) }
-        }
+    fun changeScreenState(state: ScreenState) {
+        _uiState.update { it.copy(screenState = state) }
     }
 
     fun showBottomSheet() {
@@ -176,12 +174,14 @@ class HomeViewModel @Inject constructor(
             _uiState.update { it.copy(metrics = metrics) }
         }
     }
+
     suspend fun checkIsEnableCreateMusic() {
         val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
         val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
 
         _uiState.update { it.copy(isEnabledCreateMusic = anyExceeded && !isTodayAlreadyGenerated) }
     }
+
     fun syncSwitchStateWithProfile() {
         viewModelScope.launch {
             _uiState.update {

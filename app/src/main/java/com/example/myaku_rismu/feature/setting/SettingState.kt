@@ -6,7 +6,7 @@ import com.example.myaku_rismu.domain.model.SettingData
 
 
 data class SettingState(
-    val screenState: ScreenState = ScreenState.Initializing(),
+    val screenState: ScreenState = ScreenState.Initializing,
     val display: SettingData = SettingData(),
     val dialog: SettingType? = null,
     val isHealthConnectLinked: Boolean = false,

@@ -38,7 +38,7 @@ class MusicDetailViewModel @Inject constructor(
     init {
         observeTodayMusicGeneration()
         initializedPlayerState()
-        _uiState.update { it.copy(screenState = ScreenState.Success(true)) }
+        _uiState.update { it.copy(screenState = ScreenState.Success) }
     }
 
     private fun initializedPlayerState() {
@@ -67,7 +67,7 @@ class MusicDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = LoadingState.NOTTING,
-                        screenState = ScreenState.Initializing(),
+                        screenState = ScreenState.Initializing,
                         isCreatedMusic = true
                     )
                 }
@@ -216,7 +216,7 @@ class MusicDetailViewModel @Inject constructor(
 
             val loadResult = musicPlayerUseCase.loadTrack(testTrack)
             if (loadResult.isSuccess) {
-                _uiState.update { it.copy(screenState = ScreenState.Success(true)) }
+                _uiState.update { it.copy(screenState = ScreenState.Success) }
             }
         } catch (e: Exception) {
             _uiState.update {
@@ -238,7 +238,7 @@ class MusicDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = LoadingState.SUCCESS,
-                        screenState = ScreenState.Success(true)
+                        screenState = ScreenState.Success
                     )
                 }
                 togglePlayPause()

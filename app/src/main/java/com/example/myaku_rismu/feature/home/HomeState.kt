@@ -11,7 +11,7 @@ import com.example.myaku_rismu.ui.theme.customTheme
 
 
 data class HomeState(
-    val screenState: ScreenState = ScreenState.Initializing(),
+    val screenState: ScreenState = ScreenState.Initializing,
     val bpmPlayerValue: Int = 85,
     val metrics: List<HealthMetric> = emptyList(),
     val selectedGenre: HealthMetric? = null,

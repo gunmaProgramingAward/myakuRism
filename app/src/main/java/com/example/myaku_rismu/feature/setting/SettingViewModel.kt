@@ -2,7 +2,6 @@ package com.example.myaku_rismu.feature.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.data.model.SettingType
 import com.example.myaku_rismu.domain.model.ActivityLevel
@@ -25,15 +24,17 @@ class SettingViewModel @Inject constructor(
 
     init {
         _uiState.update {
-            it.copy(screenState = ScreenState.Initializing())
+            it.copy(screenState = ScreenState.Initializing)
         }
         viewModelScope.launch {
             try {
-                _uiState.update { it.copy(display = settingUseCase.getSetting())}
+                _uiState.update { it.copy(display = settingUseCase.getSetting()) }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(screenState = ScreenState.Error(
-                        messageResId = R.string.error)
+                    it.copy(
+                        screenState = ScreenState.Error(
+                            message = e.message
+                        )
                     )
                 }
             }
@@ -117,6 +118,7 @@ class SettingViewModel @Inject constructor(
                     settingUseCase.updateSleepTimeTarget(6)
                     settingUseCase.updateDistanceTarget(2000)
                 }
+
                 ActivityLevel.MEDIUM -> {
                     settingUseCase.updateHeartRateTarget(120)
                     settingUseCase.updateStepsTarget(6000)
@@ -124,6 +126,7 @@ class SettingViewModel @Inject constructor(
                     settingUseCase.updateSleepTimeTarget(7)
                     settingUseCase.updateDistanceTarget(4000)
                 }
+
                 ActivityLevel.HIGH -> {
                     settingUseCase.updateHeartRateTarget(140)
                     settingUseCase.updateStepsTarget(8000)

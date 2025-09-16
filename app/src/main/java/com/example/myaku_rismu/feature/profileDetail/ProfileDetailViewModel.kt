@@ -24,7 +24,7 @@ class ProfileDetailViewModel @Inject constructor(
 
     init {
         _uiState.update {
-            it.copy(screenState = ScreenState.Initializing())
+            it.copy(screenState = ScreenState.Initializing)
         }
         refreshProfileDetail()
     }
@@ -67,7 +67,7 @@ class ProfileDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         screenState = ScreenState.Error(
-                            messageResId = R.string.error
+                            message = e.message
                         )
                     )
                 }
@@ -83,7 +83,7 @@ class ProfileDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         screenState = ScreenState.Error(
-                            messageResId = R.string.error
+                            message = e.message
                         )
                     )
                 }

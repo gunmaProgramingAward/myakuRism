@@ -39,7 +39,7 @@ class HealthDetailViewModel @Inject constructor(
         updateHealthType()
         getRecordTypeTarget()
         _uiState.update {
-            it.copy(screenState = ScreenState.Success())
+            it.copy(screenState = ScreenState.Success)
         }
     }
 

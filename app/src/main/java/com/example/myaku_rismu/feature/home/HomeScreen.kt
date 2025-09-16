@@ -71,7 +71,7 @@ fun HomeScreen(
         viewModel.syncSwitchStateWithProfile()
         viewModel.checkIsEnableCreateMusic()
         viewModel.fetchAndUpdateHeartRateStats()
-        viewModel.changeScreenState(ScreenState.Success())
+        viewModel.changeScreenState(ScreenState.Success)
     }
 
     fun eventHandler(event: HomeUiEvent) {
@@ -158,7 +158,7 @@ fun HomeScreen(
                 },
                 cardList = cardList,
             )
-            if (uiState.screenState == ScreenState.Initializing()) {
+            if (uiState.screenState == ScreenState.Initializing) {
                 LoadingAnimation()
             }
         }
