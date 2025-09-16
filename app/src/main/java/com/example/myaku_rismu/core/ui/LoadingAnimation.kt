@@ -7,12 +7,14 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myaku_rismu.R
+import com.example.myaku_rismu.ui.theme.customTheme
 import kotlin.math.exp
 import kotlin.math.pow
 
@@ -36,7 +39,9 @@ fun LoadingAnimation(
     loadingText: String = stringResource(R.string.Loading_text),
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.customTheme.loadingBackgroundColor.copy(alpha = 0.85f)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -44,17 +49,17 @@ fun LoadingAnimation(
             modifier = Modifier
                 .size(180.dp),
             gitResId = R.drawable.my_gif,
-            color = Color.Gray
+            color = MaterialTheme.customTheme.loadingIconColor
         )
         JumpyRow(
             modifier = Modifier
-                .offset(y =  (-52).dp)
+                .offset(y = (-52).dp)
         ) {
             for (s in loadingText) {
                 Text(
                     text = s.toString(),
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.customTheme.loadingBottomTextColor,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 22.sp
                 )
             }
