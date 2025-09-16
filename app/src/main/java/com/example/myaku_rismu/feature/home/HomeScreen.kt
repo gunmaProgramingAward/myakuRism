@@ -44,10 +44,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.myaku_rismu.R
 import com.example.myaku_rismu.core.AppState
+import com.example.myaku_rismu.core.ScreenState
 import com.example.myaku_rismu.core.ui.BarChart
 import com.example.myaku_rismu.core.ui.DonutChart
 import com.example.myaku_rismu.data.model.RecordType
 import com.example.myaku_rismu.core.ui.GifImageLoader
+import com.example.myaku_rismu.core.ui.LoadingAnimation
 import com.example.myaku_rismu.feature.home.components.HomeBottomSheet
 import com.example.myaku_rismu.feature.home.components.LoopingRipple
 import com.example.myaku_rismu.ui.theme.Myaku_rismuTheme
@@ -69,14 +71,11 @@ fun HomeScreen(
         viewModel.syncSwitchStateWithProfile()
         viewModel.checkIsEnableCreateMusic()
         viewModel.fetchAndUpdateHeartRateStats()
+        viewModel.changeScreenState(ScreenState.Success())
     }
 
     fun eventHandler(event: HomeUiEvent) {
         when (event) {
-            is HomeUiEvent.ChangeBpmPlayerValue -> {
-                viewModel.changeBpmPlayerValue(event.value)
-            }
-
             is HomeUiEvent.SelectMusicGenre -> {
                 viewModel.selectMusicGenre(event.metric)
             }
@@ -147,17 +146,22 @@ fun HomeScreen(
     )
 
     Scaffold(modifier) { innerPadding ->
-        HomeContent(
-            uiState = uiState,
-            appState = appState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
-            eventHandler = { event ->
-                eventHandler(event)
-            },
-            cardList = cardList,
-        )
+        Box {
+            HomeContent(
+                uiState = uiState,
+                appState = appState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding()),
+                eventHandler = { event ->
+                    eventHandler(event)
+                },
+                cardList = cardList,
+            )
+            if (uiState.screenState == ScreenState.Initializing()) {
+                LoadingAnimation()
+            }
+        }
     }
 }
 
