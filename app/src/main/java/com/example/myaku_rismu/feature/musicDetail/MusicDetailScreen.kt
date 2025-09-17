@@ -6,6 +6,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -165,6 +166,7 @@ fun MusicDetailScreen(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(MaterialTheme.customTheme.myakuRismuBackgroundColor)
             .pointerInput(uiState.playerState) {
                 if (uiState.playerState == PlayerState.EXPANDED) {
                     detectDragGestures(
