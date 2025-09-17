@@ -73,15 +73,16 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (_uiState.value.isEnabledCreateMusic) {
                 _uiState.value.selectedGenre?.let { genre ->
+                    _uiState.update {
+                        it.copy(
+                            isEnabledCreateMusic = false,
+                            isMusicGenerating = true
+                        )
+                    }
                     appState.musicGeneration(
                         recordType = genre.type,
                         bpm = _uiState.value.bpmPlayerValue,
                         instrumental = _uiState.value.isInstrumental
-                    )
-                }
-                _uiState.update {
-                    it.copy(
-                        isEnabledCreateMusic = false
                     )
                 }
             }
@@ -164,10 +165,24 @@ class HomeViewModel @Inject constructor(
                 )
             }
             _uiState.update { it.copy(metrics = metrics) }
+            checkIsEnableCreateMusic()
         }
     }
 
-    suspend fun checkIsEnableCreateMusic() {
+    private suspend fun checkIsEnableCreateMusic() {
+        if (_uiState.value.isMusicGenerating) {
+            val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
+            if (isTodayAlreadyGenerated) {
+                _uiState.update {
+                    it.copy(
+                        isMusicGenerating = false,
+                        isEnabledCreateMusic = false
+                    )
+                }
+            }
+            return
+        }
+
         val anyExceeded = _uiState.value.metrics.any { it.progress >= 1f }
         val isTodayAlreadyGenerated = musicGenerationUseCase.isTodayAlreadyGenerated()
 

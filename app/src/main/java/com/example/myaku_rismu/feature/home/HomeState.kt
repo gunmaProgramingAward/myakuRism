@@ -21,6 +21,7 @@ data class HomeState(
     val showBottomSheet: Boolean = false,
     val isInstrumental: Boolean = false,
     val isEnabledCreateMusic: Boolean = false,
+    val isMusicGenerating: Boolean = false,
 ) {
     val beatIntervalMs: Float
         get() {

@@ -69,7 +69,6 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.updateMetrics()
         viewModel.syncSwitchStateWithProfile()
-        viewModel.checkIsEnableCreateMusic()
         viewModel.fetchAndUpdateHeartRateStats()
         viewModel.changeScreenState(ScreenState.Success)
     }
