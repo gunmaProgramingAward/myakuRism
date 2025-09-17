@@ -45,6 +45,30 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(showBottomSheet = false) }
     }
 
+    fun selectMusicGenre(metric: HealthMetric) {
+        _uiState.update {
+            it.copy(selectedGenre = metric)
+        }
+    }
+
+    fun changeSelectedBpmValue(value: Int) {
+        _uiState.update { it.copy(selectedBpmValue = value) }
+    }
+
+    fun onSwitchCheckedChange(isChecked: Boolean) {
+        _uiState.update {
+            it.copy(
+                isSwitchChecked = isChecked,
+            )
+        }
+        viewModelScope.launch {
+            profileDetailUseCase.updateSwitchState(
+                ProfileSwitchType.INCLUDE_LYRICS,
+                isChecked
+            )
+        }
+    }
+
     fun createNewMusic(appState: AppState) {
         viewModelScope.launch {
             if (_uiState.value.isEnabledCreateMusic) {
@@ -64,16 +88,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun selectMusicGenre(metric: HealthMetric) {
-        _uiState.update {
-            it.copy(selectedGenre = metric)
-        }
-    }
-
-    fun changeSelectedBpmValue(value: Int) {
-        _uiState.update { it.copy(selectedBpmValue = value) }
-    }
-
     fun fetchAndUpdateHeartRateStats() {
         viewModelScope.launch {
             val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
@@ -86,28 +100,6 @@ class HomeViewModel @Inject constructor(
                 heartRates.maxOrNull()?.toInt()
             ).ifEmpty { listOf(0, 0, 0) }
             _uiState.update { it.copy(bpmValues = bpmValues) }
-        }
-    }
-
-    fun onSwitchCheckedChange(isChecked: Boolean) {
-        _uiState.update {
-            it.copy(
-                isSwitchChecked = isChecked,
-            )
-        }
-        viewModelScope.launch {
-            profileDetailUseCase.updateSwitchState(
-                ProfileSwitchType.INCLUDE_LYRICS,
-                isChecked
-            )
-        }
-    }
-
-    fun changeBpmPlayerValue(value: Int) {
-        _uiState.update {
-            it.copy(
-                bpmPlayerValue = value
-            )
         }
     }
 
